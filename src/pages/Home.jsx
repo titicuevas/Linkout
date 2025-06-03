@@ -50,7 +50,7 @@ export default function Home() {
           ¡Quiero sentirme mejor!
         </Link>
       </div>
-      <footer className="w-full text-center py-2 text-gray-500 text-xs bg-transparent mt-4">
+      <footer className="w-full text-center py-2 text-gray-500 text-xs bg-transparent mt-auto">
         Hecho con ❤️ para quienes buscan un nuevo comienzo. &copy; {new Date().getFullYear()} LinkOut
       </footer>
       <style>{`
