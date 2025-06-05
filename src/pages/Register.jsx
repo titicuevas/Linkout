@@ -1,6 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import ResponsiveContainer from '../components/ResponsiveContainer';
+import Footer from '../components/Footer';
+import { inputBase, buttonPrimary, labelBase, errorMsg } from '../styles/twHelpers';
+import logo from '../assets/logo.png';
 
 function EyeIcon({ open }) {
   return open ? (
@@ -18,6 +24,10 @@ export default function Register() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const MySwal = withReactContent(Swal);
+
+  useEffect(() => { document.title = 'Registro'; }, []);
 
   const validateEmail = (email) => {
     // Expresión regular básica para emails
@@ -50,7 +60,16 @@ export default function Register() {
         }
         return;
       }
-      alert('Registro exitoso. Por favor, verifica tu correo electrónico.');
+      await MySwal.fire({
+        icon: 'success',
+        title: 'Registro exitoso',
+        text: 'Por favor, verifica tu correo electrónico.',
+        confirmButtonText: 'Aceptar',
+        background: '#18181b',
+        color: '#fff',
+        confirmButtonColor: '#6366f1',
+      });
+      navigate('/');
     } catch {
       setError('Error inesperado. Intenta de nuevo.');
     } finally {
@@ -59,70 +78,81 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen w-screen min-w-screen bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
+    <ResponsiveContainer>
+      <div className="absolute top-6 left-6 z-20">
+        <Link to="/">
+          <img src={logo} alt="Logo Linkout" className="w-12 h-12 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg transition-transform hover:scale-110" />
+        </Link>
+      </div>
       <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700">
         <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Registro</h1>
-        {error && <div className="bg-red-500 text-white p-3 rounded mb-4 animate-pulse">{error}</div>}
+        {error && <div className={errorMsg}>{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Correo electrónico</label>
+            <label className={labelBase}>Correo electrónico</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 rounded bg-neutral-700 border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              className={inputBase}
               required
               autoComplete="email"
             />
           </div>
-          <div className="flex w-full">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="flex-1 p-2 rounded-l bg-neutral-700 border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
-              required
-              minLength={8}
-              autoComplete="new-password"
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              aria-label="Mostrar u ocultar contraseña"
-              className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
-              style={{height: '2.5rem'}}
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => setShowPassword(v => !v)}
-            >
-              <EyeIcon open={showPassword} />
-            </button>
+          <div>
+            <label className={labelBase}>Contraseña</label>
+            <div className="flex w-full">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={inputBase + ' flex-1 rounded-l outline-none'}
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label="Mostrar u ocultar contraseña"
+                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
+                style={{height: '2.5rem'}}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => setShowPassword(v => !v)}
+              >
+                <EyeIcon open={showPassword} />
+              </button>
+            </div>
           </div>
-          <div className="flex w-full">
-            <input
-              type={showConfirm ? 'text' : 'password'}
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="flex-1 p-2 rounded-l bg-neutral-700 border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
-              required
-              minLength={8}
-              autoComplete="new-password"
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              aria-label="Mostrar u ocultar contraseña"
-              className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
-              style={{height: '2.5rem'}}
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => setShowConfirm(v => !v)}
-            >
-              <EyeIcon open={showConfirm} />
-            </button>
+          <div>
+            <label className={labelBase}>Repetir contraseña</label>
+            <div className="flex w-full">
+              <input
+                type={showConfirm ? 'text' : 'password'}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className={inputBase + ' flex-1 rounded-l outline-none'}
+                required
+                minLength={8}
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label="Mostrar u ocultar contraseña"
+                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
+                style={{height: '2.5rem'}}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => setShowConfirm(v => !v)}
+              >
+                <EyeIcon open={showConfirm} />
+              </button>
+            </div>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-gradient-to-r from-blue-500 via-pink-400 to-yellow-400 hover:from-pink-400 hover:to-blue-400 text-white rounded-full font-bold shadow-lg transition-all text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 drop-shadow-lg tracking-wide"
+            className={buttonPrimary}
           >
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>
@@ -131,9 +161,17 @@ export default function Register() {
           ¿Ya tienes una cuenta? <Link to="/login" className="text-blue-400 hover:underline">Inicia sesión</Link>
         </p>
       </div>
-      <footer className="w-full text-center py-2 text-gray-500 text-xs bg-transparent mt-auto">
-        Hecho con ❤️ para quienes buscan un nuevo comienzo. &copy; {new Date().getFullYear()} LinkOut
-      </footer>
-    </div>
+      <Footer />
+      <style>{`
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+          100% { transform: translateY(0px); }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
+    </ResponsiveContainer>
   );
 } 

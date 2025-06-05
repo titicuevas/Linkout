@@ -1,6 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import ResponsiveContainer from '../components/ResponsiveContainer';
+import Footer from '../components/Footer';
+import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
+import logo from '../assets/logo.png';
 
 function EyeIcon({ open }) {
   return open ? (
@@ -14,8 +20,11 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const MySwal = withReactContent(Swal);
+
+  useEffect(() => { document.title = 'Login'; }, []);
 
   const validateEmail = (email) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -23,13 +32,28 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     if (!validateEmail(email)) {
-      setError('Introduce un correo electrónico válido.');
+      await MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Introduce un correo electrónico válido.',
+        confirmButtonText: 'Aceptar',
+        background: '#18181b',
+        color: '#fff',
+        confirmButtonColor: '#6366f1',
+      });
       return;
     }
     if (password.length < 8) {
-      setError('La contraseña debe tener al menos 8 caracteres.');
+      await MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'La contraseña debe tener al menos 8 caracteres.',
+        confirmButtonText: 'Aceptar',
+        background: '#18181b',
+        color: '#fff',
+        confirmButtonColor: '#6366f1',
+      });
       return;
     }
     setLoading(true);
@@ -37,76 +61,134 @@ export default function Login() {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         if (error.message.toLowerCase().includes('invalid login credentials')) {
-          setError('Correo o contraseña incorrectos.');
+          await MySwal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Correo o contraseña incorrectos.',
+            confirmButtonText: 'Aceptar',
+            background: '#18181b',
+            color: '#fff',
+            confirmButtonColor: '#6366f1',
+          });
         } else if (error.message.toLowerCase().includes('user not found')) {
-          setError('El correo no está registrado.');
+          await MySwal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'El correo no está registrado.',
+            confirmButtonText: 'Aceptar',
+            background: '#18181b',
+            color: '#fff',
+            confirmButtonColor: '#6366f1',
+          });
         } else {
-          setError(error.message);
+          await MySwal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message,
+            confirmButtonText: 'Aceptar',
+            background: '#18181b',
+            color: '#fff',
+            confirmButtonColor: '#6366f1',
+          });
         }
         return;
       }
-      alert('Inicio de sesión exitoso.');
+      await MySwal.fire({
+        icon: 'success',
+        title: '¡Bienvenido!',
+        text: 'Inicio de sesión exitoso.',
+        confirmButtonText: 'Aceptar',
+        background: '#18181b',
+        color: '#fff',
+        confirmButtonColor: '#6366f1',
+      });
+      navigate('/');
     } catch {
-      setError('Error inesperado. Intenta de nuevo.');
+      await MySwal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error inesperado. Intenta de nuevo.',
+        confirmButtonText: 'Aceptar',
+        background: '#18181b',
+        color: '#fff',
+        confirmButtonColor: '#6366f1',
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-screen min-w-screen bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
+    <ResponsiveContainer>
+      <div className="absolute top-6 left-6 z-20">
+        <Link to="/">
+          <img src={logo} alt="Logo Linkout" className="w-12 h-12 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg transition-transform hover:scale-110" />
+        </Link>
+      </div>
       <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700">
         <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Iniciar Sesión</h1>
-        {error && <div className="bg-red-500 text-white p-3 rounded mb-4 animate-pulse">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Correo electrónico</label>
+            <label className={labelBase}>Correo electrónico</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-2 rounded bg-neutral-700 border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+              className={inputBase}
               required
               autoComplete="email"
             />
           </div>
-          <div className="flex w-full">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="flex-1 p-2 rounded-l bg-neutral-700 border border-neutral-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all outline-none"
-              required
-              autoComplete="current-password"
-              minLength={8}
-            />
-            <button
-              type="button"
-              tabIndex={-1}
-              aria-label="Mostrar u ocultar contraseña"
-              className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
-              style={{height: '2.5rem'}}
-              onMouseDown={e => e.preventDefault()}
-              onClick={() => setShowPassword(v => !v)}
-            >
-              <EyeIcon open={showPassword} />
-            </button>
+          <div>
+            <label className={labelBase}>Contraseña</label>
+            <div className="flex w-full">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className={inputBase + ' flex-1 rounded-l outline-none'}
+                required
+                autoComplete="current-password"
+                minLength={8}
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label="Mostrar u ocultar contraseña"
+                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
+                style={{height: '2.5rem'}}
+                onMouseDown={e => e.preventDefault()}
+                onClick={() => setShowPassword(v => !v)}
+              >
+                <EyeIcon open={showPassword} />
+              </button>
+            </div>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-gradient-to-r from-blue-500 via-pink-400 to-yellow-400 hover:from-pink-400 hover:to-blue-400 text-white rounded-full font-bold shadow-lg transition-all text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 drop-shadow-lg tracking-wide"
+            className={buttonPrimary}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
         <p className="mt-4 text-center text-sm">
           ¿No tienes una cuenta? <Link to="/register" className="text-blue-400 hover:underline">Regístrate</Link>
+          <br />
+          <Link to="/forgot-password" className="text-blue-400 hover:underline">¿Has olvidado tu contraseña?</Link>
         </p>
       </div>
-      <footer className="w-full text-center py-2 text-gray-500 text-xs bg-transparent mt-auto">
-        Hecho con ❤️ para quienes buscan un nuevo comienzo. &copy; {new Date().getFullYear()} LinkOut
-      </footer>
-    </div>
+      <Footer />
+      <style>{`
+        @keyframes float {
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+          100% { transform: translateY(0px); }
+        }
+        .animate-float {
+          animation: float 3s ease-in-out infinite;
+        }
+      `}</style>
+    </ResponsiveContainer>
   );
 } 
