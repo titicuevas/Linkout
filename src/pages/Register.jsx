@@ -3,10 +3,10 @@ import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import ResponsiveContainer from '../components/ResponsiveContainer';
-import Footer from '../components/Footer';
+import Layout from '../components/Layout';
 import { inputBase, buttonPrimary, labelBase, errorMsg } from '../styles/twHelpers';
 import logo from '../assets/logo.png';
+import ResponsiveContainer from '../components/ResponsiveContainer';
 
 function EyeIcon({ open }) {
   return open ? (
@@ -24,6 +24,7 @@ export default function Register() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [nombre, setNombre] = useState('');
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
@@ -49,9 +50,13 @@ export default function Register() {
       setError('La contraseña debe tener al menos 8 caracteres.');
       return;
     }
+    if (!nombre.trim()) {
+      setError('Introduce tu nombre.');
+      return;
+    }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({ email, password });
+      const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) {
         if (error.message.includes('already registered') || error.message.includes('already exists')) {
           setError('El correo ya está registrado. Inicia sesión.');
@@ -59,6 +64,17 @@ export default function Register() {
           setError(error.message);
         }
         return;
+      }
+      // Insertar en profiles
+      const user = data.user;
+      if (user) {
+        const { error: profileError } = await supabase.from('profiles').insert([
+          { id: user.id, email, nombre }
+        ]);
+        if (profileError) {
+          setError('Error al crear el perfil: ' + profileError.message);
+          return;
+        }
       }
       await MySwal.fire({
         icon: 'success',
@@ -79,15 +95,22 @@ export default function Register() {
 
   return (
     <ResponsiveContainer>
-      <div className="absolute top-6 left-6 z-20">
-        <Link to="/">
-          <img src={logo} alt="Logo Linkout" className="w-12 h-12 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg transition-transform hover:scale-110" />
-        </Link>
-      </div>
-      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700">
+      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center">
+        <img src={logo} alt="Logo Linkout" className="w-12 h-12 mb-4 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg" />
         <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Registro</h1>
         {error && <div className={errorMsg}>{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className={labelBase}>Nombre</label>
+            <input
+              type="text"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              className={inputBase}
+              required
+              autoComplete="name"
+            />
+          </div>
           <div>
             <label className={labelBase}>Correo electrónico</label>
             <input
@@ -161,7 +184,6 @@ export default function Register() {
           ¿Ya tienes una cuenta? <Link to="/login" className="text-blue-400 hover:underline">Inicia sesión</Link>
         </p>
       </div>
-      <Footer />
       <style>{`
         @keyframes float {
           0% { transform: translateY(0px); }

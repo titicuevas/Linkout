@@ -4,6 +4,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import Index from './pages/Index';
+import CandidaturasIndex from './pages/candidaturas/index';
+import CrearCandidatura from './pages/candidaturas/create';
 
 export default function App() {
   return (
@@ -14,6 +16,8 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/index" element={<Index />} />
+        <Route path="/candidaturas" element={<CandidaturasIndex />} />
+        <Route path="/candidaturas/create" element={<CrearCandidatura />} />
       </Routes>
     </Router>
   );

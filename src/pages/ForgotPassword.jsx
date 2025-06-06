@@ -3,10 +3,9 @@ import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import ResponsiveContainer from '../components/ResponsiveContainer';
-import Footer from '../components/Footer';
-import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
 import logo from '../assets/logo.png';
+import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
+import ResponsiveContainer from '../components/ResponsiveContainer';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -51,12 +50,8 @@ export default function ForgotPassword() {
 
   return (
     <ResponsiveContainer>
-      <div className="absolute top-6 left-6 z-20">
-        <Link to="/">
-          <img src={logo} alt="Logo Linkout" className="w-12 h-12 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg transition-transform hover:scale-110" />
-        </Link>
-      </div>
-      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700">
+      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center">
+        <img src={logo} alt="Logo Linkout" className="w-12 h-12 mb-4 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg" />
         <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Recuperar contraseña</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -82,7 +77,6 @@ export default function ForgotPassword() {
           <Link to="/login" className="text-blue-400 hover:underline">Volver al login</Link>
         </p>
       </div>
-      <Footer />
       <style>{`
         @keyframes float {
           0% { transform: translateY(0px); }

@@ -3,8 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import logo from '../assets/logo.png';
 import { ClipboardDocumentListIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, BoltIcon } from '@heroicons/react/24/solid';
-import ResponsiveContainer from '../components/ResponsiveContainer';
-import Footer from '../components/Footer';
+import Layout from '../components/Layout';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -18,7 +17,7 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <ResponsiveContainer>
+    <Layout>
       <div className="absolute top-6 left-6 z-20">
         <img src={logo} alt="Logo Linkout" className="w-12 h-12 rounded-full bg-white border-2 border-white object-contain shadow-lg" />
       </div>
@@ -28,7 +27,7 @@ export default function Home() {
           ¿Te sientes frustrado por entrevistas, ghosting o rechazos? <span className="text-blue-400 font-bold">Aquí puedes desahogarte y recargar energías.</span> Este es tu refugio para volver a empezar con ánimo.
         </p>
         <div className="w-full max-w-4xl mx-auto mb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:grid-rows-2 gap-6">
             {/* Candidaturas */}
             <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-blue-600 cursor-pointer group shadow-lg">
               <ClipboardDocumentListIcon width={32} height={32} className="mb-2 text-blue-400 group-hover:text-white transition-colors duration-200" />
@@ -63,8 +62,7 @@ export default function Home() {
             ¡Quiero sentirme mejor!
           </Link>
         </div>
-        <Footer />
       </div>
-    </ResponsiveContainer>
+    </Layout>
   );
 } 
