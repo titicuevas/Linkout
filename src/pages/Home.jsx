@@ -35,11 +35,11 @@ export default function Home() {
               <div className="text-sm text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
             </div>
             {/* Desahógate */}
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-pink-600 cursor-pointer group shadow-lg">
+            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-pink-600 cursor-pointer group shadow-lg no-underline">
               <PencilSquareIcon width={32} height={32} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200" />
               <div className="font-bold text-white text-base text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
               <div className="text-sm text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
-            </div>
+            </Link>
             {/* Ánimo IA */}
             <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-green-600 cursor-pointer group shadow-lg">
               <ChatBubbleLeftRightIcon width={32} height={32} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200" />

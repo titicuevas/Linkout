@@ -6,6 +6,9 @@ import ForgotPassword from './pages/ForgotPassword';
 import Index from './pages/Index';
 import CandidaturasIndex from './pages/candidaturas/index';
 import CrearCandidatura from './pages/candidaturas/create';
+import Desahogate from './pages/desahogate/index';
+import CrearDesahogo from './pages/desahogate/create';
+import AnimoIAIndex from './pages/animoia/index';
 
 export default function App() {
   return (
@@ -18,6 +21,9 @@ export default function App() {
         <Route path="/index" element={<Index />} />
         <Route path="/candidaturas" element={<CandidaturasIndex />} />
         <Route path="/candidaturas/create" element={<CrearCandidatura />} />
+        <Route path="/desahogate" element={<Desahogate />} />
+        <Route path="/desahogate/create" element={<CrearDesahogo />} />
+        <Route path="/animoia" element={<AnimoIAIndex />} />
       </Routes>
     </Router>
   );

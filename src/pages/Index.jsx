@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import logo from '../assets/logo.png';
+// import logo from '../assets/logo.png';
 import { ClipboardDocumentListIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, BoltIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import Layout from '../components/Layout';
 
@@ -13,7 +13,7 @@ export default function Index() {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    document.title = 'LinkOut';
+    document.title = 'Panel | LinkOut';
     supabase.auth.getUser().then(async ({ data }) => {
       if (!data?.user) {
         navigate('/login');
@@ -59,16 +59,16 @@ export default function Index() {
               <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Candidaturas</div>
               <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
             </Link>
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-pink-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-pink-400">
+            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-pink-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400">
               <PencilSquareIcon width={40} height={40} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200" />
               <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
               <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
-            </div>
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-green-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-green-400">
+            </Link>
+            <Link to="/animoia" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-green-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400">
               <ChatBubbleLeftRightIcon width={40} height={40} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200" />
               <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
               <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
-            </div>
+            </Link>
             <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-yellow-500 cursor-pointer group shadow-xl border-2 border-transparent hover:border-yellow-400">
               <BoltIcon width={40} height={40} className="mb-2 text-yellow-300 group-hover:text-yellow-700 transition-colors duration-200" />
               <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-yellow-700 transition-colors duration-200">Reto físico</div>
