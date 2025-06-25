@@ -36,3 +36,7 @@ coverage
 # Archivos temporales de sistema
 Thumbs.db
 *.tmp
+
+# Archivos de entorno específicos
+/backend/.env
+/frontend/.env

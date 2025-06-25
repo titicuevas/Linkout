@@ -69,11 +69,11 @@ export default function Index() {
               <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
               <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
             </Link>
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-yellow-500 cursor-pointer group shadow-xl border-2 border-transparent hover:border-yellow-400">
-              <BoltIcon width={40} height={40} className="mb-2 text-yellow-300 group-hover:text-yellow-700 transition-colors duration-200" />
-              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-yellow-700 transition-colors duration-200">Reto físico</div>
+            <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-orange-500 cursor-pointer group shadow-xl border-2 border-transparent hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400">
+              <BoltIcon width={40} height={40} className="mb-2 text-yellow-300 group-hover:text-orange-700 transition-colors duration-200" />
+              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-orange-700 transition-colors duration-200">Reto físico</div>
               <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
-            </div>
+            </Link>
           </div>
         </div>
       </main>

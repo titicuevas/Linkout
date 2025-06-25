@@ -14,8 +14,10 @@
     "@supabase/supabase-js": "^2.49.9",
     "dayjs": "^1.11.13",
     "react": "^19.1.0",
+    "react-confetti": "^6.4.0",
     "react-dom": "^19.1.0",
     "react-markdown": "^10.1.0",
+    "react-paginate": "^8.3.0",
     "react-router-dom": "^7.6.1",
     "sweetalert2": "^11.22.0",
     "sweetalert2-react-content": "^5.1.0"

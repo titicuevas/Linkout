@@ -12,7 +12,21 @@ const ESTADOS = [
   { value: 'en_proceso', label: 'En proceso' },
   { value: 'aceptado', label: 'Aceptado' },
   { value: 'rechazado', label: 'Rechazado' },
-  { value: 'descartado', label: 'Descartado' },
+];
+
+const FRANJAS_SALARIAL = [
+  '< 15.000 €',
+  '15.000 - 20.000 €',
+  '20.000 - 25.000 €',
+  '25.000 - 30.000 €',
+  '30.000 - 40.000 €',
+  '> 40.000 €',
+];
+
+const TIPOS_TRABAJO = [
+  'Presencial',
+  'Remoto',
+  'Híbrido',
 ];
 
 export default function CrearCandidatura() {
@@ -22,6 +36,10 @@ export default function CrearCandidatura() {
   const [empresa, setEmpresa] = useState('');
   const [estado, setEstado] = useState('pendiente');
   const [fecha, setFecha] = useState('');
+  const [sueldoAnual, setSueldoAnual] = useState('');
+  const [franjaSalarial, setFranjaSalarial] = useState('');
+  const [tipoTrabajo, setTipoTrabajo] = useState('');
+  const [ubicacion, setUbicacion] = useState('');
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
@@ -57,12 +75,12 @@ export default function CrearCandidatura() {
   const handleCreate = async (e) => {
     e.preventDefault();
     setError('');
-    if (!puesto.trim() || !empresa.trim() || !estado || !fecha) {
-      setError('Completa todos los campos.');
+    if (!puesto.trim() || !empresa.trim() || !estado || !fecha || !tipoTrabajo || !ubicacion.trim()) {
+      setError('Completa todos los campos obligatorios.');
       return;
     }
     const { error: dbError } = await supabase.from('candidaturas').insert([
-      { user_id: user.id, puesto, empresa, estado, fecha }
+      { user_id: user.id, puesto, empresa, estado, fecha, salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion }
     ]);
     if (dbError) {
       await MySwal.fire({
@@ -95,7 +113,7 @@ export default function CrearCandidatura() {
         <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center relative">
           <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Nueva Candidatura</h1>
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center">{error}</div>}
-          <form onSubmit={handleCreate} className="space-y-4 w-full">
+          <form onSubmit={handleCreate} className="space-y-6 w-full text-lg">
             <div>
               <label className={labelBase}>Puesto</label>
               <input
@@ -138,6 +156,63 @@ export default function CrearCandidatura() {
                 className={inputBase}
                 required
                 max={maxDate}
+              />
+            </div>
+            <div>
+              <label className={labelBase + ' text-lg'}>Sueldo anual (opcional)</label>
+              <input
+                type="number"
+                min="0"
+                step="100"
+                value={sueldoAnual}
+                onChange={e => {
+                  setSueldoAnual(e.target.value);
+                  // Sugerir franja automáticamente
+                  const v = Number(e.target.value);
+                  if (!v) return setFranjaSalarial('');
+                  if (v < 15000) setFranjaSalarial('< 15.000 €');
+                  else if (v < 20000) setFranjaSalarial('15.000 - 20.000 €');
+                  else if (v < 25000) setFranjaSalarial('20.000 - 25.000 €');
+                  else if (v < 30000) setFranjaSalarial('25.000 - 30.000 €');
+                  else if (v < 40000) setFranjaSalarial('30.000 - 40.000 €');
+                  else setFranjaSalarial('> 40.000 €');
+                }}
+                className={inputBase + ' text-lg py-3'}
+                placeholder="Ej: 22000"
+              />
+            </div>
+            <div>
+              <label className={labelBase + ' text-lg'}>Franja salarial (opcional)</label>
+              <select
+                value={franjaSalarial}
+                onChange={e => setFranjaSalarial(e.target.value)}
+                className={inputBase + ' text-lg py-3'}
+              >
+                <option value="">Selecciona una franja</option>
+                {FRANJAS_SALARIAL.map(f => <option key={f} value={f}>{f}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={labelBase + ' text-lg'}>Tipo de trabajo</label>
+              <select
+                value={tipoTrabajo}
+                onChange={e => setTipoTrabajo(e.target.value)}
+                className={inputBase + ' text-lg py-3'}
+                required
+              >
+                <option value="">Selecciona tipo</option>
+                {TIPOS_TRABAJO.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={labelBase + ' text-lg'}>Ubicación</label>
+              <input
+                type="text"
+                value={ubicacion}
+                onChange={e => setUbicacion(e.target.value)}
+                className={inputBase + ' text-lg py-3'}
+                required
+                placeholder="Ciudad, país..."
               />
             </div>
             <div className="flex w-full gap-2 mt-6">
