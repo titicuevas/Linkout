@@ -5,7 +5,12 @@ import axios from 'axios';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://linkout.up.railway.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
+app.options('*', cors());
 app.use(express.json());
 
 // Helper para construir el prompt según el rol
