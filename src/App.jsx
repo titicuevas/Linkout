@@ -10,6 +10,7 @@ import Desahogate from './pages/desahogate/index';
 import CrearDesahogo from './pages/desahogate/create';
 import AnimoIAIndex from './pages/animoia/index';
 import Fisico from './pages/retos/Fisico';
+import Welcome from './pages/Welcome';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/desahogate/create" element={<CrearDesahogo />} />
         <Route path="/animoia" element={<AnimoIAIndex />} />
         <Route path="/retos/fisico" element={<Fisico />} />
+        <Route path="/welcome" element={<Welcome />} />
       </Routes>
     </Router>
   );

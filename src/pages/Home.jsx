@@ -17,48 +17,27 @@ export default function Home() {
   }, [navigate]);
 
   return (
-    <Layout>
-     
-      <div className="min-h-screen w-screen min-w-screen bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
-        <h1 className="text-3xl font-extrabold text-white mb-3 tracking-tight text-center">LinkOut</h1>
-        <p className="text-lg text-gray-300 mb-8 max-w-xl text-center font-medium">
-          ¿Te sientes frustrado por entrevistas, ghosting o rechazos? <span className="text-blue-400 font-bold">Aquí puedes desahogarte y recargar energías.</span> Este es tu refugio para volver a empezar con ánimo.
-        </p>
-        <div className="w-full max-w-4xl mx-auto mb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:grid-rows-2 gap-6">
-            {/* Candidaturas */}
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-blue-600 cursor-pointer group shadow-lg">
-              <ClipboardDocumentListIcon width={32} height={32} className="mb-2 text-blue-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-base text-center mb-1 group-hover:text-white transition-colors duration-200">Candidaturas</div>
-              <div className="text-sm text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
-            </div>
-            {/* Desahógate */}
-            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-pink-600 cursor-pointer group shadow-lg no-underline">
-              <PencilSquareIcon width={32} height={32} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-base text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
-              <div className="text-sm text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
-            </Link>
-            {/* Ánimo IA */}
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-green-600 cursor-pointer group shadow-lg">
-              <ChatBubbleLeftRightIcon width={32} height={32} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-base text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
-              <div className="text-sm text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
-            </div>
-            {/* Reto físico */}
-            <div className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-4 transition-transform hover:scale-105 hover:bg-yellow-400 cursor-pointer group shadow-lg">
-              <BoltIcon width={32} height={32} className="mb-2 text-yellow-300 group-hover:text-yellow-700 transition-colors duration-200" />
-              <div className="font-bold text-white text-base text-center mb-1 group-hover:text-yellow-700 transition-colors duration-200">Reto físico</div>
-              <div className="text-sm text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center w-full mb-12">
+    <Layout showNavbar={false}>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-pink-900 relative overflow-hidden">
+        {/* Imagen abstracta opcional, puedes poner una SVG en public/ y cambiar la ruta */}
+        {/* <div className="absolute inset-0 opacity-30 pointer-events-none" style={{background: 'url(/abstract-bg.svg) center/cover no-repeat'}} /> */}
+        <div className="z-10 flex flex-col items-center justify-center px-6 py-12">
+          <img src={logo} alt="Logo Linkout" className="w-24 h-24 mb-8 rounded-full shadow-2xl bg-white border-4 border-white" />
+          <h1 className="text-5xl font-extrabold text-white mb-6 text-center drop-shadow-lg">Desahógate en LinkOut</h1>
+          <p className="text-2xl text-blue-100 mb-10 max-w-2xl text-center font-medium">
+            ¿Te sientes frustrado, cansado o perdido? Aquí puedes soltar todo lo que llevas dentro, sin juicios, solo apoyo y energía positiva.
+          </p>
           <Link
             to="/login"
-            className="px-8 py-3 bg-gradient-to-r from-blue-500 via-pink-400 to-yellow-400 text-white rounded-full shadow-2xl hover:scale-105 hover:from-pink-400 hover:to-blue-400 transition-all duration-300 font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 text-center drop-shadow-lg tracking-wide"
+            className="px-12 py-4 bg-pink-500 hover:bg-pink-600 text-white rounded-full shadow-2xl transition-all duration-300 font-extrabold text-2xl border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 text-center drop-shadow-lg tracking-wide"
+            style={{boxShadow: '0 4px 32px 0 rgba(236,72,153,0.25)'}}
           >
-            ¡Quiero sentirme mejor!
+            ¡Quiero desahogarme!
           </Link>
+          <p className="mt-10 text-lg text-blue-200 text-center max-w-xl">
+            Tu espacio seguro para expresar lo que sientes y empezar de nuevo.<br />
+            <span className="font-bold text-pink-200">No estás solo/a.</span>
+          </p>
         </div>
       </div>
     </Layout>

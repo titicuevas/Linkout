@@ -46,7 +46,7 @@ export default function Index() {
 
   return (
     <Layout user={user} onLogout={handleLogout}>
-      <main className="flex flex-col items-center justify-center flex-1 px-4 py-8 w-full">
+      <div className="min-h-screen w-full bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
         <h1 className="text-4xl font-extrabold text-center mb-2 tracking-tight">¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!</h1>
         <h2 className="text-2xl font-bold text-center mb-6">Bienvenido a tu sitio de paz</h2>
         <p className="text-lg text-gray-300 mb-10 max-w-xl text-center font-medium">
@@ -76,7 +76,7 @@ export default function Index() {
             </Link>
           </div>
         </div>
-      </main>
+      </div>
       <style>{`
         @keyframes float {
           0% { transform: translateY(0px); }
