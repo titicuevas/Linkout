@@ -6,7 +6,7 @@ import withReactContent from 'sweetalert2-react-content';
 import ResponsiveContainer from '../components/ResponsiveContainer';
 import Footer from '../components/Footer';
 import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
-import logo from '../assets/logo.png';
+import logo from '../assets/Logo.png';
 
 function EyeIcon({ open }) {
   return open ? (
