@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import Layout from '../components/Layout';
 import { inputBase, buttonPrimary, labelBase, errorMsg } from '../styles/twHelpers';
-import logo from '../assets/logo.png';
+import logo from '../assets/Logo.png';
 import ResponsiveContainer from '../components/ResponsiveContainer';
 
 function EyeIcon({ open }) {

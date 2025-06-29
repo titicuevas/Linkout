@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import logo from '../assets/logo.png';
+import logo from '../assets/Logo.png';
 import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/solid';
 
 export default function Navbar({ user, onLogout }) {

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-// import logo from '../assets/logo.png';
+// import logo from '../assets/Logo.png';
 import { ClipboardDocumentListIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, BoltIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import Layout from '../components/Layout';
 
