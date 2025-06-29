@@ -18,9 +18,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="absolute top-6 left-6 z-20">
-        <img src={logo} alt="Logo Linkout" className="w-12 h-12 rounded-full bg-white border-2 border-white object-contain shadow-lg" />
-      </div>
+     
       <div className="min-h-screen w-screen min-w-screen bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
         <h1 className="text-3xl font-extrabold text-white mb-3 tracking-tight text-center">LinkOut</h1>
         <p className="text-lg text-gray-300 mb-8 max-w-xl text-center font-medium">
