@@ -131,6 +131,10 @@ app.post('/api/retos', async (req, res) => {
   }
 });
 
+app.get('/api/animo', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Servidor backend escuchando en http://localhost:${PORT}`);
