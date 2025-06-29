@@ -7,7 +7,7 @@ import Confetti from 'react-confetti';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
-const ENDPOINT = 'http://localhost:4000/api/retos'; // Cambia esto por tu endpoint real
+const ENDPOINT = import.meta.env.VITE_BACKEND_URL + '/api/retos'; // Cambia esto por tu endpoint real
 const NIVELES = ['Fácil', 'Medio', 'Difícil'];
 const PROGRESO_NIVEL = 100;
 

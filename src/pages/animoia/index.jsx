@@ -15,7 +15,7 @@ const ROLES = [
   { value: 'futuro', label: 'Tú del futuro' },
 ];
 
-const BACKEND_URL = 'http://localhost:4000/api/animo';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL + '/api/animo';
 
 export default function AnimoIAIndex() {
   const [user, setUser] = useState(null);
