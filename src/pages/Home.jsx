@@ -19,7 +19,7 @@ export default function Home() {
   return (
     <Layout showNavbar={false}>
       <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 relative overflow-hidden" style={{fontFamily: 'Poppins, Arial, sans-serif'}}>
-        <div className="z-10 flex flex-col items-center justify-center px-6 py-12">
+        <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto" style={{minHeight: '80vh'}}>
           <img src={logo} alt="Logo Linkout" className="w-24 h-24 mb-8 rounded-full shadow-2xl bg-white border-4 border-white animate-ghost-float" />
           <h1 className="text-5xl font-extrabold text-white mb-6 text-center drop-shadow-lg">Desahógate en LinkOut</h1>
           <p className="text-2xl text-blue-100 mb-10 max-w-2xl text-center font-medium">
