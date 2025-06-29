@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import logo from '../assets/logo.png';
+import logo from '../assets/Logo.png';
 import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
 import ResponsiveContainer from '../components/ResponsiveContainer';
 
