@@ -75,7 +75,7 @@ export default function Index() {
             <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 sm:p-8 transition-transform hover:scale-105 hover:shadow-pink-500/30 hover:border-yellow-400 cursor-pointer group shadow-2xl border-2 border-neutral-800 hover:bg-yellow-900/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 animate-fade-in-card">
               <BoltIcon width={48} height={48} className="mb-2 text-yellow-300 group-hover:text-yellow-100 transition-colors duration-200 drop-shadow-lg" />
               <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-yellow-100 transition-colors duration-200">Reto físico</div>
-              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
+              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés...</div>
             </Link>
           </div>
         </div>
