@@ -2,6 +2,21 @@
 
 **Linkeout** es una plataforma innovadora diseñada para ayudar a las personas a superar el rechazo en candidaturas laborales y mantener una mentalidad positiva durante la búsqueda de empleo.
 
+---
+
+## ✨ Cambios y mejoras recientes (2024)
+
+- **Rediseño visual completo**: Todas las vistas principales y secundarias han sido modernizadas con gradientes, tarjetas con blur y sombra, iconos grandes y colores vivos.
+- **Fondo global unificado**: Se aplica un gradiente consistente en toda la app para coherencia visual.
+- **Panel principal (Index)**: Títulos grandes con gradiente, tarjetas animadas y mensajes motivadores.
+- **Formularios y vistas**: Inputs, selects y botones mejorados, con feedback visual y animaciones suaves.
+- **Responsive avanzado**: Todas las vistas adaptadas a móvil y escritorio.
+- **Redirección tras confirmación de correo**: El flujo de bienvenida es natural y sin parpadeos, mostrando el Welcome solo cuando corresponde.
+- **Gestión de CORS y variables de entorno**: Documentado y corregido para despliegue en Railway.
+- **Mensajes y textos**: Más cálidos, motivadores y empáticos.
+
+---
+
 ## ✨ Características Principales
 
 ### 🎯 **Ánimo IA**
@@ -25,6 +40,75 @@
 - Estado de cada aplicación
 - Historial organizado
 
+---
+
+## 🏗️ Estructura del Proyecto
+
+```
+linkeout/
+├── src/                    # Frontend React
+│   ├── components/         # Componentes reutilizables (Navbar, Footer, Layout, Modal...)
+│   ├── pages/              # Páginas principales y subcarpetas (candidaturas, desahogate, animoia, retos)
+│   ├── services/           # Servicios (Supabase, API)
+│   ├── styles/             # Helpers de Tailwind y estilos globales
+│   └── utils/              # Utilidades y validadores
+├── backend/                # API Node.js (Express)
+│   └── index.js            # Servidor Express y endpoints
+├── public/                 # Archivos estáticos
+├── docs/                   # Documentación de despliegue y uso
+└── README.md               # Este archivo
+```
+
+---
+
+## 🔑 Flujo de autenticación y bienvenida
+
+- **Registro/Login**: Usando Supabase Auth.
+- **Confirmación de correo**: El usuario recibe un email con un enlace que redirige a `/welcome`.
+- **Welcome como middleware**: Si el usuario viene de confirmación, ve el Welcome aunque esté autenticado. Si accede manualmente y ya está logueado, va al dashboard.
+- **Redirección automática**: El usuario nunca ve el Home tras confirmar, solo Welcome y luego el panel principal.
+
+---
+
+## 🎨 Gestión de fondos y diseño
+
+- **Fondo global**: Gradiente aplicado en todas las vistas principales y subcarpetas.
+- **Tarjetas**: Blur, sombra profunda y colores vivos según la sección.
+- **Animaciones**: Entrada suave de tarjetas, botones y feedback visual.
+- **Botones**: Modernos, grandes y con efectos de hover.
+
+---
+
+## 🚀 Despliegue y variables de entorno
+
+### Frontend (.env)
+```
+VITE_SUPABASE_URL=tu_url_de_supabase
+VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
+VITE_BACKEND_URL=https://linkoutbackend.up.railway.app
+```
+
+### Backend (.env)
+```
+GEMINI_API_KEY=tu_clave_de_gemini
+PORT=4000
+```
+
+- **CORS**: Configurado en el backend para aceptar peticiones del frontend en Railway.
+- **Railway**: Despliegue independiente de frontend y backend, con variables de entorno separadas.
+
+---
+
+## 🧑‍💻 Consejos para desarrolladores
+
+- **Personalización**: Cambia colores, textos y animaciones en los archivos de cada página o en los helpers de Tailwind.
+- **Nuevas vistas**: Usa el patrón de fondo global y tarjetas con blur/sombra para mantener coherencia.
+- **Autenticación**: Usa Supabase para login, registro y gestión de usuarios.
+- **Redirecciones**: Gestiona los flujos de bienvenida y dashboard en Welcome.jsx y Home.jsx.
+- **Emails**: Personaliza la plantilla de confirmación para que el usuario siempre llegue a `/welcome`.
+
+---
+
 ## 🛠️ Tecnologías Utilizadas
 
 ### Frontend
@@ -46,133 +130,22 @@
 - Autenticación integrada
 - Storage para archivos
 
-## 🚀 Despliegue
-
-### Railway (Recomendado)
-
-#### Frontend
-1. Conecta tu repositorio a Railway
-2. Configura las variables de entorno:
-   ```
-   VITE_SUPABASE_URL=tu_url_de_supabase
-   VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-   VITE_BACKEND_URL=https://tu-backend.railway.app
-   ```
-3. Railway detectará automáticamente que es un proyecto Vite
-
-#### Backend
-1. Crea un nuevo servicio en Railway
-2. Configura las variables de entorno:
-   ```
-   GEMINI_API_KEY=tu_clave_de_gemini
-   PORT=4000
-   ```
-3. Railway ejecutará `npm start` automáticamente
-
-### Variables de Entorno Requeridas
-
-#### Frontend (.env)
-```env
-VITE_SUPABASE_URL=tu_url_de_supabase
-VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-VITE_BACKEND_URL=https://tu-backend.railway.app
-```
-
-#### Backend (.env)
-```env
-GEMINI_API_KEY=tu_clave_de_gemini
-PORT=4000
-```
+---
 
 ## 📦 Instalación Local
 
-### Prerrequisitos
-- Node.js 18+
-- npm o yarn
-- Cuenta en Supabase
-- API Key de Google Gemini
-
-### Pasos
-
-1. **Clona el repositorio**
-   ```bash
-   git clone https://github.com/tu-usuario/linkeout.git
-   cd linkeout
-   ```
-
-2. **Instala dependencias del frontend**
-   ```bash
-   npm install
-   ```
-
-3. **Instala dependencias del backend**
-   ```bash
-   cd backend
-   npm install
-   cd ..
-   ```
-
-4. **Configura las variables de entorno**
-   - Crea `.env` en la raíz del proyecto (frontend)
-   - Crea `.env` en la carpeta `backend`
-
-5. **Ejecuta el desarrollo**
-   ```bash
-   # Terminal 1 - Frontend
-   npm run dev
-   
-   # Terminal 2 - Backend
-   cd backend
-   npm run dev
-   ```
-
-## 🏗️ Estructura del Proyecto
-
-```
-linkeout/
-├── src/                    # Frontend React
-│   ├── components/         # Componentes reutilizables
-│   ├── pages/             # Páginas de la aplicación
-│   ├── services/          # Servicios (Supabase)
-│   ├── hooks/             # Custom hooks
-│   └── utils/             # Utilidades
-├── backend/               # API Node.js
-│   └── index.js          # Servidor Express
-├── public/               # Archivos estáticos
-└── docs/                 # Documentación
-```
-
-## 🔧 Scripts Disponibles
-
-### Frontend
-- `npm run dev` - Servidor de desarrollo
-- `npm run build` - Build de producción
-- `npm run preview` - Vista previa del build
-- `npm run lint` - Linting del código
-
-### Backend
-- `npm start` - Servidor de producción
-- `npm run dev` - Servidor de desarrollo con nodemon
-
-## 🤝 Contribuir
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
-
-## 🙏 Agradecimientos
-
-- **Supabase** por la infraestructura de backend
-- **Google Gemini** por la IA generativa
-- **Tailwind CSS** por el framework de estilos
-- **React** por el framework de frontend
+1. Clona el repositorio
+2. Instala dependencias del frontend y backend
+3. Configura las variables de entorno
+4. Ejecuta ambos servidores (`npm run dev` en frontend y backend)
 
 ---
 
-**Linkeout** - Transformando el rechazo en oportunidad 💪
+## 📚 Documentación adicional
+
+- Consulta la carpeta `/docs` para guías de despliegue, integración y personalización avanzada.
+- Lee los comentarios en cada archivo para entender la lógica y los flujos de usuario.
+
+---
+
+¡Disfruta y sigue mejorando Linkeout! 💙
