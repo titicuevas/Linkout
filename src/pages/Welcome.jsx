@@ -1,16 +1,17 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '../services/supabase';
 import logo from '../assets/Logo.png';
 
 export default function Welcome() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Espera 2 segundos y redirige al dashboard
-    const timer = setTimeout(() => {
-      navigate('/index');
-    }, 2000);
-    return () => clearTimeout(timer);
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user && data.user.email_confirmed_at) {
+        navigate('/index');
+      }
+    });
   }, [navigate]);
 
   return (
