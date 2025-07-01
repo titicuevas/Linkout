@@ -46,7 +46,7 @@ export default function Index() {
 
   return (
     <Layout user={user} onLogout={handleLogout}>
-      <div className="min-h-screen w-full bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
+      <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight drop-shadow-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-fade-in">
           ¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!
         </h1>

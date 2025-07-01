@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <Layout showNavbar={false}>
-      <div className="flex flex-1 flex-col items-center justify-center w-full min-h-screen bg-gradient-to-br from-blue-800 via-indigo-900 to-purple-900 px-4" style={{fontFamily: 'Poppins, Arial, sans-serif'}}>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <img 
           src={logo} 
           alt="Logo Linkout" 
