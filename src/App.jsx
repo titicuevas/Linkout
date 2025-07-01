@@ -6,7 +6,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import Index from './pages/Index';
 import CandidaturasIndex from './pages/candidaturas/index';
 import CrearCandidatura from './pages/candidaturas/create';
-import Desahogate from './pages/candidaturas/desahogate/index';
+import Desahogate from './pages/desahogate/index';
 import CrearDesahogo from './pages/desahogate/create';
 import AnimoIAIndex from './pages/animoia/index';
 import Fisico from './pages/retos/Fisico';
