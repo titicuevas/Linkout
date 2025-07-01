@@ -3,10 +3,9 @@ import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import Layout from '../components/Layout';
 import { inputBase, buttonPrimary, labelBase, errorMsg } from '../styles/twHelpers';
 import logo from '../assets/Logo.png';
-import ResponsiveContainer from '../components/ResponsiveContainer';
+import { LockClosedIcon, EnvelopeIcon, UserIcon } from '@heroicons/react/24/solid';
 
 function EyeIcon({ open }) {
   return open ? (
@@ -31,7 +30,6 @@ export default function Register() {
   useEffect(() => { document.title = 'Registro'; }, []);
 
   const validateEmail = (email) => {
-    // Expresión regular básica para emails
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
@@ -94,42 +92,50 @@ export default function Register() {
   };
 
   return (
-    <ResponsiveContainer>
-      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center">
-        <img src={logo} alt="Logo Linkout" className="w-12 h-12 mb-4 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg" />
-        <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Registro</h1>
-        {error && <div className={errorMsg}>{error}</div>}
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 px-2 py-8">
+      <div className="w-full max-w-md bg-neutral-900/90 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center mx-auto mt-8 mb-8 sm:mt-16 sm:mb-16 relative animate-fade-in">
+        <img src={logo} alt="Logo Linkout" className="w-20 h-20 mb-4 rounded-full bg-white border-4 border-white object-contain animate-ghost-float shadow-2xl" style={{marginTop: '-3rem'}} />
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Registro</h1>
+        <div className="text-center text-gray-300 mb-6 text-base sm:text-lg">Crea tu cuenta y únete a la comunidad de LinkOut.</div>
+        {error && <div className={errorMsg + ' w-full text-center mb-2'}>{error}</div>}
+        <form onSubmit={handleSubmit} className="space-y-4 w-full">
           <div>
             <label className={labelBase}>Nombre</label>
-            <input
-              type="text"
-              value={nombre}
-              onChange={(e) => setNombre(e.target.value)}
-              className={inputBase}
-              required
-              autoComplete="name"
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><UserIcon className="w-5 h-5" /></span>
+              <input
+                type="text"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className={inputBase + ' w-full pl-10'}
+                required
+                autoComplete="name"
+              />
+            </div>
           </div>
           <div>
             <label className={labelBase}>Correo electrónico</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputBase}
-              required
-              autoComplete="email"
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><EnvelopeIcon className="w-5 h-5" /></span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputBase + ' w-full pl-10'}
+                required
+                autoComplete="email"
+              />
+            </div>
           </div>
           <div>
             <label className={labelBase}>Contraseña</label>
-            <div className="flex w-full">
+            <div className="flex w-full relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><LockClosedIcon className="w-5 h-5" /></span>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={inputBase + ' flex-1 rounded-l outline-none'}
+                className={inputBase + ' flex-1 rounded-l outline-none w-full pl-10'}
                 required
                 minLength={8}
                 autoComplete="new-password"
@@ -138,7 +144,7 @@ export default function Register() {
                 type="button"
                 tabIndex={-1}
                 aria-label="Mostrar u ocultar contraseña"
-                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
+                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center z-10"
                 style={{height: '2.5rem'}}
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => setShowPassword(v => !v)}
@@ -149,12 +155,13 @@ export default function Register() {
           </div>
           <div>
             <label className={labelBase}>Repetir contraseña</label>
-            <div className="flex w-full">
+            <div className="flex w-full relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><LockClosedIcon className="w-5 h-5" /></span>
               <input
                 type={showConfirm ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className={inputBase + ' flex-1 rounded-l outline-none'}
+                className={inputBase + ' flex-1 rounded-l outline-none w-full pl-10'}
                 required
                 minLength={8}
                 autoComplete="new-password"
@@ -163,7 +170,7 @@ export default function Register() {
                 type="button"
                 tabIndex={-1}
                 aria-label="Mostrar u ocultar contraseña"
-                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center"
+                className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-0 ring-0 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center z-10"
                 style={{height: '2.5rem'}}
                 onMouseDown={e => e.preventDefault()}
                 onClick={() => setShowConfirm(v => !v)}
@@ -175,25 +182,28 @@ export default function Register() {
           <button
             type="submit"
             disabled={loading}
-            className={buttonPrimary}
+            className={buttonPrimary + ' w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-blue-500 shadow-lg text-xl font-bold py-3 transition-all duration-300'}
+            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
           >
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-6 text-center text-sm w-full">
           ¿Ya tienes una cuenta? <Link to="/login" className="text-blue-400 hover:underline">Inicia sesión</Link>
         </p>
       </div>
       <style>{`
-        @keyframes float {
+        @keyframes ghost-float {
           0% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
+          50% { transform: translateY(-32px); }
           100% { transform: translateY(0px); }
         }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
+        .animate-ghost-float {
+          animation: ghost-float 2.8s ease-in-out infinite;
         }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fade-in 0.7s; }
       `}</style>
-    </ResponsiveContainer>
+    </div>
   );
 } 

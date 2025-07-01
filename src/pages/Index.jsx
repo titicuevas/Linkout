@@ -47,32 +47,34 @@ export default function Index() {
   return (
     <Layout user={user} onLogout={handleLogout}>
       <div className="min-h-screen w-full bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
-        <h1 className="text-4xl font-extrabold text-center mb-2 tracking-tight">¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!</h1>
-        <h2 className="text-2xl font-bold text-center mb-6">Bienvenido a tu sitio de paz</h2>
-        <p className="text-lg text-gray-300 mb-10 max-w-xl text-center font-medium">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight">
+          ¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!
+        </h1>
+        <h2 className="text-xl sm:text-2xl font-bold text-center mb-6">Bienvenido a tu sitio de paz</h2>
+        <p className="text-base sm:text-lg text-gray-300 mb-10 max-w-xl text-center font-medium">
           Aquí puedes desahogarte, recargar energías y volver a empezar con ánimo.
         </p>
         <div className="w-full max-w-5xl mx-auto mb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:grid-rows-2 gap-8">
-            <Link to="/candidaturas" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-blue-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400">
-              <ClipboardDocumentListIcon width={40} height={40} className="mb-2 text-blue-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Candidaturas</div>
-              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:grid-rows-2 gap-6 md:gap-8">
+            <Link to="/candidaturas" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-blue-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <ClipboardDocumentListIcon width={36} height={36} className="mb-2 text-blue-400 group-hover:text-white transition-colors duration-200" />
+              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Candidaturas</div>
+              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
             </Link>
-            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-pink-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400">
-              <PencilSquareIcon width={40} height={40} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
-              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
+            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-pink-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400">
+              <PencilSquareIcon width={36} height={36} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200" />
+              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
+              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
             </Link>
-            <Link to="/animoia" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-green-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400">
-              <ChatBubbleLeftRightIcon width={40} height={40} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
-              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
+            <Link to="/animoia" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-green-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400">
+              <ChatBubbleLeftRightIcon width={36} height={36} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200" />
+              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
+              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
             </Link>
-            <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 transition-transform hover:scale-105 hover:bg-orange-500 cursor-pointer group shadow-xl border-2 border-transparent hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400">
-              <BoltIcon width={40} height={40} className="mb-2 text-yellow-300 group-hover:text-orange-700 transition-colors duration-200" />
-              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-orange-700 transition-colors duration-200">Reto físico</div>
-              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
+            <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-orange-500 cursor-pointer group shadow-xl border-2 border-transparent hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400">
+              <BoltIcon width={36} height={36} className="mb-2 text-yellow-300 group-hover:text-orange-700 transition-colors duration-200" />
+              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-orange-700 transition-colors duration-200">Reto físico</div>
+              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
             </Link>
           </div>
         </div>

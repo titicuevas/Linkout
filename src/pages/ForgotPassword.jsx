@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import logo from '../assets/Logo.png';
 import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
-import ResponsiveContainer from '../components/ResponsiveContainer';
+import { EnvelopeIcon } from '@heroicons/react/24/solid';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -49,44 +49,51 @@ export default function ForgotPassword() {
   };
 
   return (
-    <ResponsiveContainer>
-      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center">
-        <img src={logo} alt="Logo Linkout" className="w-12 h-12 mb-4 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg" />
-        <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Recuperar contraseña</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen w-full flex flex-col justify-center items-center bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 px-2 py-8">
+      <div className="w-full max-w-md bg-neutral-900/90 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center mx-auto mt-8 mb-8 sm:mt-16 sm:mb-16 relative animate-fade-in">
+        <img src={logo} alt="Logo Linkout" className="w-20 h-20 mb-4 rounded-full bg-white border-4 border-white object-contain animate-ghost-float shadow-2xl" style={{marginTop: '-3rem'}} />
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Recuperar contraseña</h1>
+        <div className="text-center text-gray-300 mb-6 text-base sm:text-lg">Introduce tu correo y te enviaremos un enlace para restablecer tu contraseña.</div>
+        <form onSubmit={handleSubmit} className="space-y-4 w-full">
           <div>
             <label className={labelBase}>Correo electrónico</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputBase}
-              required
-              autoComplete="email"
-            />
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><EnvelopeIcon className="w-5 h-5" /></span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputBase + ' w-full pl-10'}
+                required
+                autoComplete="email"
+              />
+            </div>
           </div>
           <button
             type="submit"
             disabled={loading}
-            className={buttonPrimary}
+            className={buttonPrimary + ' w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-blue-500 shadow-lg text-xl font-bold py-3 transition-all duration-300'}
+            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
           >
             {loading ? 'Enviando...' : 'Enviar correo de recuperación'}
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-6 text-center text-sm w-full">
           <Link to="/login" className="text-blue-400 hover:underline">Volver al login</Link>
         </p>
       </div>
       <style>{`
-        @keyframes float {
+        @keyframes ghost-float {
           0% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
+          50% { transform: translateY(-32px); }
           100% { transform: translateY(0px); }
         }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
+        .animate-ghost-float {
+          animation: ghost-float 2.8s ease-in-out infinite;
         }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fade-in 0.7s; }
       `}</style>
-    </ResponsiveContainer>
+    </div>
   );
 } 

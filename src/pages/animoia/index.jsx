@@ -74,30 +74,30 @@ export default function AnimoIAIndex() {
 
   return (
     <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
-      <div className="w-full max-w-2xl mx-auto mt-16 relative flex flex-col items-center justify-center min-h-[70vh] p-4" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)', borderRadius: '2rem'}}>
-        <h1 className="text-4xl font-extrabold text-center mb-2 tracking-tight text-pink-400 flex items-center justify-center gap-3 animate-fade-in-slow">
+      <div className="w-full max-w-2xl mx-auto mt-8 sm:mt-16 relative flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4 rounded-2xl" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)'}}>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight text-pink-400 flex items-center justify-center gap-3 animate-fade-in-slow">
           <span className="relative flex items-center justify-center">
-            <SparklesIcon className="w-10 h-10 text-pink-300 animate-bounce-slow" />
+            <SparklesIcon className="w-8 sm:w-10 h-8 sm:h-10 text-pink-300 animate-bounce-slow" />
           </span>
           Ánimo <span className="text-white">IA</span>
         </h1>
-        <div className="text-lg text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un rol y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
-        <div className="text-base text-pink-200 mb-8 text-center animate-fade-in-slow">Recuerda: ¡cada paso cuenta y mereces seguir adelante! 💪✨</div>
-        <div className="flex flex-col gap-10 w-full">
+        <div className="text-base sm:text-lg text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un rol y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
+        <div className="text-sm sm:text-base text-pink-200 mb-8 text-center animate-fade-in-slow">Recuerda: ¡cada paso cuenta y mereces seguir adelante! 💪✨</div>
+        <div className="flex flex-col gap-8 w-full">
           {mensajes.length === 0 ? (
             <div className="text-center py-8 text-gray-400 bg-neutral-800 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in">
               No tienes desahogos registrados.
             </div>
           ) : (
             mensajes.map((m) => (
-              <div key={m.id} className="bg-neutral-900 rounded-3xl shadow-3xl border-2 border-pink-400 px-8 py-7 flex flex-col gap-4 items-center animate-fade-in-slow">
-                <div className="w-full text-white font-semibold text-lg mb-1 bg-neutral-800 rounded-2xl p-4 shadow-inner border border-neutral-700 flex flex-col gap-2">
-                  <span className="block mb-2 text-pink-300 font-bold text-base flex items-center gap-2"><UserCircleIcon className="w-5 h-5 text-pink-200" />Tu mensaje:</span>
-                  <span className="whitespace-pre-line text-lg">{m.texto}</span>
+              <div key={m.id} className="bg-neutral-900 rounded-2xl sm:rounded-3xl shadow-3xl border-2 border-pink-400 px-4 sm:px-8 py-5 sm:py-7 flex flex-col gap-4 items-center animate-fade-in-slow">
+                <div className="w-full text-white font-semibold text-base sm:text-lg mb-1 bg-neutral-800 rounded-2xl p-3 sm:p-4 shadow-inner border border-neutral-700 flex flex-col gap-2">
+                  <span className="block mb-2 text-pink-300 font-bold text-sm sm:text-base flex items-center gap-2"><UserCircleIcon className="w-5 h-5 text-pink-200" />Tu mensaje:</span>
+                  <span className="whitespace-pre-line text-base sm:text-lg">{m.texto}</span>
                 </div>
                 <div className="w-full flex flex-col sm:flex-row items-center gap-3 mt-2">
                   <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <label className="text-sm text-pink-300 font-bold">Rol:</label>
+                    <label className="text-xs sm:text-sm text-pink-300 font-bold">Rol:</label>
                     <select
                       className="bg-neutral-900 text-white border border-pink-400 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
                       value={rolesSeleccionados[m.id] || 'motivador'}
@@ -110,7 +110,7 @@ export default function AnimoIAIndex() {
                   </div>
                   <button
                     onClick={() => handleAnimoIA(m.id)}
-                    className="flex items-center gap-2 px-7 py-2 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-600 hover:from-pink-400 hover:to-pink-700 text-white rounded-full font-bold shadow-lg transition-all duration-200 mt-2 sm:mt-0 text-lg active:scale-95"
+                    className="flex items-center gap-2 px-5 sm:px-7 py-2 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-600 hover:from-pink-400 hover:to-pink-700 text-white rounded-full font-bold shadow-lg transition-all duration-200 mt-2 sm:mt-0 text-base sm:text-lg active:scale-95"
                     disabled={loading[m.id]}
                   >
                     {loading[m.id] ? (
@@ -124,7 +124,7 @@ export default function AnimoIAIndex() {
                   </button>
                 </div>
                 {respuestas[m.id] && (
-                  <div className="w-full bg-pink-900/90 text-pink-100 rounded-2xl p-5 mt-2 animate-fade-in border-2 border-pink-700 shadow-inner flex flex-col gap-2" style={{fontSize: '1.1rem', lineHeight: '1.6'}}>
+                  <div className="w-full bg-pink-900/90 text-pink-100 rounded-2xl p-4 sm:p-5 mt-2 animate-fade-in border-2 border-pink-700 shadow-inner flex flex-col gap-2" style={{fontSize: '1.05rem', lineHeight: '1.6'}}>
                     <span className="font-bold text-pink-200 flex items-center gap-2"><SparklesIcon className="w-5 h-5 text-yellow-200 animate-pulse" />IA:</span>
                     <ReactMarkdown>{respuestas[m.id]}</ReactMarkdown>
                   </div>
@@ -137,7 +137,7 @@ export default function AnimoIAIndex() {
             ))
           )}
         </div>
-        <div className="flex justify-center mt-12">
+        <div className="flex justify-center mt-10 sm:mt-12">
           <button
             onClick={() => navigate('/index')}
             className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-6 rounded shadow text-base"
