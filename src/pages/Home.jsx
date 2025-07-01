@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import logo from '../assets/Logo.png';
 import Layout from '../components/Layout';
 
 export default function Home() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   useEffect(() => { document.title = 'LinkOut'; }, []);
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -14,6 +16,13 @@ export default function Home() {
       }
     });
   }, [navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('type') === 'signup' && params.get('access_token')) {
+      navigate('/welcome');
+    }
+  }, [location, navigate]);
 
   return (
     <Layout showNavbar={false}>
