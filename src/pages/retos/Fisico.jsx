@@ -159,8 +159,11 @@ export default function RetoFisico() {
     return (
       <Layout user={user} onLogout={handleLogout}>
         {confettiElement}
-        <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
-          <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center animate-fade-in-slow rounded-2xl" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)'}}>
+        <div
+          className="min-h-[100vh] w-full flex flex-col items-center justify-center px-2 py-8"
+          style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}
+        >
+          <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center animate-fade-in-slow rounded-2xl backdrop-blur-md bg-neutral-900/80 shadow-3xl p-4">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg flex items-center justify-center gap-3 animate-gradient-move">
               <FireIcon className="w-10 sm:w-12 h-10 sm:h-12 text-orange-400 animate-bounce-slow" />
               Reto Físico
