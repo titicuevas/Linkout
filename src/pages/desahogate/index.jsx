@@ -173,22 +173,37 @@ export default function DesahogateIndex() {
               ))
             )}
           </div>
-          <div className="flex justify-center mt-8 animate-fade-in">
+          {/* Botones de acción en escritorio */}
+          <div className="hidden sm:flex justify-center mt-8 gap-4 animate-fade-in">
             <button onClick={() => navigate('/index')} className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-full shadow-lg transition font-bold text-lg">
               <ArrowLeftIcon className="w-6 h-6" />
               Volver al inicio
             </button>
+            <button
+              onClick={() => navigate('/desahogate/create')}
+              className="flex items-center gap-2 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in"
+            >
+              <PlusIcon className="w-7 h-7" />
+              Nuevo desahogo
+            </button>
           </div>
-          {/* Botón flotante solo si hay mensajes */}
+          {/* Botón flotante solo en móvil */}
           {mensajes.length > 0 && (
             <button
               onClick={() => navigate('/desahogate/create')}
-              className="fixed bottom-24 sm:bottom-8 right-8 z-50 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2"
+              className="fixed bottom-8 right-8 z-50 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2 sm:hidden"
             >
               <PlusIcon className="w-7 h-7" />
               Nuevo desahogo
             </button>
           )}
+          {/* Botón volver al inicio solo en móvil */}
+          <div className="flex justify-center mt-8 animate-fade-in sm:hidden">
+            <button onClick={() => navigate('/index')} className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-full shadow-lg transition font-bold text-lg">
+              <ArrowLeftIcon className="w-6 h-6" />
+              Volver al inicio
+            </button>
+          </div>
           <style>{`
             @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
             .animate-fade-in { animation: fade-in 0.7s; }
