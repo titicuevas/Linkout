@@ -120,17 +120,17 @@ export default function Login() {
 
   return (
     <ResponsiveContainer>
-      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center">
-        <img src={logo} alt="Logo Linkout" className="w-12 h-12 mb-4 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg" />
-        <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Iniciar Sesión</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-6 sm:p-8 border border-neutral-700 flex flex-col items-center mx-auto mt-8 mb-8 sm:mt-16 sm:mb-16">
+        <img src={logo} alt="Logo Linkout" className="w-16 h-16 mb-4 rounded-full bg-white border-2 border-white object-contain animate-float shadow-lg" />
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-center mb-6 tracking-tight">Iniciar Sesión</h1>
+        <form onSubmit={handleSubmit} className="space-y-4 w-full">
           <div>
             <label className={labelBase}>Correo electrónico</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={inputBase}
+              className={inputBase + ' w-full'}
               required
               autoComplete="email"
             />
@@ -142,7 +142,7 @@ export default function Login() {
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={inputBase + ' flex-1 rounded-l outline-none'}
+                className={inputBase + ' flex-1 rounded-l outline-none w-full'}
                 required
                 autoComplete="current-password"
                 minLength={8}
@@ -163,12 +163,12 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={buttonPrimary}
+            className={buttonPrimary + ' w-full'}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
-        <p className="mt-4 text-center text-sm">
+        <p className="mt-4 text-center text-sm w-full">
           ¿No tienes una cuenta? <Link to="/register" className="text-blue-400 hover:underline">Regístrate</Link>
           <br />
           <Link to="/forgot-password" className="text-blue-400 hover:underline">¿Has olvidado tu contraseña?</Link>
