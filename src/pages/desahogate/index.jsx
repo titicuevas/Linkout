@@ -183,7 +183,7 @@ export default function DesahogateIndex() {
           {mensajes.length > 0 && (
             <button
               onClick={() => navigate('/desahogate/create')}
-              className="fixed bottom-8 right-8 z-50 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2"
+              className="fixed bottom-24 sm:bottom-8 right-8 z-50 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2"
             >
               <PlusIcon className="w-7 h-7" />
               Nuevo desahogo
@@ -192,6 +192,9 @@ export default function DesahogateIndex() {
           <style>{`
             @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
             .animate-fade-in { animation: fade-in 0.7s; }
+            @media (max-width: 640px) {
+              .mb-for-fab { margin-bottom: 6rem; }
+            }
           `}</style>
         </div>
         {/* Modal de edición */}
