@@ -132,90 +132,87 @@ export default function DesahogateIndex() {
 
   return (
     <Layout user={user} onLogout={handleLogout}>
-      <div className="w-full max-w-2xl mx-auto mt-16 relative">
-        <div className="mb-6 flex items-center gap-2">
-          
-        </div>
-        <h1 className="text-2xl font-extrabold tracking-tight mb-8">Mis Desahogos</h1>
-        <div className="flex flex-col gap-4">
+      <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mis Desahogos</h1>
+        <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto animate-fade-in">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-12 bg-neutral-800 rounded-xl shadow-xl border border-neutral-700 animate-pulse">
+            <div className="flex flex-col items-center justify-center py-12 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-pulse">
               <svg className="w-12 h-12 text-pink-400 animate-spin mb-4" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
               <div className="text-lg text-gray-300 font-bold mb-2">Cargando...</div>
             </div>
           ) : mensajes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 bg-neutral-800 rounded-xl shadow-xl border border-neutral-700">
-              <FaceFrownIcon className="w-16 h-16 text-pink-400 mb-4 animate-bounce" />
-              <div className="text-lg text-gray-300 font-bold mb-2">No tienes mensajes registrados.</div>
-              <div className="text-sm text-gray-400 mb-6">¡Anímate a escribir tu primer desahogo!</div>
+            <div className="flex flex-col items-center justify-center py-16 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in">
+              <FaceFrownIcon className="w-20 h-20 text-pink-400 mb-4 animate-bounce" />
+              <div className="text-xl text-white font-bold mb-2">No tienes mensajes registrados.</div>
+              <div className="text-base text-gray-400 mb-6">¡Anímate a escribir tu primer desahogo!</div>
               <button
                 onClick={() => navigate('/desahogate/create')}
-                className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full px-6 py-3 font-bold text-lg shadow-lg transition"
+                className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full px-8 py-4 font-bold text-lg shadow-lg transition animate-fade-in"
               >
-                <PlusIcon className="w-6 h-6" />
+                <PlusIcon className="w-7 h-7" />
                 Nuevo desahogo
               </button>
             </div>
           ) : (
             mensajes.map((m) => (
-              <div key={m.id} className="flex items-center justify-between bg-neutral-800 rounded-xl shadow-xl border border-neutral-700 px-5 py-4 hover:scale-[1.02] hover:shadow-2xl transition-all duration-200 group">
+              <div key={m.id} className="flex items-center justify-between backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 px-6 py-5 hover:scale-[1.02] hover:shadow-pink-500/30 transition-all duration-200 group animate-fade-in">
                 <div className="flex-1">
-                  <div className="text-white font-medium whitespace-pre-line mb-1">{m.texto}</div>
+                  <div className="text-white font-medium whitespace-pre-line mb-1 text-lg">{m.texto}</div>
                   <div className="text-xs text-pink-400 font-semibold">{tiempoDesde(m.created_at)}</div>
                 </div>
                 <div className="flex items-center gap-2 ml-4">
                   <button title="Editar" className="p-2 rounded-full bg-neutral-900 hover:bg-pink-900 transition shadow group-hover:scale-110" onClick={() => handleEdit(m.id, m.texto)}>
-                    <PencilSquareIcon className="w-5 h-5 text-pink-400" />
+                    <PencilSquareIcon className="w-6 h-6 text-pink-400" />
                   </button>
                   <button title="Eliminar" className="p-2 rounded-full bg-neutral-900 hover:bg-red-900 transition shadow group-hover:scale-110" onClick={() => handleDelete(m.id)}>
-                    <TrashIcon className="w-5 h-5 text-red-400" />
+                    <TrashIcon className="w-6 h-6 text-red-400" />
                   </button>
                 </div>
               </div>
             ))
           )}
         </div>
-        <br />
-        <button onClick={() => navigate('/index')} className="flex items-center gap-2 px-4 py-2 bg-neutral-800 hover:bg-neutral-700 text-white rounded-lg shadow transition font-bold">
-            <ArrowLeftIcon className="w-5 h-5" />
+        <div className="flex justify-center mt-8 animate-fade-in">
+          <button onClick={() => navigate('/index')} className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-neutral-700 text-white rounded-full shadow-lg transition font-bold text-lg">
+            <ArrowLeftIcon className="w-6 h-6" />
             Volver al inicio
           </button>
-        {/* Botón flotante solo si hay mensajes */}
-        {mensajes.length > 0 && (
-          <button
-            onClick={() => navigate('/desahogate/create')}
-            className="fixed bottom-8 right-8 bg-pink-600 hover:bg-pink-700 text-white rounded-full shadow-2xl p-4 flex items-center gap-2 font-bold text-lg z-50 transition"
-            style={{boxShadow:'0 8px 32px 0 rgba(0,0,0,0.25)'}}
-          >
-            <PlusIcon className="w-6 h-6" />
-            Nuevo desahogo
-          </button>
-        )}
-
-        {/* Modal de edición */}
-        {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-            <div className="bg-neutral-900 rounded-xl p-8 shadow-2xl w-full max-w-md relative">
-              <button className="absolute top-2 right-2 p-1 hover:bg-neutral-800 rounded" onClick={() => setShowModal(false)}>
-                <XMarkIcon className="w-6 h-6 text-gray-400" />
-              </button>
-              <h2 className="text-xl font-bold mb-4 text-pink-400">Editar desahogo</h2>
-              <form onSubmit={handleEditSave} className="flex flex-col gap-4">
-                <textarea
-                  className="w-full h-32 p-3 rounded-lg bg-neutral-800 text-white border border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
-                  value={editTexto}
-                  onChange={e => setEditTexto(e.target.value)}
-                  required
-                />
-                <div className="flex gap-2">
-                  <button type="button" className="flex-1 px-4 py-2 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition" onClick={() => setShowModal(false)}>Cancelar</button>
-                  <button type="submit" className="flex-1 px-4 py-2 bg-pink-600 text-white rounded font-extrabold shadow-lg hover:bg-pink-700 transition">Guardar cambios</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
+        </div>
+        {/* Botón flotante para crear desahogo */}
+        <button
+          onClick={() => navigate('/desahogate/create')}
+          className="fixed bottom-8 right-8 z-50 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2"
+        >
+          <PlusIcon className="w-7 h-7" />
+          Nuevo desahogo
+        </button>
+        <style>{`
+          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+          .animate-fade-in { animation: fade-in 0.7s; }
+        `}</style>
       </div>
+      {/* Modal de edición */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="bg-neutral-900 rounded-2xl p-8 shadow-2xl w-full max-w-md relative animate-fade-in">
+            <button className="absolute top-2 right-2 p-1 hover:bg-neutral-800 rounded" onClick={() => setShowModal(false)}>
+              <XMarkIcon className="w-6 h-6 text-gray-400" />
+            </button>
+            <form onSubmit={handleEditSave} className="flex flex-col gap-4">
+              <textarea
+                value={editTexto}
+                onChange={e => setEditTexto(e.target.value)}
+                className="w-full h-32 p-3 rounded-lg bg-neutral-900 text-white border border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none transition-all"
+                required
+              />
+              <div className="flex gap-2 mt-2">
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition">Cancelar</button>
+                <button type="submit" className="flex-1 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded font-extrabold shadow-lg transition">Guardar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 } 

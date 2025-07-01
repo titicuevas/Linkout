@@ -159,67 +159,86 @@ export default function RetoFisico() {
     return (
       <Layout user={user} onLogout={handleLogout}>
         {confettiElement}
-        <div className="w-full max-w-2xl mx-auto mt-16 flex flex-col items-center justify-center min-h-[70vh] p-4" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)', borderRadius: '2rem'}}>
-          <h1 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-pink-400 flex items-center justify-center gap-3 animate-fade-in-slow">
-            <FireIcon className="w-8 h-8 text-orange-400 animate-bounce-slow" />
-            Reto Físico
-          </h1>
-          {seleccionando && rechazadas.length > 0 ? (
-            <>
-              <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Selecciona una candidatura rechazada para desbloquear retos físicos:</div>
-              <div className="flex flex-col gap-4 w-full max-w-md mx-auto">
-                {rechazadas.map(c => {
-                  const completado = localStorage.getItem(`reto_completado_${c.id}`);
-                  return (
-                    <button
-                      key={c.id}
-                      onClick={() => !completado && navigate('/retos/fisico', { state: { candidatura: c } })}
-                      className={`flex items-center justify-between gap-2 py-3 px-6 rounded-lg shadow text-base border transition-all font-semibold
-                        ${completado ? 'bg-green-600 text-white border-green-700 cursor-not-allowed opacity-80' : 'bg-neutral-800 hover:bg-pink-600 text-white border-pink-400'}`}
-                      disabled={!!completado}
-                    >
-                      <span>
-                        <span className="font-bold text-pink-300">{c.puesto}</span> en <span className="text-pink-200">{c.empresa}</span>
-                      </span>
-                      {completado ? (
-                        <span className="flex items-center gap-1 text-white font-bold"><CheckCircleIcon className="w-6 h-6 text-white" />Completado</span>
-                      ) : null}
-                    </button>
-                  );
-                })}
+        <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
+          <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center animate-fade-in-slow rounded-2xl" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)'}}>
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg flex items-center justify-center gap-3 animate-gradient-move">
+              <FireIcon className="w-10 sm:w-12 h-10 sm:h-12 text-orange-400 animate-bounce-slow" />
+              Reto Físico
+            </h1>
+            {seleccionando && rechazadas.length > 0 ? (
+              <>
+                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Selecciona una candidatura rechazada para desbloquear retos físicos:</div>
+                <div className="flex flex-col gap-4 w-full max-w-md mx-auto">
+                  {rechazadas.map(c => {
+                    const completado = localStorage.getItem(`reto_completado_${c.id}`);
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => !completado && navigate('/retos/fisico', { state: { candidatura: c } })}
+                        className={`flex items-center justify-between gap-2 py-3 px-6 rounded-xl shadow-lg text-base border-2 transition-all font-semibold
+                          ${completado ? 'bg-green-600 text-white border-green-700 cursor-not-allowed opacity-80' : 'bg-neutral-800/80 hover:bg-pink-600 text-white border-pink-400'}`}
+                        disabled={!!completado}
+                      >
+                        <span>
+                          <span className="font-bold text-pink-300">{c.puesto}</span> en <span className="text-pink-200">{c.empresa}</span>
+                        </span>
+                        {completado ? (
+                          <span className="flex items-center gap-1 text-white font-bold"><CheckCircleIcon className="w-6 h-6 text-white" />Completado</span>
+                        ) : null}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Para desbloquear retos físicos, primero asocia una candidatura rechazada.</div>
+                <button
+                  onClick={() => navigate('/candidaturas')}
+                  className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg text-lg transition-all mt-8"
+                >
+                  Volver a candidaturas
+                </button>
+              </>
+            )}
+            {/* Barra de progreso y nivel */}
+            <div className="flex flex-col items-center w-full mb-8 mt-4">
+              <div className="w-full bg-neutral-800/80 rounded-full h-7 mb-2 overflow-hidden border-2 border-pink-400 shadow-inner">
+                <div
+                  className="bg-gradient-to-r from-pink-400 to-pink-600 h-7 rounded-full transition-all duration-500 animate-glow"
+                  style={{ width: `${(puntos % PROGRESO_NIVEL) / PROGRESO_NIVEL * 100}%` }}
+                ></div>
               </div>
-            </>
-          ) : (
-            <>
-              <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Para desbloquear retos físicos, primero asocia una candidatura rechazada.</div>
-              <button
-                onClick={() => navigate('/candidaturas')}
-                className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-6 rounded shadow text-base mt-8"
-              >
-                Volver a candidaturas
-              </button>
-            </>
-          )}
-          {/* Barra de progreso y nivel */}
-          <div className="flex flex-col items-center w-full mb-8 mt-4">
-            <div className="w-full bg-neutral-800 rounded-full h-6 mb-2 overflow-hidden border-2 border-pink-400 shadow-inner">
-              <div
-                className="bg-gradient-to-r from-pink-400 to-pink-600 h-6 rounded-full transition-all duration-500"
-                style={{ width: `${(puntos % PROGRESO_NIVEL) / PROGRESO_NIVEL * 100}%` }}
-              ></div>
+              <div className="flex justify-between w-full text-base font-bold text-pink-300">
+                <span>Nivel {nivel}</span>
+                <span>{puntos % PROGRESO_NIVEL} / {PROGRESO_NIVEL} pts</span>
+              </div>
             </div>
-            <div className="flex justify-between w-full text-sm font-bold text-pink-300">
-              <span>Nivel {nivel}</span>
-              <span>{puntos % PROGRESO_NIVEL} / {PROGRESO_NIVEL} pts</span>
-            </div>
+            {/* Botón volver al inicio */}
+            <button
+              onClick={() => navigate('/index')}
+              className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg text-lg transition-all mt-2"
+            >
+              Volver al inicio
+            </button>
           </div>
-          {/* Botón volver al inicio */}
-          <button
-            onClick={() => navigate('/index')}
-            className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-6 rounded shadow text-base mt-2"
-          >
-            Volver al inicio
-          </button>
+          <style>{`
+            @keyframes fade-in-slow { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
+            .animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1); }
+            @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+            .animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
+            @keyframes gradient-move {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
+            .animate-gradient-move {
+              background-size: 200% 200%;
+              animation: gradient-move 3s ease-in-out infinite;
+            }
+            .shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0,0,0,0.35); }
+            .animate-glow { box-shadow: 0 0 16px 2px #f472b6, 0 0 32px 4px #fbbf24aa; }
+          `}</style>
         </div>
       </Layout>
     );

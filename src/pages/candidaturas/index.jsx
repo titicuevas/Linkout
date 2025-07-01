@@ -96,10 +96,10 @@ export default function CandidaturasIndex() {
 
   return (
     <Layout user={user} onLogout={handleLogout}>
-      <div className="w-full max-w-5xl mx-auto mt-8 flex flex-col items-center justify-center min-h-[70vh]">
-        <h1 className="text-2xl font-extrabold tracking-tight mb-2 text-center">Mis Candidaturas</h1>
-        <div className="text-gray-400 text-center mb-8 text-lg">Gestiona y haz seguimiento de tus candidaturas activas.</div>
-        <div className="bg-neutral-800 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 animate-fade-in">
+      <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mis Candidaturas</h1>
+        <div className="text-gray-400 text-center mb-8 text-lg animate-fade-in">Gestiona y haz seguimiento de tus candidaturas activas.</div>
+        <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 animate-pulse">
               <svg className="w-12 h-12 text-blue-400 animate-spin mb-4" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
@@ -122,11 +122,12 @@ export default function CandidaturasIndex() {
               <tbody className="divide-y divide-neutral-700">
                 {paginatedCandidaturas.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="text-center py-16 text-gray-400">
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <FaceFrownIcon className="w-12 h-12 text-blue-400 mb-2 animate-bounce" />
-                        <span className="text-lg font-bold">No tienes candidaturas registradas.</span>
-                        <span className="text-sm">¡Empieza a crear tu primera candidatura!</span>
+                    <td colSpan={8} className="text-center py-20 text-gray-400">
+                      <div className="flex flex-col items-center justify-center gap-4 animate-fade-in">
+                        <FaceFrownIcon className="w-16 h-16 text-blue-400 mb-2 animate-bounce" />
+                        <span className="text-xl font-bold">No tienes candidaturas registradas.</span>
+                        <span className="text-base text-gray-400 mb-2">¡Empieza a crear tu primera candidatura!</span>
+                        <button onClick={() => navigate('/candidaturas/create')} className="mt-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-lg transition-all animate-fade-in">+ Crear candidatura</button>
                       </div>
                     </td>
                   </tr>
@@ -175,22 +176,34 @@ export default function CandidaturasIndex() {
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
           onPageChange={handlePageClick}
-          containerClassName={'flex justify-center items-center gap-2 mt-6'}
-          pageClassName={'px-3 py-1 rounded bg-neutral-700 hover:bg-neutral-600 text-white font-bold'}
+          containerClassName={'flex justify-center items-center gap-2 mt-6 animate-fade-in'}
+          pageClassName={'px-3 py-2 rounded-full bg-neutral-700 hover:bg-pink-500 text-white font-bold transition-all'}
           activeClassName={'bg-pink-500 text-white font-extrabold'}
-          previousClassName={'px-3 py-1 rounded bg-neutral-700 hover:bg-neutral-600 text-white font-bold'}
-          nextClassName={'px-3 py-1 rounded bg-neutral-700 hover:bg-neutral-600 text-white font-bold'}
+          previousClassName={'px-3 py-2 rounded-full bg-neutral-700 hover:bg-blue-500 text-white font-bold transition-all'}
+          nextClassName={'px-3 py-2 rounded-full bg-neutral-700 hover:bg-blue-500 text-white font-bold transition-all'}
           disabledClassName={'bg-neutral-700 text-gray-400'}
           forcePage={currentPage}
         />
-        <div className="flex justify-center mt-8">
+        <div className="flex justify-center mt-8 animate-fade-in">
           <button
-            onClick={() => navigate("/index")}
-            className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-6 rounded shadow"
+            onClick={() => navigate('/index')}
+            className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-lg transition-all"
           >
             Volver al inicio
           </button>
         </div>
+        {/* Botón flotante para crear candidatura */}
+        <button
+          onClick={() => navigate('/candidaturas/create')}
+          className="fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2"
+        >
+          <PlusIcon className="w-6 h-6" />
+          Crear candidatura
+        </button>
+        <style>{`
+          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+          .animate-fade-in { animation: fade-in 0.7s; }
+        `}</style>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         {selectedCandidatura && (
@@ -347,17 +360,6 @@ export default function CandidaturasIndex() {
           </form>
         )}
       </Modal>
-      {/* Botón flotante para crear candidatura */}
-      {!modalOpen && (
-        <button
-          onClick={() => navigate('/candidaturas/create')}
-          className="fixed bottom-8 right-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl p-4 flex items-center gap-2 font-bold text-lg z-50 transition"
-          style={{boxShadow:'0 8px 32px 0 rgba(0,0,0,0.25)'}}
-        >
-          <PlusIcon className="w-6 h-6" />
-          Crear candidatura
-        </button>
-      )}
     </Layout>
   );
 } 

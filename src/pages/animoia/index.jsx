@@ -63,7 +63,7 @@ export default function AnimoIAIndex() {
       });
       const data = await res.json();
       setRespuestas(prev => ({ ...prev, [id]: data.respuesta }));
-    } catch (err) {
+    } catch {
       setRespuestas(prev => ({ ...prev, [id]: 'Error al obtener respuesta de la IA.' }));
     } finally {
       setLoading(prev => ({ ...prev, [id]: false }));
@@ -74,87 +74,100 @@ export default function AnimoIAIndex() {
 
   return (
     <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
-      <div className="w-full max-w-2xl mx-auto mt-8 sm:mt-16 relative flex flex-col items-center justify-center min-h-[70vh] p-2 sm:p-4 rounded-2xl" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)'}}>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight text-pink-400 flex items-center justify-center gap-3 animate-fade-in-slow">
-          <span className="relative flex items-center justify-center">
-            <SparklesIcon className="w-8 sm:w-10 h-8 sm:h-10 text-pink-300 animate-bounce-slow" />
-          </span>
-          Ánimo <span className="text-white">IA</span>
-        </h1>
-        <div className="text-base sm:text-lg text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un rol y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
-        <div className="text-sm sm:text-base text-pink-200 mb-8 text-center animate-fade-in-slow">Recuerda: ¡cada paso cuenta y mereces seguir adelante! 💪✨</div>
-        <div className="flex flex-col gap-8 w-full">
-          {mensajes.length === 0 ? (
-            <div className="text-center py-8 text-gray-400 bg-neutral-800 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in">
-              No tienes desahogos registrados.
-            </div>
-          ) : (
-            mensajes.map((m) => (
-              <div key={m.id} className="bg-neutral-900 rounded-2xl sm:rounded-3xl shadow-3xl border-2 border-pink-400 px-4 sm:px-8 py-5 sm:py-7 flex flex-col gap-4 items-center animate-fade-in-slow">
-                <div className="w-full text-white font-semibold text-base sm:text-lg mb-1 bg-neutral-800 rounded-2xl p-3 sm:p-4 shadow-inner border border-neutral-700 flex flex-col gap-2">
-                  <span className="block mb-2 text-pink-300 font-bold text-sm sm:text-base flex items-center gap-2"><UserCircleIcon className="w-5 h-5 text-pink-200" />Tu mensaje:</span>
-                  <span className="whitespace-pre-line text-base sm:text-lg">{m.texto}</span>
-                </div>
-                <div className="w-full flex flex-col sm:flex-row items-center gap-3 mt-2">
-                  <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <label className="text-xs sm:text-sm text-pink-300 font-bold">Rol:</label>
-                    <select
-                      className="bg-neutral-900 text-white border border-pink-400 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
-                      value={rolesSeleccionados[m.id] || 'motivador'}
-                      onChange={e => handleRolChange(m.id, e.target.value)}
-                    >
-                      {ROLES.map(r => (
-                        <option key={r.value} value={r.value}>{r.label}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    onClick={() => handleAnimoIA(m.id)}
-                    className="flex items-center gap-2 px-5 sm:px-7 py-2 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-600 hover:from-pink-400 hover:to-pink-700 text-white rounded-full font-bold shadow-lg transition-all duration-200 mt-2 sm:mt-0 text-base sm:text-lg active:scale-95"
-                    disabled={loading[m.id]}
-                  >
-                    {loading[m.id] ? (
-                      <span className="flex items-center gap-2">
-                        <svg className="animate-spin h-6 w-6 text-yellow-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
-                        Generando...
-                      </span>
-                    ) : (
-                      <><SparklesIcon className="w-6 h-6 text-yellow-200 animate-pulse" />Recibir ánimo IA</>
-                    )}
-                  </button>
-                </div>
-                {respuestas[m.id] && (
-                  <div className="w-full bg-pink-900/90 text-pink-100 rounded-2xl p-4 sm:p-5 mt-2 animate-fade-in border-2 border-pink-700 shadow-inner flex flex-col gap-2" style={{fontSize: '1.05rem', lineHeight: '1.6'}}>
-                    <span className="font-bold text-pink-200 flex items-center gap-2"><SparklesIcon className="w-5 h-5 text-yellow-200 animate-pulse" />IA:</span>
-                    <ReactMarkdown>{respuestas[m.id]}</ReactMarkdown>
-                  </div>
-                )}
-                <div className="w-full text-right text-xs text-gray-400 mt-1 flex items-center gap-1 justify-end">
-                  <CalendarDaysIcon className="w-4 h-4 inline-block mr-1" />
-                  {m.created_at ? new Date(m.created_at).toLocaleDateString('es-ES') : ''}
-                </div>
+      <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
+        <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center animate-fade-in-slow">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg flex items-center justify-center gap-3 animate-gradient-move">
+            <span className="relative flex items-center justify-center">
+              <SparklesIcon className="w-10 sm:w-12 h-10 sm:h-12 text-pink-300 animate-bounce-slow" />
+            </span>
+            Ánimo <span className="text-white">IA</span>
+          </h1>
+          <div className="text-lg sm:text-xl text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un rol y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
+          <div className="text-base sm:text-lg text-pink-200 mb-8 text-center animate-fade-in-slow">Recuerda: ¡cada paso cuenta y mereces seguir adelante! 💪✨</div>
+          <div className="flex flex-col gap-8 w-full">
+            {mensajes.length === 0 ? (
+              <div className="text-center py-10 text-gray-400 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in">
+                No tienes desahogos registrados.
               </div>
-            ))
-          )}
+            ) : (
+              mensajes.map((m) => (
+                <div key={m.id} className="backdrop-blur-md bg-gradient-to-br from-neutral-900/90 via-neutral-900/80 to-blue-900/60 rounded-2xl shadow-3xl border-2 border-pink-400 px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-4 items-center animate-fade-in-slow">
+                  <div className="w-full text-white font-semibold text-base sm:text-lg mb-1 bg-neutral-800/80 rounded-2xl p-3 sm:p-4 shadow-inner border border-neutral-700 flex flex-col gap-2">
+                    <span className="block mb-2 text-pink-300 font-bold text-sm sm:text-base flex items-center gap-2"><UserCircleIcon className="w-5 h-5 text-pink-200" />Tu mensaje:</span>
+                    <span className="whitespace-pre-line text-base sm:text-lg">{m.texto}</span>
+                  </div>
+                  <div className="w-full flex flex-col sm:flex-row items-center gap-3 mt-2">
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <label className="text-xs sm:text-sm text-pink-300 font-bold">Rol:</label>
+                      <select
+                        className="bg-neutral-900/80 text-white border-2 border-pink-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400 transition text-base font-semibold"
+                        value={rolesSeleccionados[m.id] || 'motivador'}
+                        onChange={e => handleRolChange(m.id, e.target.value)}
+                      >
+                        {ROLES.map(r => (
+                          <option key={r.value} value={r.value}>{r.label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      onClick={() => handleAnimoIA(m.id)}
+                      className="flex items-center gap-2 px-7 sm:px-10 py-3 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-600 hover:from-pink-400 hover:to-pink-700 text-white rounded-full font-extrabold shadow-lg transition-all duration-200 mt-2 sm:mt-0 text-lg active:scale-95 animate-glow"
+                      disabled={loading[m.id]}
+                    >
+                      {loading[m.id] ? (
+                        <span className="flex items-center gap-2">
+                          <svg className="animate-spin h-7 w-7 text-yellow-200" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                          Generando...
+                        </span>
+                      ) : (
+                        <><SparklesIcon className="w-7 h-7 text-yellow-200 animate-pulse" />Recibir ánimo IA</>
+                      )}
+                    </button>
+                  </div>
+                  {respuestas[m.id] && (
+                    <div className="w-full bg-pink-900/90 text-pink-100 rounded-2xl p-5 sm:p-6 mt-2 animate-fade-in border-2 border-pink-700 shadow-inner flex flex-col gap-2 relative overflow-hidden" style={{fontSize: '1.1rem', lineHeight: '1.7'}}>
+                      <span className="font-bold text-pink-200 flex items-center gap-2"><SparklesIcon className="w-6 h-6 text-yellow-200 animate-pulse" />IA:</span>
+                      <ReactMarkdown>{respuestas[m.id]}</ReactMarkdown>
+                      <div className="absolute bottom-2 right-4 text-xs text-pink-300 opacity-60 select-none">¡Tú puedes! 💖</div>
+                    </div>
+                  )}
+                  <div className="w-full text-right text-xs text-gray-400 mt-1 flex items-center gap-1 justify-end">
+                    <CalendarDaysIcon className="w-4 h-4 inline-block mr-1" />
+                    {m.created_at ? new Date(m.created_at).toLocaleDateString('es-ES') : ''}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+          <div className="flex justify-center mt-10 sm:mt-12 animate-fade-in-slow">
+            <button
+              onClick={() => navigate('/index')}
+              className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg text-lg transition-all"
+            >
+              Volver al inicio
+            </button>
+          </div>
         </div>
-        <div className="flex justify-center mt-10 sm:mt-12">
-          <button
-            onClick={() => navigate('/index')}
-            className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-6 rounded shadow text-base"
-          >
-            Volver al inicio
-          </button>
-        </div>
+        <style>{`
+          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+          .animate-fade-in { animation: fade-in 0.7s; }
+          @keyframes fade-in-slow { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
+          .animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1); }
+          @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+          .animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
+          @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+          .animate-gradient-move {
+            background-size: 200% 200%;
+            animation: gradient-move 3s ease-in-out infinite;
+          }
+          .shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0,0,0,0.35); }
+          .animate-glow { box-shadow: 0 0 16px 2px #f472b6, 0 0 32px 4px #a78bfa33; }
+        `}</style>
       </div>
-      <style>{`
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .animate-fade-in { animation: fade-in 0.7s; }
-        @keyframes fade-in-slow { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
-        .animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1); }
-        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
-        .shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0,0,0,0.35); }
-      `}</style>
     </Layout>
   );
 } 

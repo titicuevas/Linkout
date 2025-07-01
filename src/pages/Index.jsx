@@ -47,47 +47,44 @@ export default function Index() {
   return (
     <Layout user={user} onLogout={handleLogout}>
       <div className="min-h-screen w-full bg-neutral-900 text-white flex flex-col items-center justify-center px-2 py-4">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight drop-shadow-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-fade-in">
           ¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!
         </h1>
-        <h2 className="text-xl sm:text-2xl font-bold text-center mb-6">Bienvenido a tu sitio de paz</h2>
-        <p className="text-base sm:text-lg text-gray-300 mb-10 max-w-xl text-center font-medium">
+        <h2 className="text-xl sm:text-2xl font-bold text-center mb-3 animate-fade-in">Bienvenido a tu sitio de paz</h2>
+        <div className="text-base sm:text-lg text-gray-300 mb-6 max-w-xl text-center font-medium animate-fade-in">
           Aquí puedes desahogarte, recargar energías y volver a empezar con ánimo.
-        </p>
-        <div className="w-full max-w-5xl mx-auto mb-10">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 lg:grid-rows-2 gap-6 md:gap-8">
-            <Link to="/candidaturas" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-blue-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400">
-              <ClipboardDocumentListIcon width={36} height={36} className="mb-2 text-blue-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Candidaturas</div>
-              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
+        </div>
+        <div className="text-pink-300 text-center font-semibold mb-10 animate-fade-in-slow">Recuerda: ¡Tu bienestar es lo primero! 🚀</div>
+        <div className="w-full max-w-4xl mx-auto mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+            <Link to="/candidaturas" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 sm:p-8 transition-transform hover:scale-105 hover:shadow-pink-500/30 hover:border-blue-400 cursor-pointer group shadow-2xl border-2 border-neutral-800 hover:bg-blue-900/60 focus:outline-none focus:ring-2 focus:ring-blue-400 animate-fade-in-card">
+              <ClipboardDocumentListIcon width={48} height={48} className="mb-2 text-blue-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
+              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Candidaturas</div>
+              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
             </Link>
-            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-pink-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400">
-              <PencilSquareIcon width={36} height={36} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
-              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
+            <Link to="/desahogate" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 sm:p-8 transition-transform hover:scale-105 hover:shadow-pink-500/30 hover:border-pink-400 cursor-pointer group shadow-2xl border-2 border-neutral-800 hover:bg-pink-900/60 focus:outline-none focus:ring-2 focus:ring-pink-400 animate-fade-in-card">
+              <PencilSquareIcon width={48} height={48} className="mb-2 text-pink-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
+              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Desahógate</div>
+              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
             </Link>
-            <Link to="/animoia" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-green-700 cursor-pointer group shadow-xl border-2 border-transparent hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-400">
-              <ChatBubbleLeftRightIcon width={36} height={36} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200" />
-              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
-              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
+            <Link to="/animoia" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 sm:p-8 transition-transform hover:scale-105 hover:shadow-pink-500/30 hover:border-green-400 cursor-pointer group shadow-2xl border-2 border-neutral-800 hover:bg-green-900/60 focus:outline-none focus:ring-2 focus:ring-green-400 animate-fade-in-card">
+              <ChatBubbleLeftRightIcon width={48} height={48} className="mb-2 text-green-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
+              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
+              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
             </Link>
-            <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-5 sm:p-6 transition-transform hover:scale-105 hover:bg-orange-500 cursor-pointer group shadow-xl border-2 border-transparent hover:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-400">
-              <BoltIcon width={36} height={36} className="mb-2 text-yellow-300 group-hover:text-orange-700 transition-colors duration-200" />
-              <div className="font-bold text-white text-base sm:text-lg text-center mb-1 group-hover:text-orange-700 transition-colors duration-200">Reto físico</div>
-              <div className="text-sm sm:text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
+            <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-neutral-800 rounded-2xl p-6 sm:p-8 transition-transform hover:scale-105 hover:shadow-pink-500/30 hover:border-yellow-400 cursor-pointer group shadow-2xl border-2 border-neutral-800 hover:bg-yellow-900/60 focus:outline-none focus:ring-2 focus:ring-yellow-400 animate-fade-in-card">
+              <BoltIcon width={48} height={48} className="mb-2 text-yellow-300 group-hover:text-yellow-100 transition-colors duration-200 drop-shadow-lg" />
+              <div className="font-bold text-white text-lg text-center mb-1 group-hover:text-yellow-100 transition-colors duration-200">Reto físico</div>
+              <div className="text-base text-gray-300 text-center break-words whitespace-pre-line">Actívate y libera el estrés.</div>
             </Link>
           </div>
         </div>
       </div>
       <style>{`
-        @keyframes float {
-          0% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-          100% { transform: translateY(0px); }
-        }
-        .animate-float {
-          animation: float 3s ease-in-out infinite;
-        }
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fade-in 0.7s; }
+        @keyframes fade-in-card { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
+        .animate-fade-in-card { animation: fade-in-card 1.2s cubic-bezier(.4,0,.2,1); }
       `}</style>
     </Layout>
   );

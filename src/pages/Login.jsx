@@ -169,8 +169,8 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className={buttonPrimary + ' w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-blue-500 shadow-lg text-xl font-bold py-3 transition-all duration-300'}
-            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
+            className={buttonPrimary + ' w-full bg-blue-600 hover:bg-blue-700 shadow-lg text-xl font-bold py-3 transition-all duration-300 border-2 border-blue-700'}
+            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.12)'}}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>

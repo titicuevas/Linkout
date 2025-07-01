@@ -109,18 +109,18 @@ export default function CrearCandidatura() {
 
   return (
     <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
-      <div className="flex flex-col items-center justify-center min-h-[80vh] w-full">
-        <div className="w-full max-w-md bg-neutral-800 rounded-lg shadow-2xl p-8 border border-neutral-700 flex flex-col items-center relative">
-          <h1 className="text-3xl font-extrabold text-center mb-6 tracking-tight">Nueva Candidatura</h1>
-          {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center">{error}</div>}
-          <form onSubmit={handleCreate} className="space-y-6 w-full text-lg">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-2 py-8">
+        <div className="w-full max-w-md bg-neutral-900/90 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-6 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Nueva Candidatura</h1>
+          {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
+          <form onSubmit={handleCreate} className="space-y-5 w-full text-lg">
             <div>
               <label className={labelBase}>Puesto</label>
               <input
                 type="text"
                 value={puesto}
                 onChange={e => setPuesto(e.target.value)}
-                className={inputBase}
+                className={inputBase + ' w-full'}
                 required
               />
             </div>
@@ -130,7 +130,7 @@ export default function CrearCandidatura() {
                 type="text"
                 value={empresa}
                 onChange={e => setEmpresa(e.target.value)}
-                className={inputBase}
+                className={inputBase + ' w-full'}
                 required
               />
             </div>
@@ -139,7 +139,7 @@ export default function CrearCandidatura() {
               <select
                 value={estado}
                 onChange={e => setEstado(e.target.value)}
-                className={inputBase}
+                className={inputBase + ' w-full'}
                 required
               >
                 {ESTADOS.map(opt => (
@@ -153,7 +153,7 @@ export default function CrearCandidatura() {
                 type="date"
                 value={fecha}
                 onChange={e => setFecha(e.target.value)}
-                className={inputBase}
+                className={inputBase + ' w-full'}
                 required
                 max={maxDate}
               />
@@ -177,7 +177,7 @@ export default function CrearCandidatura() {
                   else if (v < 40000) setFranjaSalarial('30.000 - 40.000 €');
                   else setFranjaSalarial('> 40.000 €');
                 }}
-                className={inputBase + ' text-lg py-3'}
+                className={inputBase + ' text-lg py-3 w-full'}
                 placeholder="Ej: 22000"
               />
             </div>
@@ -186,7 +186,7 @@ export default function CrearCandidatura() {
               <select
                 value={franjaSalarial}
                 onChange={e => setFranjaSalarial(e.target.value)}
-                className={inputBase + ' text-lg py-3'}
+                className={inputBase + ' text-lg py-3 w-full'}
               >
                 <option value="">Selecciona una franja</option>
                 {FRANJAS_SALARIAL.map(f => <option key={f} value={f}>{f}</option>)}
@@ -197,7 +197,7 @@ export default function CrearCandidatura() {
               <select
                 value={tipoTrabajo}
                 onChange={e => setTipoTrabajo(e.target.value)}
-                className={inputBase + ' text-lg py-3'}
+                className={inputBase + ' text-lg py-3 w-full'}
                 required
               >
                 <option value="">Selecciona tipo</option>
@@ -210,17 +210,23 @@ export default function CrearCandidatura() {
                 type="text"
                 value={ubicacion}
                 onChange={e => setUbicacion(e.target.value)}
-                className={inputBase + ' text-lg py-3'}
+                className={inputBase + ' text-lg py-3 w-full'}
                 required
                 placeholder="Ciudad, país..."
               />
             </div>
-            <div className="flex w-full gap-2 mt-6">
-              <button type="button" onClick={handleCancel} className="flex-1 px-4 py-2 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition">Cancelar candidatura</button>
-              <button type="submit" className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 via-pink-400 to-yellow-400 text-white rounded font-extrabold shadow-lg hover:from-pink-400 hover:to-blue-400 transition">Crear Candidatura</button>
+            <div className="flex w-full gap-2 mt-6 flex-col sm:flex-row">
+              <button type="button" onClick={handleCancel} className="flex-1 px-4 py-3 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition text-lg shadow-md">Cancelar candidatura</button>
+              <button type="submit" className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-extrabold shadow-lg border-2 border-blue-700 text-lg transition-all duration-300">Crear Candidatura</button>
             </div>
           </form>
         </div>
+        <style>{`
+          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+          .animate-fade-in { animation: fade-in 0.7s; }
+          @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
+          .animate-shake { animation: shake 0.5s; }
+        `}</style>
       </div>
     </Layout>
   );
