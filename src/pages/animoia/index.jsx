@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
-import { ArrowLeftIcon, SparklesIcon, CalendarDaysIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ArrowLeftIcon, SparklesIcon, CalendarDaysIcon, UserCircleIcon, BoltIcon, FireIcon, HeartIcon, StarIcon, EyeIcon, CloudIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
 
 const ROLES = [
@@ -13,9 +13,56 @@ const ROLES = [
   { value: 'psicologo', label: 'Psicólogo' },
   { value: 'companero', label: 'Compañero de trabajo' },
   { value: 'futuro', label: 'Tú del futuro' },
+  { value: 'goku', label: 'Goku (Dragon Ball)' },
+  { value: 'naruto', label: 'Naruto Uzumaki' },
+  { value: 'luffy', label: 'Monkey D. Luffy (One Piece)' },
+  { value: 'asta', label: 'Asta (Black Clover)' },
+  { value: 'deku', label: 'Deku (My Hero Academia)' },
+  { value: 'tanjiro', label: 'Tanjiro (Demon Slayer)' },
+  { value: 'itadori', label: 'Itadori (Jujutsu Kaisen)' },
+  { value: 'gojo', label: 'Gojo (Jujutsu Kaisen)' },
 ];
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL + '/api/animo';
+
+// Componentes de iconos personalizados
+const SombreroPajaIcon = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+  </svg>
+);
+
+const ToroIcon = ({ className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+    <path d="M12 6c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"/>
+  </svg>
+);
+
+// Función para obtener el icono y color de cada personaje
+const getPersonajeInfo = (rol) => {
+  switch (rol) {
+    case 'goku':
+      return { icon: CloudIcon, color: 'text-orange-400', bgColor: 'from-orange-500 to-red-500' };
+    case 'naruto':
+      return { icon: BoltIcon, color: 'text-yellow-400', bgColor: 'from-yellow-500 to-orange-500' };
+    case 'luffy':
+      return { icon: SombreroPajaIcon, color: 'text-red-400', bgColor: 'from-red-500 to-pink-500' };
+    case 'asta':
+      return { icon: ToroIcon, color: 'text-green-400', bgColor: 'from-green-500 to-emerald-500' };
+    case 'deku':
+      return { icon: HeartIcon, color: 'text-green-400', bgColor: 'from-green-500 to-emerald-500' };
+    case 'tanjiro':
+      return { icon: FireIcon, color: 'text-red-400', bgColor: 'from-red-500 to-orange-500' };
+    case 'itadori':
+      return { icon: HeartIcon, color: 'text-pink-400', bgColor: 'from-pink-500 to-rose-500' };
+    case 'gojo':
+      return { icon: EyeIcon, color: 'text-purple-400', bgColor: 'from-purple-500 to-indigo-500' };
+    default:
+      return { icon: SparklesIcon, color: 'text-pink-400', bgColor: 'from-pink-500 to-purple-500' };
+  }
+};
 
 export default function AnimoIAIndex() {
   const [user, setUser] = useState(null);
@@ -23,6 +70,7 @@ export default function AnimoIAIndex() {
   const [respuestas, setRespuestas] = useState({});
   const [rolesSeleccionados, setRolesSeleccionados] = useState({});
   const [loading, setLoading] = useState({});
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,6 +85,14 @@ export default function AnimoIAIndex() {
     });
     // eslint-disable-next-line
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => {
+        setProfile(data);
+      });
+    }
+  }, [user]);
 
   const fetchMensajes = async (userId) => {
     const { data } = await supabase
@@ -59,7 +115,11 @@ export default function AnimoIAIndex() {
       const res = await fetch(BACKEND_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ texto: mensaje.texto, rol: rolesSeleccionados[id] || 'motivador', nombre: user?.user_metadata?.nombre || user?.email || 'Usuario' })
+        body: JSON.stringify({
+          texto: mensaje.texto,
+          rol: rolesSeleccionados[id] || 'motivador',
+          nombre: profile?.nombre || user?.user_metadata?.nombre || user?.email || 'Usuario'
+        })
       });
       const data = await res.json();
       setRespuestas(prev => ({ ...prev, [id]: data.respuesta }));
@@ -82,8 +142,8 @@ export default function AnimoIAIndex() {
             </span>
             Ánimo <span className="text-white">IA</span>
           </h1>
-          <div className="text-lg sm:text-xl text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un rol y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
-          <div className="text-base sm:text-lg text-pink-200 mb-8 text-center animate-fade-in-slow">Recuerda: ¡cada paso cuenta y mereces seguir adelante! 💪✨</div>
+          <div className="text-lg sm:text-xl text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un personaje y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
+          <div className="text-base sm:text-lg text-pink-200 mb-8 text-center animate-fade-in-slow">¡Incluye personajes de anime con historias inspiradoras de superación! 💪✨</div>
           <div className="flex flex-col gap-8 w-full">
             {mensajes.length === 0 ? (
               <div className="text-center py-10 text-gray-400 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in">
@@ -98,7 +158,7 @@ export default function AnimoIAIndex() {
                   </div>
                   <div className="w-full flex flex-col sm:flex-row items-center gap-3 mt-2">
                     <div className="flex items-center gap-2 w-full sm:w-auto">
-                      <label className="text-xs sm:text-sm text-pink-300 font-bold">Rol:</label>
+                      <label className="text-xs sm:text-sm text-pink-300 font-bold">Personaje:</label>
                       <select
                         className="bg-neutral-900/80 text-white border-2 border-pink-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400 transition text-base font-semibold"
                         value={rolesSeleccionados[m.id] || 'motivador'}
@@ -111,7 +171,7 @@ export default function AnimoIAIndex() {
                     </div>
                     <button
                       onClick={() => handleAnimoIA(m.id)}
-                      className="flex items-center gap-2 px-7 sm:px-10 py-3 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-600 hover:from-pink-400 hover:to-pink-700 text-white rounded-full font-extrabold shadow-lg transition-all duration-200 mt-2 sm:mt-0 text-lg active:scale-95 animate-glow"
+                      className={`flex items-center gap-2 px-7 sm:px-10 py-3 bg-gradient-to-r ${getPersonajeInfo(rolesSeleccionados[m.id] || 'motivador').bgColor} hover:opacity-80 text-white rounded-full font-extrabold shadow-lg transition-all duration-200 mt-2 sm:mt-0 text-lg active:scale-95 animate-glow`}
                       disabled={loading[m.id]}
                     >
                       {loading[m.id] ? (
@@ -120,13 +180,25 @@ export default function AnimoIAIndex() {
                           Generando...
                         </span>
                       ) : (
-                        <><SparklesIcon className="w-7 h-7 text-yellow-200 animate-pulse" />Recibir ánimo IA</>
+                        <>
+                          {(() => {
+                            const IconComponent = getPersonajeInfo(rolesSeleccionados[m.id] || 'motivador').icon;
+                            return <IconComponent className="w-7 h-7 text-yellow-200 animate-pulse" />;
+                          })()}
+                          Recibir ánimo IA
+                        </>
                       )}
                     </button>
                   </div>
                   {respuestas[m.id] && (
                     <div className="w-full bg-pink-900/90 text-pink-100 rounded-2xl p-5 sm:p-6 mt-2 animate-fade-in border-2 border-pink-700 shadow-inner flex flex-col gap-2 relative overflow-hidden" style={{fontSize: '1.1rem', lineHeight: '1.7'}}>
-                      <span className="font-bold text-pink-200 flex items-center gap-2"><SparklesIcon className="w-6 h-6 text-yellow-200 animate-pulse" />IA:</span>
+                      <span className="font-bold text-pink-200 flex items-center gap-2">
+                        {(() => {
+                          const IconComponent = getPersonajeInfo(rolesSeleccionados[m.id] || 'motivador').icon;
+                          return <IconComponent className="w-6 h-6 text-yellow-200 animate-pulse" />;
+                        })()}
+                        {ROLES.find(r => r.value === (rolesSeleccionados[m.id] || 'motivador'))?.label}:
+                      </span>
                       <ReactMarkdown>{respuestas[m.id]}</ReactMarkdown>
                       <div className="absolute bottom-2 right-4 text-xs text-pink-300 opacity-60 select-none">¡Tú puedes! 💖</div>
                     </div>

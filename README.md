@@ -4,7 +4,7 @@
 
 ---
 
-## ✨ Cambios y mejoras recientes (2024)
+## ✨ Cambios y mejoras recientes
 
 - **Rediseño visual completo**: Todas las vistas principales y secundarias han sido modernizadas con gradientes, tarjetas con blur y sombra, iconos grandes y colores vivos.
 - **Fondo global unificado**: Se aplica un gradiente consistente en toda la app para coherencia visual.
@@ -21,8 +21,9 @@
 
 ### 🎯 **Ánimo IA**
 - Recibe consejos personalizados de diferentes roles (madre, hermano, mejor amigo, motivador, psicólogo, compañero, futuro yo)
+- **¡NUEVO!** Personajes de anime con historias inspiradoras (Goku, Naruto, Luffy, Asta, Deku, Tanjiro, Itadori, Gojo)
 - Respuestas generadas por IA usando Google Gemini
-- Interfaz intuitiva y empática
+- Interfaz intuitiva y empática con iconos y colores temáticos
 
 ### 💪 **Retos Físicos**
 - Generación automática de retos físicos personalizados según el puesto y empresa
@@ -34,6 +35,16 @@
 - Espacio seguro para expresar frustraciones
 - Sistema de posts anónimos
 - Comunidad de apoyo
+
+### 🎌 **Personajes de Anime**
+- **Goku (Dragon Ball)**: Espíritu de lucha inquebrantable y superación de límites 🌀
+- **Naruto Uzumaki**: Determinación y creencia en los sueños ⚡
+- **Monkey D. Luffy (One Piece)**: Libertad y espíritu aventurero 🎩
+- **Asta (Black Clover)**: Trabajo duro y nunca rendirse 🐂
+- **Deku (My Hero Academia)**: Espíritu de héroe y crecimiento 💚
+- **Tanjiro (Demon Slayer)**: Compasión y perseverancia 🔥
+- **Itadori (Jujutsu Kaisen)**: Optimismo y protección 💖
+- **Gojo (Jujutsu Kaisen)**: Confianza y poder absoluto 👁️
 
 ### 🎯 **Candidaturas**
 - Seguimiento de candidaturas enviadas
