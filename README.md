@@ -2,6 +2,12 @@
 
 **Linkeout** es una plataforma innovadora diseñada para ayudar a las personas a superar el rechazo en candidaturas laborales y mantener una mentalidad positiva durante la búsqueda de empleo.
 
+## 🔗 **Enlaces del Proyecto**
+
+- **🌐 Demo en vivo**: https://linkout.up.railway.app/
+- **📂 Código fuente**: https://github.com/titicuevas/Linkout
+- **👤 Usuario demo**: demo@demo.es / 12345678
+
 ---
 
 ## ✨ Cambios y mejoras recientes
@@ -156,6 +162,23 @@ PORT=4000
 
 - Consulta la carpeta `/docs` para guías de despliegue, integración y personalización avanzada.
 - Lee los comentarios en cada archivo para entender la lógica y los flujos de usuario.
+
+---
+
+## 🎮 **Demo en Vivo**
+
+**¡Prueba LinkOut sin registrarte!**
+
+- **🌐 Enlace**: https://linkout.up.railway.app/
+- **👤 Usuario demo**: demo@demo.es
+- **🔑 Contraseña**: 12345678
+
+### 🎯 **¿Qué puedes probar?**
+
+1. **Desahógate**: Escribe tus frustraciones laborales
+2. **Ánimo IA**: Recibe motivación de personajes de anime o roles tradicionales
+3. **Retos Físicos**: Genera retos personalizados según el puesto y empresa
+4. **Candidaturas**: Organiza tu búsqueda de empleo
 
 ---
 
