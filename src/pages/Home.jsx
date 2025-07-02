@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import logo from '../assets/Logo.png';
@@ -7,12 +7,15 @@ import Layout from '../components/Layout';
 export default function Home() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => { document.title = 'LinkOut'; }, []);
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data?.user) {
-        navigate('/index');
+        navigate('/index', { replace: true });
+      } else {
+        setIsCheckingAuth(false);
       }
     });
   }, [navigate]);
@@ -24,8 +27,26 @@ export default function Home() {
     }
   }, [location, navigate]);
 
+  // Mostrar loading mientras se verifica la autenticación
+  if (isCheckingAuth) {
+    return (
+      <Layout>
+        <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
+          <div className="flex flex-col items-center">
+            <img 
+              src={logo} 
+              alt="Logo Linkout" 
+              className="w-32 h-32 mb-8 rounded-full shadow-2xl bg-white border-4 border-white object-contain animate-pulse"
+            />
+            <div className="text-white text-xl font-semibold">Verificando autenticación...</div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
-    <Layout showNavbar={false}>
+    <Layout>
       <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <img 
           src={logo} 
