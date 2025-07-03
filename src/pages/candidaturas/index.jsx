@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import Swal from 'sweetalert2';
 import ReactPaginate from 'react-paginate';
-import { CompanyLogo } from '../../components/CompanyLogo.jsx';
 
 export default function CandidaturasIndex() {
   const [user, setUser] = useState(null);
@@ -279,14 +278,7 @@ export default function CandidaturasIndex() {
                     <tr key={c.id} className="hover:bg-neutral-700 transition" style={{height:'64px'}}>
                       <td className="px-8 py-4 whitespace-nowrap text-white font-medium text-lg">{c.puesto}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-gray-300 text-lg">
-                        <div className="flex items-center gap-3">
-                          <CompanyLogo 
-                            companyName={c.empresa} 
-                            companyUrl={c.empresa_url} 
-                            className="w-6 h-6 rounded-full flex-shrink-0"
-                          />
-                          <span>{c.empresa}</span>
-                        </div>
+                        <span>{c.empresa}</span>
                       </td>
                       <td className="px-8 py-4 whitespace-nowrap">
                         <span className="px-4 py-2 rounded-full text-base font-bold " style={{
