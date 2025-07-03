@@ -2,20 +2,21 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
+import Modal from '../../components/Modal';
 import Swal from 'sweetalert2';
 import ReactPaginate from 'react-paginate';
 
 export default function CandidaturasIndex() {
   const [user, setUser] = useState(null);
   const [candidaturas, setCandidaturas] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [sortBy, setSortBy] = useState('fecha');
-  const [sortDir, setSortDir] = useState('desc');
+  const [sortBy] = useState('fecha');
+  const [sortDir] = useState('desc');
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 4;
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
+  const [modalFeedback, setModalFeedback] = useState({ show: false, text: '' });
 
   // Filtros visuales
   const ESTADOS = [
@@ -72,22 +73,38 @@ export default function CandidaturasIndex() {
   useEffect(() => {
     async function fetchCandidaturas() {
       if (!user) return;
-      setLoading(true);
       const { data, error } = await supabase.from('candidaturas').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
       if (error) console.error('Error al cargar candidaturas:', error);
       setCandidaturas(data || []);
-      setLoading(false);
     }
     fetchCandidaturas();
   }, [user]);
 
-  const handleSort = (col) => {
-    if (sortBy === col) {
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(col);
-      setSortDir('asc');
-    }
+  const handleEditClick = () => {
+    // Aquí iría la lógica de edición si se reactiva el modal de edición
+  };
+
+  const handleDeleteClick = (id) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, borrar',
+      cancelButtonText: 'Cancelar',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const { error } = await supabase.from('candidaturas').delete().eq('id', id);
+        if (!error) {
+          setCandidaturas(candidaturas.filter(c => c.id !== id));
+          Swal.fire('¡Borrado!', 'La candidatura ha sido eliminada.', 'success');
+        } else {
+          Swal.fire('Error', 'No se pudo borrar la candidatura.', 'error');
+        }
+      }
+    });
   };
 
   const handlePageClick = (event) => {
@@ -105,6 +122,13 @@ export default function CandidaturasIndex() {
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario de Candidaturas</h1>
         <div className="text-gray-400 text-center mb-8 text-lg animate-fade-in">Seguimiento completo de todos tus procesos de selección.</div>
+        {/* Botón para crear candidatura */}
+        <button
+          className="fixed bottom-8 right-8 z-50 bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all text-lg"
+          onClick={() => navigate('/candidaturas/create')}
+        >
+          + Añadir candidatura
+        </button>
         {/* Filtros de estado */}
         <div className="flex gap-2 flex-wrap justify-center mb-4">
           {ESTADOS.map(e => (
@@ -139,12 +163,13 @@ export default function CandidaturasIndex() {
                 <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Estado</th>
                 <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Origen</th>
                 <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Fecha</th>
+                <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {paginatedCandidaturas.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="text-center text-gray-400 py-8">No hay candidaturas.</td>
+                  <td colSpan={6} className="text-center text-gray-400 py-8">No hay candidaturas.</td>
                 </tr>
               ) : (
                 paginatedCandidaturas.map((c) => (
@@ -154,6 +179,20 @@ export default function CandidaturasIndex() {
                     <td className="px-8 py-4 whitespace-nowrap text-pink-400 font-bold">{c.estado}</td>
                     <td className="px-8 py-4 whitespace-nowrap text-blue-400">{c.origen}</td>
                     <td className="px-8 py-4 whitespace-nowrap text-gray-400">{c.fecha ? new Date(c.fecha).toLocaleDateString() : '-'}</td>
+                    <td className="px-8 py-4 whitespace-nowrap flex gap-2">
+                      <button
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-bold text-xs"
+                        onClick={() => handleEditClick()}
+                      >Editar</button>
+                      <button
+                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-bold text-xs"
+                        onClick={() => handleDeleteClick(c.id)}
+                      >Borrar</button>
+                      <button
+                        className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded font-bold text-xs"
+                        onClick={() => setModalFeedback({ show: true, text: c.feedback_reclutador || 'Sin feedback' })}
+                      >Feedback</button>
+                    </td>
                   </tr>
                 ))
               )}
@@ -178,6 +217,11 @@ export default function CandidaturasIndex() {
             disabledClassName={"opacity-50 cursor-not-allowed"}
           />
         </div>
+        {/* Modal de feedback */}
+        <Modal isOpen={modalFeedback.show} onClose={() => setModalFeedback({ show: false, text: '' })}>
+          <div className="text-lg text-white font-bold mb-2">Feedback del reclutador</div>
+          <div className="text-gray-200 whitespace-pre-line">{modalFeedback.text}</div>
+        </Modal>
       </div>
     </Layout>
   );
