@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
-import { PlusIcon, PencilSquareIcon, XMarkIcon, CheckIcon, FaceFrownIcon, BoltIcon, ChevronUpIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
+import { PlusIcon, PencilSquareIcon, XMarkIcon, CheckIcon, FaceFrownIcon, BoltIcon, ChevronUpIcon, ChevronDownIcon, ChartBarIcon, AdjustmentsHorizontalIcon, BuildingOffice2Icon, BriefcaseIcon, GlobeAltIcon, CurrencyEuroIcon } from '@heroicons/react/24/solid';
 import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
@@ -23,30 +23,30 @@ export default function CandidaturasIndex() {
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
 
-  // Estados y orígenes posibles
+  // Filtros visuales mejorados
   const ESTADOS = [
-    { value: '', label: 'Todos' },
-    { value: 'entrevista_contacto', label: 'Entrevista contacto' },
-    { value: 'prueba_tecnica', label: 'Prueba técnica' },
-    { value: 'segunda_entrevista', label: '2ª Entrevista' },
-    { value: 'entrevista_final', label: 'Entrevista final' },
-    { value: 'contratacion', label: 'Contratación' },
-    { value: 'rechazado', label: 'No seleccionado' },
+    { value: '', label: 'Todos', icon: <AdjustmentsHorizontalIcon className="w-5 h-5 mr-1" /> },
+    { value: 'entrevista_contacto', label: 'Entrevista contacto', icon: <BriefcaseIcon className="w-5 h-5 mr-1" /> },
+    { value: 'prueba_tecnica', label: 'Prueba técnica', icon: <ChartBarIcon className="w-5 h-5 mr-1" /> },
+    { value: 'segunda_entrevista', label: '2ª Entrevista', icon: <ChartBarIcon className="w-5 h-5 mr-1" /> },
+    { value: 'entrevista_final', label: 'Entrevista final', icon: <ChartBarIcon className="w-5 h-5 mr-1" /> },
+    { value: 'contratacion', label: 'Contratación', icon: <BuildingOffice2Icon className="w-5 h-5 mr-1" /> },
+    { value: 'rechazado', label: 'No seleccionado', icon: <XMarkIcon className="w-5 h-5 mr-1" /> },
   ];
   const ORIGENES = [
-    { value: '', label: 'Todos' },
-    { value: 'LinkedIn', label: 'LinkedIn' },
-    { value: 'InfoJobs', label: 'InfoJobs' },
-    { value: 'Joppy', label: 'Joppy' },
-    { value: 'Tecnoempleo', label: 'Tecnoempleo' },
-    { value: 'Email', label: 'Email' },
-    { value: 'Otros', label: 'Otros' },
+    { value: '', label: 'Todos', icon: <AdjustmentsHorizontalIcon className="w-5 h-5 mr-1" /> },
+    { value: 'LinkedIn', label: 'LinkedIn', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'InfoJobs', label: 'InfoJobs', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Joppy', label: 'Joppy', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Tecnoempleo', label: 'Tecnoempleo', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Email', label: 'Email', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Otros', label: 'Otros', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
   ];
 
-  // Filtrado
+  // Filtrado insensible a mayúsculas/minúsculas y espacios
   const candidaturasFiltradas = candidaturas.filter(c =>
-    (filtroEstado === '' || c.estado === filtroEstado) &&
-    (filtroOrigen === '' || c.origen === filtroOrigen)
+    (filtroEstado === '' || (c.estado || '').toLowerCase().trim() === filtroEstado.toLowerCase().trim()) &&
+    (filtroOrigen === '' || (c.origen || '').toLowerCase().trim() === filtroOrigen.toLowerCase().trim())
   );
 
   // Ordenar el array filtrado
@@ -292,30 +292,37 @@ export default function CandidaturasIndex() {
           <PlusIcon className="w-6 h-6" />
           Crear candidatura
         </button>
-        {/* Filtros visuales */}
-        <div className="flex flex-wrap gap-2 mb-6 w-full max-w-6xl mx-auto animate-fade-in">
+        {/* Barra superior de filtros y botón de estadísticas */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 w-full max-w-6xl mx-auto animate-fade-in">
           <div className="flex gap-2 flex-wrap">
             {ESTADOS.map(e => (
               <button
                 key={e.value}
                 onClick={() => setFiltroEstado(e.value)}
-                className={`px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
               >
-                {e.label}
+                {e.icon}{e.label}
               </button>
             ))}
           </div>
-          <div className="flex gap-2 flex-wrap ml-4">
+          <div className="flex gap-2 flex-wrap">
             {ORIGENES.map(o => (
               <button
                 key={o.value}
                 onClick={() => setFiltroOrigen(o.value)}
-                className={`px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
               >
-                {o.label}
+                {o.icon}{o.label}
               </button>
             ))}
           </div>
+          <button
+            onClick={() => navigate('/candidaturas/estadisticas')}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white rounded-full shadow-2xl font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide hover:text-yellow-200 focus:text-yellow-200"
+            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
+          >
+            <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
+          </button>
         </div>
         <style>{`
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }

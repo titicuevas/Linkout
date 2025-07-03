@@ -21,6 +21,10 @@
 - **Gestión de CORS y variables de entorno**: Documentado y corregido para despliegue en Railway.
 - **Mensajes y textos**: Más cálidos, motivadores y empáticos.
 - **Nuevo enfoque**: Transformado en un diario de búsqueda de empleo profesional con seguimiento detallado de candidaturas.
+- **Filtros visuales mejorados**: Filtros tipo pill con iconos y colores vivos para estado y origen, ubicados en barra superior.
+- **Dashboard de estadísticas**: Gráficos interactivos de candidaturas por estado, origen, tipo de trabajo, ubicación y franja salarial usando Recharts.
+- **Feedback de reclutador**: Campo editable en cada candidatura para guardar comentarios y feedback recibido.
+- **Modal con scroll**: El formulario de edición de candidatura es accesible y usable incluso con muchos campos o feedback largo.
 
 ---
 
