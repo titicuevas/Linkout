@@ -33,16 +33,26 @@ export default function CandidaturasIndex() {
               <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Estado</th>
               <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Origen</th>
               <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Fecha</th>
+              <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Actualizada</th>
+              <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Salario</th>
+              <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Tipo</th>
+              <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Ubicación</th>
+              <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Feedback</th>
               <th className="px-8 py-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td className="px-8 py-4 whitespace-nowrap text-white font-medium text-lg">Ejemplo Puesto</td>
-              <td className="px-8 py-4 whitespace-nowrap text-gray-300 text-lg">Ejemplo Empresa</td>
-              <td className="px-8 py-4 whitespace-nowrap text-pink-400 font-bold">En proceso</td>
-              <td className="px-8 py-4 whitespace-nowrap text-blue-400">LinkedIn</td>
-              <td className="px-8 py-4 whitespace-nowrap text-gray-400">01/01/2024</td>
+              <td className="px-8 py-4 whitespace-nowrap text-white font-medium text-lg">Desarrollador Backend</td>
+              <td className="px-8 py-4 whitespace-nowrap text-gray-300 text-lg">Nttdata</td>
+              <td className="px-8 py-4 whitespace-nowrap text-pink-400 font-bold">entrevista_final</td>
+              <td className="px-8 py-4 whitespace-nowrap text-blue-400">linkedin</td>
+              <td className="px-8 py-4 whitespace-nowrap text-gray-400">30/6/2025</td>
+              <td className="px-8 py-4 whitespace-nowrap text-gray-400">30/6/2025</td>
+              <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">30.000 €</td>
+              <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">Remoto</td>
+              <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">Madrid</td>
+              <td className="px-8 py-4 whitespace-nowrap text-blue-200 text-lg text-center">Buen feedback</td>
               <td className="px-8 py-4 whitespace-nowrap flex gap-2">
                 <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-bold text-xs">Editar</button>
                 <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-bold text-xs">Borrar</button>
