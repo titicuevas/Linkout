@@ -47,7 +47,7 @@ export default function DesahogateIndex() {
 
   const handleDelete = async (id) => {
     const result = await MySwal.fire({
-      title: '¿Eliminar desahogo?',
+      title: '¿Eliminar reflexión?',
       text: 'Esta acción no se puede deshacer.',
       icon: 'warning',
       showCancelButton: true,
@@ -64,7 +64,7 @@ export default function DesahogateIndex() {
         fetchMensajes(user.id);
         await MySwal.fire({
           icon: 'success',
-          title: 'Desahogo eliminado',
+          title: 'Reflexión eliminada',
           background: '#18181b',
           color: '#fff',
           confirmButtonColor: '#6366f1',
@@ -100,7 +100,7 @@ export default function DesahogateIndex() {
       fetchMensajes(user.id);
       await MySwal.fire({
         icon: 'success',
-        title: 'Desahogo actualizado',
+        title: 'Reflexión actualizada',
         background: '#18181b',
         color: '#fff',
         confirmButtonColor: '#6366f1',
@@ -134,7 +134,7 @@ export default function DesahogateIndex() {
     <Layout user={user} onLogout={handleLogout}>
       <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-3xl p-4">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario Personal</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario de Reflexiones</h1>
           <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto animate-fade-in">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-pulse">
@@ -145,13 +145,13 @@ export default function DesahogateIndex() {
               <div className="flex flex-col items-center justify-center py-16 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in">
                 <FaceFrownIcon className="w-20 h-20 text-pink-400 mb-4 animate-bounce" />
                 <div className="text-xl text-white font-bold mb-2">No tienes mensajes registrados.</div>
-                <div className="text-base text-gray-400 mb-6">¡Anímate a escribir tu primer desahogo!</div>
+                <div className="text-base text-gray-400 mb-6">¡Anímate a escribir tu primera reflexión!</div>
                 <button
                   onClick={() => navigate('/desahogate/create')}
                   className="flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full px-8 py-4 font-bold text-lg shadow-lg transition animate-fade-in"
                 >
                   <PlusIcon className="w-7 h-7" />
-                  Nuevo desahogo
+                  Nueva reflexión
                 </button>
               </div>
             ) : (
@@ -184,7 +184,7 @@ export default function DesahogateIndex() {
               className="flex items-center gap-2 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in"
             >
               <PlusIcon className="w-7 h-7" />
-              Nuevo desahogo
+              Nueva reflexión
             </button>
           </div>
           {/* Botón flotante solo en móvil */}
@@ -194,7 +194,7 @@ export default function DesahogateIndex() {
               className="fixed bottom-8 right-8 z-50 px-7 py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2 sm:hidden"
             >
               <PlusIcon className="w-7 h-7" />
-              Nuevo desahogo
+              Nueva reflexión
             </button>
           )}
           {/* Botón volver al inicio solo en móvil */}

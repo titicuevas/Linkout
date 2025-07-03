@@ -49,8 +49,8 @@ export default function CrearDesahogo() {
     }
     await MySwal.fire({
       icon: 'success',
-      title: '¡Desahogo guardado!',
-      text: 'Tu mensaje ha sido registrado. ¡Ánimo!',
+      title: '¡Entrada guardada!',
+      text: 'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!',
       background: '#18181b',
       color: '#fff',
       confirmButtonColor: '#e11d48',
@@ -63,7 +63,7 @@ export default function CrearDesahogo() {
       <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-2 py-8">
         <div className="w-full max-w-md backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">Nueva Entrada en mi Diario</h1>
-          <div className="text-pink-400 text-lg font-semibold mb-6 text-center animate-fade-in">Reflexiona sobre tu proceso de búsqueda de trabajo</div>
+          <div className="text-pink-400 text-lg font-semibold mb-6 text-center animate-fade-in">Comparte tus reflexiones y experiencias</div>
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
           <form onSubmit={handleCreate} className="space-y-5 w-full" autoComplete="off">
             <div>
@@ -74,11 +74,14 @@ export default function CrearDesahogo() {
                 onBlur={() => setTocado(true)}
                 maxLength={maxChars}
                 className={`w-full h-44 p-4 rounded-lg bg-neutral-900 text-white border ${tocado && !texto.trim() ? 'border-red-500' : 'border-pink-400'} focus:outline-none focus:ring-2 focus:ring-pink-400 mb-2 resize-none transition-all text-lg`}
-                placeholder="Comparte tus experiencias, aprendizajes y reflexiones sobre tu búsqueda de empleo..."
+                placeholder="Suelta todo lo que llevas dentro... ¿Qué has aprendido hoy? ¿Qué te motiva a seguir? ¿Qué reflexiones tienes sobre tu proceso? Comparte desde el corazón y ayuda a otros desarrolladores en su camino."
                 required
                 autoComplete="off"
               />
               <div className={`text-right text-xs ${texto.length > maxChars - 20 ? 'text-red-400 font-bold' : 'text-gray-400'}`}>{texto.length}/{maxChars} caracteres</div>
+              <div className="text-blue-300 text-sm italic mt-2 bg-blue-900/20 rounded-lg p-3 border border-blue-700">
+                💙 <strong>Recuerda:</strong> Este es un espacio para compartir experiencias constructivas y motivar a otros desarrolladores. Sé auténtico, comparte aprendizajes y mantén un tono positivo.
+              </div>
             </div>
             <div className="flex w-full gap-2 mt-6 flex-col sm:flex-row">
               <button type="button" onClick={handleCancel} className="flex-1 px-4 py-3 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition text-lg shadow-md flex items-center justify-center gap-2">
