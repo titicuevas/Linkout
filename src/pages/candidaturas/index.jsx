@@ -26,22 +26,22 @@ export default function CandidaturasIndex() {
 
   // Filtros visuales mejorados
   const ESTADOS = [
-    { value: '', label: 'Todos', icon: <AdjustmentsHorizontalIcon className="w-5 h-5 mr-1" /> },
-    { value: 'entrevista_contacto', label: 'Entrevista contacto', icon: <BriefcaseIcon className="w-5 h-5 mr-1" /> },
-    { value: 'prueba_tecnica', label: 'Prueba técnica', icon: <ChartBarIcon className="w-5 h-5 mr-1" /> },
-    { value: 'segunda_entrevista', label: '2ª Entrevista', icon: <ChartBarIcon className="w-5 h-5 mr-1" /> },
-    { value: 'entrevista_final', label: 'Entrevista final', icon: <ChartBarIcon className="w-5 h-5 mr-1" /> },
-    { value: 'contratacion', label: 'Contratación', icon: <BuildingOffice2Icon className="w-5 h-5 mr-1" /> },
-    { value: 'rechazado', label: 'No seleccionado', icon: <XMarkIcon className="w-5 h-5 mr-1" /> },
+    { value: '', label: 'Todos' },
+    { value: 'entrevista_contacto', label: 'Entrevista contacto' },
+    { value: 'prueba_tecnica', label: 'Prueba técnica' },
+    { value: 'segunda_entrevista', label: '2ª Entrevista' },
+    { value: 'entrevista_final', label: 'Entrevista final' },
+    { value: 'contratacion', label: 'Contratación' },
+    { value: 'rechazado', label: 'No seleccionado' },
   ];
   const ORIGENES = [
-    { value: '', label: 'Todos', icon: <AdjustmentsHorizontalIcon className="w-5 h-5 mr-1" /> },
-    { value: 'LinkedIn', label: 'LinkedIn', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'InfoJobs', label: 'InfoJobs', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'Joppy', label: 'Joppy', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'Tecnoempleo', label: 'Tecnoempleo', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'Email', label: 'Email', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'Otros', label: 'Otros', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: '', label: 'Todos' },
+    { value: 'LinkedIn', label: 'LinkedIn' },
+    { value: 'InfoJobs', label: 'InfoJobs' },
+    { value: 'Joppy', label: 'Joppy' },
+    { value: 'Tecnoempleo', label: 'Tecnoempleo' },
+    { value: 'Email', label: 'Email' },
+    { value: 'Otros', label: 'Otros' },
   ];
 
   // Filtrado insensible a mayúsculas/minúsculas y espacios
@@ -181,7 +181,7 @@ export default function CandidaturasIndex() {
                 onClick={() => setFiltroEstado(e.value)}
                 className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
               >
-                {e.icon}{e.label}
+                {e.label}
               </button>
             ))}
           </div>
@@ -192,7 +192,7 @@ export default function CandidaturasIndex() {
                 onClick={() => setFiltroOrigen(o.value)}
                 className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
               >
-                {o.icon}{o.label}
+                {o.label}
               </button>
             ))}
           </div>
@@ -211,99 +211,66 @@ export default function CandidaturasIndex() {
               <div className="text-lg text-gray-300 font-bold mb-2">Cargando...</div>
             </div>
           ) : (
-            <table className="min-w-full divide-y divide-neutral-700 text-lg" style={{minWidth:'1200px'}}>
-              <thead>
-                <tr>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('puesto')}>Puesto {sortBy==='puesto' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('empresa')}>Empresa {sortBy==='empresa' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('estado')}>Estado {sortBy==='estado' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')}>Fecha {sortBy==='fecha' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('salario_anual')}>Salario {sortBy==='salario_anual' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('tipo_trabajo')}>Tipo {sortBy==='tipo_trabajo' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('ubicacion')}>Ubicación {sortBy==='ubicacion' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('origen')}>Origen {sortBy==='origen' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider">Feedback</th>
-                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-700">
-                {paginatedCandidaturas.length === 0 ? (
+            <div className="overflow-x-auto w-full max-w-6xl mx-auto mb-8 animate-fade-in">
+              <table className="min-w-full divide-y divide-gray-700 bg-neutral-900 rounded-xl shadow-xl">
+                <thead>
                   <tr>
-                    <td colSpan={8} className="text-center py-20 text-gray-400">
-                      <div className="flex flex-col items-center justify-center gap-4 animate-fade-in">
-                        <FaceFrownIcon className="w-16 h-16 text-blue-400 mb-2 animate-bounce" />
-                        <span className="text-xl font-bold">No tienes candidaturas registradas.</span>
-                        <span className="text-base text-gray-400 mb-2">¡Empieza a crear tu primera candidatura!</span>
-                        <button onClick={() => navigate('/candidaturas/create')} className="mt-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-lg transition-all animate-fade-in">+ Crear candidatura</button>
-                      </div>
-                    </td>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Puesto</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Empresa</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Estado</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Origen</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')}>Fecha {sortBy === 'fecha' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Actualizada</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Salario</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Tipo</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Ubicación</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Feedback</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
                   </tr>
-                ) : (
-                  paginatedCandidaturas.map((c) => (
-                    <tr key={c.id} className="hover:bg-neutral-700 transition" style={{height:'64px'}}>
-                      <td className="px-8 py-4 whitespace-nowrap text-white font-medium text-lg">{c.puesto}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-gray-300 text-lg">{c.empresa}</td>
-                      <td className="px-8 py-4 whitespace-nowrap">
-                        <span className="px-4 py-2 rounded-full text-base font-bold " style={{
-                          background: c.estado === 'contratacion' ? '#22c55e' : 
-                                    c.estado === 'rechazado' ? '#ef4444' : 
-                                    c.estado === 'entrevista_final' ? '#10b981' :
-                                    c.estado === 'segunda_entrevista' ? '#3b82f6' :
-                                    c.estado === 'prueba_tecnica' ? '#f59e0b' :
-                                    c.estado === 'entrevista_contacto' ? '#8b5cf6' : '#64748b', 
-                          color: 'white'
-                        }}>
-                          {c.estado.replace(/_/g, ' ')}
-                        </span>
-                      </td>
-                      <td className="px-8 py-4 whitespace-nowrap text-gray-400 text-lg">{c.fecha ? new Date(c.fecha).toLocaleDateString() : ''}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.salario_anual ? `${c.salario_anual} €` : c.franja_salarial || '-'}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.tipo_trabajo || '-'}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.ubicacion || '-'}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-blue-200 font-bold text-lg">{c.origen ? c.origen.replace('_', ' ').toUpperCase() : '-'}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-blue-200 text-lg text-center">
-                        {c.feedback ? (
-                          <span
-                            className="relative group cursor-pointer"
-                            onMouseEnter={e => setTooltipFeedback({ show: true, text: c.feedback, x: e.clientX, y: e.clientY })}
-                            onMouseLeave={() => setTooltipFeedback({ show: false, text: '', x: 0, y: 0 })}
-                          >
-                            <ChatBubbleLeftEllipsisIcon className="w-7 h-7 text-blue-400 inline-block" />
-                          </span>
-                        ) : (
-                          <ChatBubbleLeftEllipsisIcon className="w-7 h-7 text-gray-600 inline-block opacity-40" />
-                        )}
-                      </td>
-                      <td className="px-8 py-4 whitespace-nowrap flex gap-3">
-                        <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 rounded-full p-3 transition" title="Editar" style={{fontSize:'1.3rem'}}>
-                          <PencilSquareIcon className="w-7 h-7 text-white" />
-                        </button>
-                        <button onClick={() => handleDeleteClick(c.id)} className="bg-red-600 hover:bg-red-700 rounded-full p-3 transition" title="Borrar" style={{fontSize:'1.3rem'}}>
-                          <XMarkIcon className="w-7 h-7 text-white" />
-                        </button>
-                        {c.estado === 'rechazado' && (
-                          <button
-                            onClick={() => navigate('/retos/fisico', { state: { candidatura: c } })}
-                            className="bg-yellow-400 hover:bg-yellow-500 rounded-full p-3 transition flex items-center justify-center"
-                            title="Reto físico"
-                            style={{fontSize:'1.3rem'}}>
-                            <BoltIcon className="w-7 h-7 text-yellow-900" />
+                </thead>
+                <tbody>
+                  {paginatedCandidaturas.length === 0 ? (
+                    <tr>
+                      <td colSpan={11} className="py-12 text-center text-gray-400 text-lg">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="text-5xl">😕</span>
+                          <span>No tienes candidaturas registradas.</span>
+                          <span className="text-sm text-gray-500">¡Empieza a crear tu primera candidatura!</span>
+                          <button onClick={() => navigate('/candidaturas/create')} className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-base transition-all">
+                            + Crear candidatura
                           </button>
-                        )}
+                        </div>
                       </td>
-                      {/* Mostrar feedback si existe */}
-                      {c.feedback && (
-                        <tr>
-                          <td colSpan={9} className="bg-neutral-800/80 text-blue-200 px-12 py-3 italic border-t border-neutral-700">
-                            <span className="font-bold text-blue-400">Feedback:</span> {c.feedback}
-                          </td>
-                        </tr>
-                      )}
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    paginatedCandidaturas.map((c) => (
+                      <tr key={c.id} className="hover:bg-neutral-800 transition-all">
+                        <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{c.puesto}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">{c.empresa}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-pink-400 font-bold">{c.estado}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-blue-400">{c.origen}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-gray-400">{c.fecha ? new Date(c.fecha).toLocaleDateString() : '-'}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-gray-400">{c.fecha_actualizacion ? new Date(c.fecha_actualizacion).toLocaleDateString() : '-'}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.salario_anual ? c.salario_anual + ' €' : '-'}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.tipo_trabajo || '-'}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.ubicacion || '-'}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-center">
+                          {c.feedback ? (
+                            <button onClick={() => setTooltipFeedback({ show: true, text: c.feedback })} className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded font-bold text-xs">Ver feedback</button>
+                          ) : (
+                            <span className="text-gray-500">-</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap flex gap-2">
+                          <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-bold text-xs">Editar</button>
+                          <button onClick={() => handleDeleteClick(c.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-bold text-xs">Borrar</button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
         <ReactPaginate
@@ -350,14 +317,17 @@ export default function CandidaturasIndex() {
             Volver al inicio
           </button>
         </div>
-        {/* Tooltip feedback */}
+        {/* Modal feedback */}
         {tooltipFeedback.show && (
-          <div
-            className="fixed z-50 bg-blue-900 text-blue-100 px-4 py-3 rounded-xl shadow-2xl border border-blue-400 text-base max-w-xs animate-fade-in"
-            style={{ left: tooltipFeedback.x + 12, top: tooltipFeedback.y - 12 }}
-          >
-            <span className="font-bold text-blue-300">Feedback:</span> {tooltipFeedback.text}
-          </div>
+          <Modal isOpen={tooltipFeedback.show} onClose={() => setTooltipFeedback({ show: false, text: '' })}>
+            <div className="text-lg text-white font-bold mb-2">Feedback del reclutador</div>
+            <div className="text-blue-200 text-base text-center whitespace-pre-line max-w-sm bg-neutral-800 p-4 rounded-lg border border-neutral-700">
+              {tooltipFeedback.text}
+            </div>
+            <button onClick={() => setTooltipFeedback({ show: false, text: '' })} className="mt-4 px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-lg text-base transition-all">
+              Cerrar
+            </button>
+          </Modal>
         )}
         <style>{`
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
