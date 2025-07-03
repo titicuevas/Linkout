@@ -81,6 +81,18 @@ export default function CandidaturasIndex() {
           Crear candidatura
         </button>
       </div>
+      {/* Modal de feedback (visual, sin lógica) */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+        <div className="bg-neutral-900 rounded-lg shadow-xl p-8 relative min-w-[320px] max-w-full max-h-[90vh] overflow-y-auto flex flex-col items-center gap-4">
+          <div className="text-lg text-white font-bold mb-2">Feedback del reclutador</div>
+          <div className="text-blue-200 text-base text-center whitespace-pre-line max-w-sm bg-neutral-800 p-4 rounded-lg border border-neutral-700">
+            Ejemplo de feedback recibido del reclutador o comentarios de entrevista.
+          </div>
+          <button className="mt-4 px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-lg text-base transition-all">
+            Cerrar
+          </button>
+        </div>
+      </div>
       <div>Test</div>
     </Layout>
   );
