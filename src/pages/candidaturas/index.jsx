@@ -67,6 +67,20 @@ export default function CandidaturasIndex() {
         <span className="text-lg font-bold text-pink-400">1</span>
         <button className="text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer">Siguiente &gt;</button>
       </div>
+      {/* Botón flotante para crear candidatura (solo escritorio) */}
+      <button
+        className="hidden sm:flex fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in items-center gap-2"
+      >
+        Crear candidatura
+      </button>
+      {/* Botón fijo en la parte inferior solo en móvil */}
+      <div className="sm:hidden fixed bottom-0 left-0 w-full z-50 bg-neutral-900 border-t border-neutral-800 flex justify-center items-center py-3 animate-fade-in">
+        <button
+          className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-base transition-all"
+        >
+          Crear candidatura
+        </button>
+      </div>
       <div>Test</div>
     </Layout>
   );
