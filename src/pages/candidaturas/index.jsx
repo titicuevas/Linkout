@@ -62,6 +62,11 @@ export default function CandidaturasIndex() {
           </tbody>
         </table>
       </div>
+      <div className="flex justify-center items-center gap-3 mt-8">
+        <button className="text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer">&lt; Anterior</button>
+        <span className="text-lg font-bold text-pink-400">1</span>
+        <button className="text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer">Siguiente &gt;</button>
+      </div>
       <div>Test</div>
     </Layout>
   );
