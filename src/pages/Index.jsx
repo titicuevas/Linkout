@@ -50,34 +50,34 @@ export default function Index() {
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight drop-shadow-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-fade-in">
           ¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!
         </h1>
-        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-white animate-fade-in">Bienvenido a tu espacio de bienestar y motivación</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-white animate-fade-in">Tu centro de control para la búsqueda de trabajo</h2>
         <div className="text-lg sm:text-xl text-gray-200 mb-6 max-w-2xl text-center font-medium animate-fade-in">
-          Aquí puedes organizar tus candidaturas, desahogarte, recibir palabras de ánimo y superar nuevos retos. ¡Este es tu refugio para crecer y avanzar!
+          Organiza tus candidaturas, mantén tu motivación y supera nuevos retos. ¡Este es tu espacio para crecer profesionalmente!
         </div>
         <div className="text-pink-300 text-center font-semibold mb-10 animate-fade-in-slow text-lg flex items-center justify-center gap-2">
-          <span>💡 Recuerda: ¡Tu bienestar y tu progreso son lo más importante! 🚀</span>
+          <span>💡 Recuerda: ¡Cada candidatura es un paso hacia tu próximo trabajo! 🚀</span>
         </div>
         <div className="w-full max-w-5xl mx-auto mb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             <Link to="/candidaturas" className="flex flex-col items-center w-full bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-blue-400/40 hover:border-blue-400 cursor-pointer group shadow-2xl border-2 border-blue-900 hover:bg-blue-900/80 focus:outline-none focus:ring-2 focus:ring-blue-400 animate-fade-in-card">
               <ClipboardDocumentListIcon width={56} height={56} className="mb-3 text-blue-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
-              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Candidaturas</div>
-              <div className="text-base text-blue-100 text-center break-words whitespace-pre-line">Organiza tus aplicaciones y recupera el control.</div>
+              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Mi Diario de Candidaturas</div>
+              <div className="text-base text-blue-100 text-center break-words whitespace-pre-line">Seguimiento completo de todos tus procesos de selección.</div>
             </Link>
             <Link to="/desahogate" className="flex flex-col items-center w-full bg-gradient-to-br from-pink-900/80 via-pink-800/70 to-pink-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-pink-400/40 hover:border-pink-400 cursor-pointer group shadow-2xl border-2 border-pink-900 hover:bg-pink-900/80 focus:outline-none focus:ring-2 focus:ring-pink-400 animate-fade-in-card">
               <PencilSquareIcon width={56} height={56} className="mb-3 text-pink-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
-              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Desahógate</div>
-              <div className="text-base text-pink-100 text-center break-words whitespace-pre-line">Exprésate, aquí te escuchamos.</div>
+              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Mi Diario Personal</div>
+              <div className="text-base text-pink-100 text-center break-words whitespace-pre-line">Reflexiona y documenta tu proceso de búsqueda.</div>
             </Link>
             <Link to="/animoia" className="flex flex-col items-center w-full bg-gradient-to-br from-green-900/80 via-green-800/70 to-green-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-green-400/40 hover:border-green-400 cursor-pointer group shadow-2xl border-2 border-green-900 hover:bg-green-900/80 focus:outline-none focus:ring-2 focus:ring-green-400 animate-fade-in-card">
               <ChatBubbleLeftRightIcon width={56} height={56} className="mb-3 text-green-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
-              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Ánimo IA</div>
-              <div className="text-base text-green-100 text-center break-words whitespace-pre-line">Recibe palabras que te animen.</div>
+              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Motivación IA</div>
+              <div className="text-base text-green-100 text-center break-words whitespace-pre-line">Recibe mensajes motivacionales personalizados.</div>
             </Link>
             <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-gradient-to-br from-yellow-900/80 via-yellow-800/70 to-yellow-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-yellow-400/40 hover:border-yellow-400 cursor-pointer group shadow-2xl border-2 border-yellow-900 hover:bg-yellow-900/80 focus:outline-none focus:ring-2 focus:ring-yellow-400 animate-fade-in-card">
               <BoltIcon width={56} height={56} className="mb-3 text-yellow-300 group-hover:text-yellow-100 transition-colors duration-200 drop-shadow-lg" />
-              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-yellow-100 transition-colors duration-200">Reto físico</div>
-              <div className="text-base text-yellow-100 text-center break-words whitespace-pre-line">Actívate y libera el estrés con energía positiva.</div>
+              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-yellow-100 transition-colors duration-200">Retos de Bienestar</div>
+              <div className="text-base text-yellow-100 text-center break-words whitespace-pre-line">Mantén tu energía y motivación activa.</div>
             </Link>
           </div>
         </div>

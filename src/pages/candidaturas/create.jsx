@@ -8,10 +8,21 @@ import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 
 const ESTADOS = [
-  { value: 'pendiente', label: 'Pendiente' },
-  { value: 'en_proceso', label: 'En proceso' },
-  { value: 'aceptado', label: 'Aceptado' },
-  { value: 'rechazado', label: 'Rechazado' },
+  { value: 'entrevista_contacto', label: 'Entrevista de contacto' },
+  { value: 'prueba_tecnica', label: 'Prueba técnica' },
+  { value: 'segunda_entrevista', label: 'Segunda entrevista' },
+  { value: 'entrevista_final', label: 'Entrevista final' },
+  { value: 'contratacion', label: 'Contratación' },
+  { value: 'rechazado', label: 'Descarte' },
+];
+
+const ORIGENES = [
+  { value: 'infojobs', label: 'InfoJobs' },
+  { value: 'linkedin', label: 'LinkedIn' },
+  { value: 'joppy', label: 'Joppy' },
+  { value: 'tecnoempleo', label: 'Tecnoempleo' },
+  { value: 'correo_directo', label: 'Correo directo empresa' },
+  { value: 'otro', label: 'Otro' },
 ];
 
 const FRANJAS_SALARIAL = [
@@ -34,12 +45,13 @@ export default function CrearCandidatura() {
   const [error, setError] = useState('');
   const [puesto, setPuesto] = useState('');
   const [empresa, setEmpresa] = useState('');
-  const [estado, setEstado] = useState('pendiente');
+  const [estado, setEstado] = useState('entrevista_contacto');
   const [fecha, setFecha] = useState('');
   const [sueldoAnual, setSueldoAnual] = useState('');
   const [franjaSalarial, setFranjaSalarial] = useState('');
   const [tipoTrabajo, setTipoTrabajo] = useState('');
   const [ubicacion, setUbicacion] = useState('');
+  const [origen, setOrigen] = useState('');
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
@@ -75,12 +87,12 @@ export default function CrearCandidatura() {
   const handleCreate = async (e) => {
     e.preventDefault();
     setError('');
-    if (!puesto.trim() || !empresa.trim() || !estado || !fecha || !tipoTrabajo || !ubicacion.trim()) {
+    if (!puesto.trim() || !empresa.trim() || !estado || !fecha || !tipoTrabajo || !ubicacion.trim() || !origen) {
       setError('Completa todos los campos obligatorios.');
       return;
     }
     const { error: dbError } = await supabase.from('candidaturas').insert([
-      { user_id: user.id, puesto, empresa, estado, fecha, salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion }
+      { user_id: user.id, puesto, empresa, estado, fecha, salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion, origen }
     ]);
     if (dbError) {
       await MySwal.fire({
@@ -111,7 +123,7 @@ export default function CrearCandidatura() {
     <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
       <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-2 py-8">
         <div className="w-full max-w-md bg-neutral-900/90 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-6 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Nueva Candidatura</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-6 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Registrar Nueva Candidatura</h1>
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
           <form onSubmit={handleCreate} className="space-y-5 w-full text-lg">
             <div>
@@ -214,6 +226,18 @@ export default function CrearCandidatura() {
                 required
                 placeholder="Ciudad, país..."
               />
+            </div>
+            <div>
+              <label className={labelBase + ' text-lg'}>Origen de la candidatura</label>
+              <select
+                value={origen}
+                onChange={e => setOrigen(e.target.value)}
+                className={inputBase + ' text-lg py-3 w-full'}
+                required
+              >
+                <option value="">Selecciona origen</option>
+                {ORIGENES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
             </div>
             <div className="flex w-full gap-2 mt-6 flex-col sm:flex-row">
               <button type="button" onClick={handleCancel} className="flex-1 px-4 py-3 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition text-lg shadow-md">Cancelar candidatura</button>

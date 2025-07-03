@@ -1,6 +1,6 @@
 # Linkeout 🚀
 
-**Linkeout** es una plataforma innovadora diseñada para ayudar a las personas a superar el rechazo en candidaturas laborales y mantener una mentalidad positiva durante la búsqueda de empleo.
+**Linkeout** es una plataforma innovadora diseñada para ayudar a desarrolladores junior a gestionar su búsqueda de empleo de manera organizada y mantener la motivación durante todo el proceso.
 
 ## 🔗 **Enlaces del Proyecto**
 
@@ -20,27 +20,35 @@
 - **Redirección tras confirmación de correo**: El flujo de bienvenida es natural y sin parpadeos, mostrando el Welcome solo cuando corresponde.
 - **Gestión de CORS y variables de entorno**: Documentado y corregido para despliegue en Railway.
 - **Mensajes y textos**: Más cálidos, motivadores y empáticos.
+- **Nuevo enfoque**: Transformado en un diario de búsqueda de empleo profesional con seguimiento detallado de candidaturas.
 
 ---
 
 ## ✨ Características Principales
 
-### 🎯 **Ánimo IA**
+### 📊 **Diario de Candidaturas**
+- Seguimiento detallado de todas tus candidaturas laborales
+- Estados avanzados: Contacto inicial, Entrevista, Prueba técnica, Segunda entrevista, Entrevista final, Contratación, Rechazo
+- Origen de la candidatura: InfoJobs, LinkedIn, Joppy, Tecnoempleo, Email directo, Otros
+- Estadísticas motivadoras: Total de candidaturas, Procesos en curso, Contrataciones, Rechazos
+- Historial organizado y fácil de consultar
+
+### 🎯 **Motivación IA**
 - Recibe consejos personalizados de diferentes roles (madre, hermano, mejor amigo, motivador, psicólogo, compañero, futuro yo)
 - **¡NUEVO!** Personajes de anime con historias inspiradoras (Goku, Naruto, Luffy, Asta, Deku, Tanjiro, Itadori, Gojo)
 - Respuestas generadas por IA usando Google Gemini
 - Interfaz intuitiva y empática con iconos y colores temáticos
 
-### 💪 **Retos Físicos**
+### 💪 **Retos de Bienestar**
 - Generación automática de retos físicos personalizados según el puesto y empresa
 - Tres niveles de dificultad: Fácil, Medio, Difícil
 - Sistema de puntos y motivación
 - Ejercicios alternativos para cada reto
 
 ### 📝 **Desahógate**
-- Espacio seguro para expresar frustraciones
+- Espacio seguro para expresar frustraciones y experiencias
 - Sistema de posts anónimos
-- Comunidad de apoyo
+- Comunidad de apoyo entre desarrolladores
 
 ### 🎌 **Personajes de Anime**
 - **Goku (Dragon Ball)**: Espíritu de lucha inquebrantable y superación de límites 🌀
@@ -51,11 +59,6 @@
 - **Tanjiro (Demon Slayer)**: Compasión y perseverancia 🔥
 - **Itadori (Jujutsu Kaisen)**: Optimismo y protección 💖
 - **Gojo (Jujutsu Kaisen)**: Confianza y poder absoluto 👁️
-
-### 🎯 **Candidaturas**
-- Seguimiento de candidaturas enviadas
-- Estado de cada aplicación
-- Historial organizado
 
 ---
 
@@ -175,10 +178,10 @@ PORT=4000
 
 ### 🎯 **¿Qué puedes probar?**
 
-1. **Desahógate**: Escribe tus frustraciones laborales
-2. **Ánimo IA**: Recibe motivación de personajes de anime o roles tradicionales
-3. **Retos Físicos**: Genera retos personalizados según el puesto y empresa
-4. **Candidaturas**: Organiza tu búsqueda de empleo
+1. **Diario de Candidaturas**: Organiza y sigue tus aplicaciones laborales
+2. **Motivación IA**: Recibe motivación de personajes de anime o roles tradicionales
+3. **Retos de Bienestar**: Genera retos personalizados según el puesto y empresa
+4. **Desahógate**: Comparte experiencias con otros desarrolladores
 
 ---
 

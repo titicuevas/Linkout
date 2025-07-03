@@ -140,9 +140,9 @@ export default function AnimoIAIndex() {
             <span className="relative flex items-center justify-center">
               <SparklesIcon className="w-10 sm:w-12 h-10 sm:h-12 text-pink-300 animate-bounce-slow" />
             </span>
-            Ánimo <span className="text-white">IA</span>
+            Motivación <span className="text-white">IA</span>
           </h1>
-          <div className="text-lg sm:text-xl text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un personaje y recibe un mensaje de <span className="text-pink-400 font-bold">ánimo personalizado</span> para cada uno de tus desahogos.</div>
+          <div className="text-lg sm:text-xl text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Selecciona un personaje y recibe un mensaje de <span className="text-pink-400 font-bold">motivación personalizada</span> para cada una de tus reflexiones.</div>
           <div className="text-base sm:text-lg text-pink-200 mb-8 text-center animate-fade-in-slow">¡Incluye personajes de anime con historias inspiradoras de superación! 💪✨</div>
           <div className="flex flex-col gap-8 w-full">
             {mensajes.length === 0 ? (
@@ -185,7 +185,7 @@ export default function AnimoIAIndex() {
                             const IconComponent = getPersonajeInfo(rolesSeleccionados[m.id] || 'motivador').icon;
                             return <IconComponent className="w-7 h-7 text-yellow-200 animate-pulse" />;
                           })()}
-                          Recibir ánimo IA
+                          Recibir Motivación
                         </>
                       )}
                     </button>

@@ -132,7 +132,7 @@ export default function RetoFisico() {
         await MySwal.fire({
           icon: 'success',
           title: '¡Reto completado!',
-          text: '¡Enhorabuena! Has completado el reto físico para esta candidatura. Sigue así, cada paso cuenta.',
+          text: '¡Enhorabuena! Has completado el reto de bienestar para esta candidatura. Sigue así, cada paso cuenta.',
           background: '#18181b',
           color: '#fff',
           confirmButtonColor: '#6366f1',
@@ -166,11 +166,11 @@ export default function RetoFisico() {
           <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center animate-fade-in-slow rounded-2xl backdrop-blur-md bg-neutral-900/80 shadow-3xl p-4">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 bg-clip-text text-transparent drop-shadow-lg flex items-center justify-center gap-3 animate-gradient-move">
               <FireIcon className="w-10 sm:w-12 h-10 sm:h-12 text-orange-400 animate-bounce-slow" />
-              Reto Físico
+              Retos de Bienestar
             </h1>
             {seleccionando && rechazadas.length > 0 ? (
               <>
-                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Selecciona una candidatura rechazada para desbloquear retos físicos:</div>
+                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Selecciona una candidatura rechazada para desbloquear retos de bienestar:</div>
                 <div className="flex flex-col gap-4 w-full max-w-md mx-auto">
                   {rechazadas.map(c => {
                     const completado = localStorage.getItem(`reto_completado_${c.id}`);
@@ -195,7 +195,7 @@ export default function RetoFisico() {
               </>
             ) : (
               <>
-                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Para desbloquear retos físicos, primero asocia una candidatura rechazada.</div>
+                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Para desbloquear retos de bienestar, primero asocia una candidatura rechazada.</div>
                 <button
                   onClick={() => navigate('/candidaturas')}
                   className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg text-lg transition-all mt-8"

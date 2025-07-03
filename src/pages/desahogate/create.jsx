@@ -62,8 +62,8 @@ export default function CrearDesahogo() {
     <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
       <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-2 py-8">
         <div className="w-full max-w-md backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">Nuevo Desahogo</h1>
-          <div className="text-pink-400 text-lg font-semibold mb-6 text-center animate-fade-in">¿Algo que quieras compartir hoy?</div>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">Nueva Entrada en mi Diario</h1>
+          <div className="text-pink-400 text-lg font-semibold mb-6 text-center animate-fade-in">Reflexiona sobre tu proceso de búsqueda de trabajo</div>
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
           <form onSubmit={handleCreate} className="space-y-5 w-full" autoComplete="off">
             <div>
@@ -74,7 +74,7 @@ export default function CrearDesahogo() {
                 onBlur={() => setTocado(true)}
                 maxLength={maxChars}
                 className={`w-full h-44 p-4 rounded-lg bg-neutral-900 text-white border ${tocado && !texto.trim() ? 'border-red-500' : 'border-pink-400'} focus:outline-none focus:ring-2 focus:ring-pink-400 mb-2 resize-none transition-all text-lg`}
-                placeholder="Escribe aquí lo que sientes..."
+                placeholder="Reflexiona sobre tu día, tus candidaturas, tus aprendizajes..."
                 required
                 autoComplete="off"
               />
@@ -91,7 +91,7 @@ export default function CrearDesahogo() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                 </svg>
-                Crear Desahogo
+                Guardar Entrada
               </button>
             </div>
           </form>

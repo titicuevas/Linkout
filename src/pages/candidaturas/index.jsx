@@ -97,8 +97,36 @@ export default function CandidaturasIndex() {
   return (
     <Layout user={user} onLogout={handleLogout}>
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mis Candidaturas</h1>
-        <div className="text-gray-400 text-center mb-8 text-lg animate-fade-in">Gestiona y haz seguimiento de tus candidaturas activas.</div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario de Candidaturas</h1>
+        <div className="text-gray-400 text-center mb-8 text-lg animate-fade-in">Seguimiento completo de todos tus procesos de selección.</div>
+        
+        {/* Contador y estadísticas */}
+        {!loading && candidaturas.length > 0 && (
+          <div className="w-full max-w-6xl mx-auto mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
+            <div className="bg-gradient-to-br from-blue-900/80 to-blue-800/60 rounded-xl p-4 text-center border border-blue-700">
+              <div className="text-2xl font-bold text-blue-300">{candidaturas.length}</div>
+              <div className="text-sm text-blue-200">Total Candidaturas</div>
+            </div>
+            <div className="bg-gradient-to-br from-green-900/80 to-green-800/60 rounded-xl p-4 text-center border border-green-700">
+              <div className="text-2xl font-bold text-green-300">
+                {candidaturas.filter(c => c.estado === 'contratacion').length}
+              </div>
+              <div className="text-sm text-green-200">Contrataciones</div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-900/80 to-purple-800/60 rounded-xl p-4 text-center border border-purple-700">
+              <div className="text-2xl font-bold text-purple-300">
+                {candidaturas.filter(c => c.estado !== 'rechazado' && c.estado !== 'contratacion').length}
+              </div>
+              <div className="text-sm text-purple-200">En Proceso</div>
+            </div>
+            <div className="bg-gradient-to-br from-red-900/80 to-red-800/60 rounded-xl p-4 text-center border border-red-700">
+              <div className="text-2xl font-bold text-red-300">
+                {candidaturas.filter(c => c.estado === 'rechazado').length}
+              </div>
+              <div className="text-sm text-red-200">Descartes</div>
+            </div>
+          </div>
+        )}
         <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 animate-pulse">
@@ -116,6 +144,7 @@ export default function CandidaturasIndex() {
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('salario_anual')}>Salario {sortBy==='salario_anual' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('tipo_trabajo')}>Tipo {sortBy==='tipo_trabajo' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('ubicacion')}>Ubicación {sortBy==='ubicacion' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
+                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('origen')}>Origen {sortBy==='origen' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
                 </tr>
               </thead>
@@ -137,12 +166,23 @@ export default function CandidaturasIndex() {
                       <td className="px-8 py-4 whitespace-nowrap text-white font-medium text-lg">{c.puesto}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-gray-300 text-lg">{c.empresa}</td>
                       <td className="px-8 py-4 whitespace-nowrap">
-                        <span className="px-4 py-2 rounded-full text-base font-bold " style={{background: c.estado === 'aceptado' ? '#22c55e' : c.estado === 'rechazado' ? '#ef4444' : c.estado === 'en_proceso' ? '#f59e42' : '#64748b', color: 'white'}}>{c.estado.replace('_', ' ')}</span>
+                        <span className="px-4 py-2 rounded-full text-base font-bold " style={{
+                          background: c.estado === 'contratacion' ? '#22c55e' : 
+                                    c.estado === 'rechazado' ? '#ef4444' : 
+                                    c.estado === 'entrevista_final' ? '#10b981' :
+                                    c.estado === 'segunda_entrevista' ? '#3b82f6' :
+                                    c.estado === 'prueba_tecnica' ? '#f59e0b' :
+                                    c.estado === 'entrevista_contacto' ? '#8b5cf6' : '#64748b', 
+                          color: 'white'
+                        }}>
+                          {c.estado.replace(/_/g, ' ')}
+                        </span>
                       </td>
                       <td className="px-8 py-4 whitespace-nowrap text-gray-400 text-lg">{c.fecha ? new Date(c.fecha).toLocaleDateString() : ''}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.salario_anual ? `${c.salario_anual} €` : c.franja_salarial || '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.tipo_trabajo || '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.ubicacion || '-'}</td>
+                      <td className="px-8 py-4 whitespace-nowrap text-blue-200 font-bold text-lg">{c.origen ? c.origen.replace('_', ' ').toUpperCase() : '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap flex gap-3">
                         <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 rounded-full p-3 transition" title="Editar" style={{fontSize:'1.3rem'}}>
                           <PencilSquareIcon className="w-7 h-7 text-white" />
@@ -221,6 +261,7 @@ export default function CandidaturasIndex() {
                 franja_salarial: form.franja_salarial.value,
                 tipo_trabajo: form.tipo_trabajo.value,
                 ubicacion: form.ubicacion.value,
+                origen: form.origen.value,
               };
               if (selectedCandidatura.estado === 'rechazado' && updated.estado !== 'rechazado') {
                 localStorage.removeItem(`reto_completado_${selectedCandidatura.id}`);
@@ -271,10 +312,12 @@ export default function CandidaturasIndex() {
                 className="bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
               >
-                <option value="pendiente">Pendiente</option>
-                <option value="en_proceso">En proceso</option>
-                <option value="aceptado">Aceptado</option>
-                <option value="rechazado">Rechazado</option>
+                <option value="entrevista_contacto">Entrevista de contacto</option>
+                <option value="prueba_tecnica">Prueba técnica</option>
+                <option value="segunda_entrevista">Segunda entrevista</option>
+                <option value="entrevista_final">Entrevista final</option>
+                <option value="contratacion">Contratación</option>
+                <option value="rechazado">Descarte</option>
               </select>
             </label>
             <label className="flex flex-col gap-1">
@@ -339,6 +382,23 @@ export default function CandidaturasIndex() {
                 required
                 placeholder="Ciudad, país..."
               />
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-semibold text-gray-300">Origen de la candidatura</span>
+              <select
+                name="origen"
+                defaultValue={selectedCandidatura.origen || ''}
+                className="bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-lg"
+                required
+              >
+                <option value="">Selecciona origen</option>
+                <option value="infojobs">InfoJobs</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="joppy">Joppy</option>
+                <option value="tecnoempleo">Tecnoempleo</option>
+                <option value="correo_directo">Correo directo empresa</option>
+                <option value="otro">Otro</option>
+              </select>
             </label>
             <div className="flex gap-2 justify-end mt-2">
               <button

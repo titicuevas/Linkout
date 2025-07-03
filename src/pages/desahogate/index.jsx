@@ -134,7 +134,7 @@ export default function DesahogateIndex() {
     <Layout user={user} onLogout={handleLogout}>
       <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-3xl p-4">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mis Desahogos</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario Personal</h1>
           <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto animate-fade-in">
             {loading ? (
               <div className="flex flex-col items-center justify-center py-12 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-pulse">
