@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 
 // Servicio para obtener logos de empresas usando Clearbit
 export const getCompanyLogo = async (companyName, companyUrl = null) => {
@@ -34,8 +34,8 @@ export const getCompanyInitials = (companyName) => {
   return words.slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
 };
 
-// Componente de logo con fallback - versión pequeña
-export const CompanyLogo = ({ companyName, companyUrl, className = "w-6 h-6 rounded-full" }) => {
+// Componente de logo con fallback - versión optimizada
+export const CompanyLogo = memo(({ companyName, companyUrl, className = "w-6 h-6 rounded-full" }) => {
   const [logoUrl, setLogoUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -86,6 +86,10 @@ export const CompanyLogo = ({ companyName, companyUrl, className = "w-6 h-6 roun
       alt={`Logo de ${companyName}`}
       className={`${className} object-cover bg-white`}
       onError={() => setError(true)}
+      loading="lazy"
     />
   );
-}; 
+});
+
+// Añadir displayName para debugging
+CompanyLogo.displayName = 'CompanyLogo'; 

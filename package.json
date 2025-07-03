@@ -13,6 +13,7 @@
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "@supabase/supabase-js": "^2.49.9",
+    "axios": "^1.10.0",
     "dayjs": "^1.11.13",
     "react": "^19.1.0",
     "react-confetti": "^6.4.0",
@@ -37,6 +38,7 @@
     "postcss": "^8.5.4",
     "serve": "^14.2.4",
     "tailwindcss": "^3.4.17",
+    "terser": "^5.43.1",
     "vite": "^6.3.5"
   }
 }
