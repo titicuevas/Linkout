@@ -45,8 +45,10 @@ export default function CrearCandidatura() {
   const [error, setError] = useState('');
   const [puesto, setPuesto] = useState('');
   const [empresa, setEmpresa] = useState('');
+  const [empresaUrl, setEmpresaUrl] = useState('');
   const [estado, setEstado] = useState('entrevista_contacto');
   const [fecha, setFecha] = useState('');
+  const [fechaActualizacion, setFechaActualizacion] = useState(new Date().toISOString().split('T')[0]);
   const [sueldoAnual, setSueldoAnual] = useState('');
   const [franjaSalarial, setFranjaSalarial] = useState('');
   const [tipoTrabajo, setTipoTrabajo] = useState('');
@@ -92,7 +94,7 @@ export default function CrearCandidatura() {
       return;
     }
     const { error: dbError } = await supabase.from('candidaturas').insert([
-      { user_id: user.id, puesto, empresa, estado, fecha, salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion, origen }
+      { user_id: user.id, puesto, empresa, empresa_url: empresaUrl, estado, fecha, fecha_actualizacion: new Date().toISOString().split('T')[0], salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion, origen }
     ]);
     if (dbError) {
       await MySwal.fire({
@@ -147,6 +149,16 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
+              <label className={labelBase + ' text-sm text-gray-400'}>URL de la empresa (opcional)</label>
+              <input
+                type="url"
+                value={empresaUrl}
+                onChange={e => setEmpresaUrl(e.target.value)}
+                placeholder="https://www.empresa.com"
+                className={inputBase + ' w-full text-sm'}
+              />
+            </div>
+            <div>
               <label className={labelBase}>Estado</label>
               <select
                 value={estado}
@@ -169,6 +181,18 @@ export default function CrearCandidatura() {
                 required
                 max={maxDate}
               />
+            </div>
+            <div>
+              <label className={labelBase + ' text-sm text-gray-400'}>Fecha de última actualización</label>
+              <input
+                type="date"
+                value={fechaActualizacion}
+                onChange={e => setFechaActualizacion(e.target.value)}
+                className={inputBase + ' w-full text-sm'}
+                max={maxDate}
+                readOnly
+              />
+              <span className="text-xs text-gray-500 mt-1">Se actualiza automáticamente al cambiar el estado</span>
             </div>
             <div>
               <label className={labelBase + ' text-lg'}>Sueldo anual (opcional)</label>

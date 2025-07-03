@@ -34,14 +34,23 @@ create table desahogos (
 );
 ```
 
-### Tabla: candidaturas
+### Tabla: candidaturas (ESQUEMA COMPLETO)
 ```sql
 create table candidaturas (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users not null,
   empresa text not null,
+  empresa_url text, -- URL de la empresa para obtener logos
   puesto text not null,
-  estado text not null, -- ejemplo: pendiente, rechazada, entrevista...
+  estado text not null, -- entrevista_contacto, prueba_tecnica, segunda_entrevista, entrevista_final, contratacion, rechazado
+  fecha date not null, -- fecha de inscripción
+  fecha_actualizacion date default current_date, -- fecha de última actualización
+  salario_anual integer, -- salario anual en euros
+  franja_salarial text, -- rango salarial
+  tipo_trabajo text, -- Presencial, Remoto, Híbrido
+  ubicacion text, -- ciudad, país
+  origen text, -- linkedin, infojobs, joppy, tecnoempleo, correo_directo, otro
+  feedback text, -- feedback del reclutador
   created_at timestamp with time zone default now()
 );
 ```
@@ -60,7 +69,42 @@ create table retos (
 
 ---
 
-## 4. Policies recomendadas (Row Level Security)
+## 4. Actualización de la tabla candidaturas existente
+
+Si ya tienes la tabla candidaturas creada, ejecuta estos comandos para añadir los campos nuevos:
+
+```sql
+-- Añadir campo para URL de empresa
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS empresa_url text;
+
+-- Añadir campo para fecha de actualización
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS fecha_actualizacion date DEFAULT current_date;
+
+-- Añadir campo para salario anual
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS salario_anual integer;
+
+-- Añadir campo para franja salarial
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS franja_salarial text;
+
+-- Añadir campo para tipo de trabajo
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS tipo_trabajo text;
+
+-- Añadir campo para ubicación
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS ubicacion text;
+
+-- Añadir campo para origen
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS origen text;
+
+-- Añadir campo para feedback
+ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS feedback text;
+
+-- Actualizar registros existentes para que tengan fecha_actualizacion
+UPDATE candidaturas SET fecha_actualizacion = fecha WHERE fecha_actualizacion IS NULL;
+```
+
+---
+
+## 5. Policies recomendadas (Row Level Security)
 
 Activa RLS en cada tabla y añade una policy básica:
 
@@ -81,13 +125,14 @@ create policy "Usuarios pueden gestionar sus propios registros"
 
 ---
 
-## 5. Personalización de emails
+## 6. Personalización de emails
 
 - Edita las plantillas de confirmación y recuperación en el panel de Supabase.
 - Usa `{{ .ConfirmationURL }}` y `{{ .Email }}` en los mensajes.
 
 ---
 
-## 6. Notas
+## 7. Notas
 - Puedes extender el esquema según las necesidades de la app.
-- Si necesitas lógica backend personalizada, puedes crear un backend propio y comunicarlo con Supabase. 
+- Si necesitas lógica backend personalizada, puedes crear un backend propio y comunicarlo con Supabase.
+- Los logos de empresas se obtienen automáticamente desde Clearbit usando la URL de la empresa. 

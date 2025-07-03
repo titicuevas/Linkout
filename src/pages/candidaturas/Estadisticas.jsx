@@ -57,6 +57,14 @@ export default function EstadisticasCandidaturas() {
   return (
     <Layout user={user}>
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
+        <div className="w-full flex justify-start mb-8">
+          <button
+            onClick={() => navigate('/candidaturas')}
+            className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-pink-600 text-white rounded-full shadow-lg font-extrabold text-lg border-2 border-pink-400 outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide"
+          >
+            ← Volver a candidaturas
+          </button>
+        </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Estadísticas de Candidaturas</h1>
         {loading ? (
           <div className="text-lg text-gray-300 font-bold mb-2">Cargando estadísticas...</div>
