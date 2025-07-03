@@ -19,11 +19,10 @@ export default function CandidaturasIndex() {
   const [sortDir, setSortDir] = useState('desc');
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 4;
-  const totalPages = Math.ceil(candidaturasFiltradas.length / pageSize);
+  const totalPages = Math.ceil(candidaturas.length / pageSize);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
-  const [modalFeedback, setModalFeedback] = useState({ show: false, text: '' });
-  const [showEmptyMessage, setShowEmptyMessage] = useState(false);
+  const [tooltipFeedback, setTooltipFeedback] = useState({ show: false, text: '', x: 0, y: 0 });
 
   // Filtros visuales mejorados
   const ESTADOS = [
@@ -37,18 +36,18 @@ export default function CandidaturasIndex() {
   ];
   const ORIGENES = [
     { value: '', label: 'Todos', icon: <AdjustmentsHorizontalIcon className="w-5 h-5 mr-1" /> },
-    { value: 'linkedin', label: 'LinkedIn', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'infojobs', label: 'InfoJobs', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'joppy', label: 'Joppy', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'tecnoempleo', label: 'Tecnoempleo', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'correo_directo', label: 'Email', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
-    { value: 'otro', label: 'Otros', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'LinkedIn', label: 'LinkedIn', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'InfoJobs', label: 'InfoJobs', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Joppy', label: 'Joppy', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Tecnoempleo', label: 'Tecnoempleo', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Email', label: 'Email', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
+    { value: 'Otros', label: 'Otros', icon: <GlobeAltIcon className="w-5 h-5 mr-1" /> },
   ];
 
   // Filtrado insensible a mayúsculas/minúsculas y espacios
   const candidaturasFiltradas = candidaturas.filter(c =>
     (filtroEstado === '' || (c.estado || '').toLowerCase().trim() === filtroEstado.toLowerCase().trim()) &&
-    (filtroOrigen === '' || (c.origen || '').toLowerCase().trim().includes(filtroOrigen.toLowerCase().trim()))
+    (filtroOrigen === '' || (c.origen || '').toLowerCase().trim() === filtroOrigen.toLowerCase().trim())
   );
 
   // Ordenar el array filtrado
@@ -138,11 +137,6 @@ export default function CandidaturasIndex() {
     setCurrentPage(event.selected);
   };
 
-  // Resetear página cuando cambian los filtros
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [filtroEstado, filtroOrigen]);
-
   if (!user) return null;
 
   return (
@@ -179,41 +173,36 @@ export default function CandidaturasIndex() {
           </div>
         )}
         {/* Filtros arriba de la tabla */}
-        <div className="flex flex-col gap-4 mb-4 w-full max-w-6xl mx-auto animate-fade-in">
-          {/* Filtros de estado */}
-          <div className="flex gap-2 flex-wrap justify-center">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full max-w-6xl mx-auto animate-fade-in">
+          <div className="flex gap-2 flex-wrap">
             {ESTADOS.map(e => (
               <button
                 key={e.value}
                 onClick={() => setFiltroEstado(e.value)}
-                className={`flex items-center px-3 py-2 rounded-full border-2 font-bold text-xs sm:text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
               >
                 {e.icon}{e.label}
               </button>
             ))}
           </div>
-          {/* Filtros de origen */}
-          <div className="flex gap-2 flex-wrap justify-center">
+          <div className="flex gap-2 flex-wrap">
             {ORIGENES.map(o => (
               <button
                 key={o.value}
                 onClick={() => setFiltroOrigen(o.value)}
-                className={`flex items-center px-3 py-2 rounded-full border-2 font-bold text-xs sm:text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
               >
                 {o.icon}{o.label}
               </button>
             ))}
           </div>
-          {/* Botón estadísticas */}
-          <div className="flex justify-center">
-            <button
-              onClick={() => navigate('/candidaturas/estadisticas')}
-              className="flex items-center gap-2 px-4 sm:px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white rounded-full shadow-2xl font-extrabold text-base sm:text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide hover:text-yellow-200 focus:text-yellow-200"
-              style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
-            >
-              <ChartBarIcon className="w-5 h-5 sm:w-7 sm:h-7" /> Ver estadísticas
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/candidaturas/estadisticas')}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white rounded-full shadow-2xl font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide hover:text-yellow-200 focus:text-yellow-200"
+            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
+          >
+            <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
+          </button>
         </div>
         <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
           {loading ? (
@@ -271,18 +260,13 @@ export default function CandidaturasIndex() {
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.salario_anual ? `${c.salario_anual} €` : c.franja_salarial || '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.tipo_trabajo || '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.ubicacion || '-'}</td>
-                      <td className="px-8 py-4 whitespace-nowrap text-blue-200 font-bold text-lg">
-                        {c.origen ? 
-                          c.origen === 'correo_directo' ? 'Email' :
-                          c.origen === 'otro' ? 'Otros' :
-                          c.origen.charAt(0).toUpperCase() + c.origen.slice(1) 
-                          : '-'}
-                      </td>
+                      <td className="px-8 py-4 whitespace-nowrap text-blue-200 font-bold text-lg">{c.origen ? c.origen.replace('_', ' ').toUpperCase() : '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-blue-200 text-lg text-center">
                         {c.feedback ? (
                           <span
                             className="relative group cursor-pointer"
-                            onClick={() => setModalFeedback({ show: true, text: c.feedback })}
+                            onMouseEnter={e => setTooltipFeedback({ show: true, text: c.feedback, x: e.clientX, y: e.clientY })}
+                            onMouseLeave={() => setTooltipFeedback({ show: false, text: '', x: 0, y: 0 })}
                           >
                             <ChatBubbleLeftEllipsisIcon className="w-7 h-7 text-blue-400 inline-block" />
                           </span>
@@ -307,6 +291,14 @@ export default function CandidaturasIndex() {
                           </button>
                         )}
                       </td>
+                      {/* Mostrar feedback si existe */}
+                      {c.feedback && (
+                        <tr>
+                          <td colSpan={9} className="bg-neutral-800/80 text-blue-200 px-12 py-3 italic border-t border-neutral-700">
+                            <span className="font-bold text-blue-400">Feedback:</span> {c.feedback}
+                          </td>
+                        </tr>
+                      )}
                     </tr>
                   ))
                 )}
@@ -324,7 +316,7 @@ export default function CandidaturasIndex() {
           onPageChange={handlePageClick}
           containerClassName={'flex justify-center items-center gap-3 mt-8 animate-fade-in'}
           pageClassName={'text-lg px-5 py-3 rounded-full bg-neutral-800 hover:bg-pink-500 hover:text-white text-pink-200 font-extrabold border-2 border-pink-400 shadow-md transition-all duration-200 cursor-pointer'}
-          activeClassName={'!bg-pink-600 !text-white !border-pink-600 !shadow-lg scale-110 z-10 ring-4 ring-pink-300'}
+          activeClassName={'!bg-pink-600 !text-white !border-pink-600 !shadow-lg scale-110 z-10'}
           previousClassName={'text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer'}
           nextClassName={'text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer'}
           disabledClassName={'bg-neutral-700 text-gray-400 opacity-60 cursor-not-allowed'}
@@ -358,21 +350,15 @@ export default function CandidaturasIndex() {
             Volver al inicio
           </button>
         </div>
-        {/* Modal feedback */}
-        <Modal isOpen={modalFeedback.show} onClose={() => setModalFeedback({ show: false, text: '' })}>
-          <div className="flex flex-col items-center gap-4 p-4">
-            <ChatBubbleLeftEllipsisIcon className="w-10 h-10 text-blue-400 mb-2" />
-            <div className="text-blue-200 text-lg text-center whitespace-pre-line max-w-xs">
-              <span className="font-bold text-blue-300">Feedback:</span> {modalFeedback.text}
-            </div>
-            <button
-              onClick={() => setModalFeedback({ show: false, text: '' })}
-              className="mt-4 px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-lg text-base transition-all"
-            >
-              Cerrar
-            </button>
+        {/* Tooltip feedback */}
+        {tooltipFeedback.show && (
+          <div
+            className="fixed z-50 bg-blue-900 text-blue-100 px-4 py-3 rounded-xl shadow-2xl border border-blue-400 text-base max-w-xs animate-fade-in"
+            style={{ left: tooltipFeedback.x + 12, top: tooltipFeedback.y - 12 }}
+          >
+            <span className="font-bold text-blue-300">Feedback:</span> {tooltipFeedback.text}
           </div>
-        </Modal>
+        )}
         <style>{`
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
           .animate-fade-in { animation: fade-in 0.7s; }
