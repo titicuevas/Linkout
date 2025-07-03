@@ -276,7 +276,26 @@ export default function CandidaturasIndex() {
           breakClassName={'text-lg px-4 py-3 rounded-full bg-neutral-700 text-gray-300 font-bold border-2 border-neutral-700 shadow-md'}
           forcePage={currentPage}
         />
-        <div className="flex justify-center mt-8 animate-fade-in">
+        {/* Botón flotante para crear candidatura (solo escritorio) */}
+        <button
+          onClick={() => navigate('/candidaturas/create')}
+          className="hidden sm:flex fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in items-center gap-2"
+        >
+          <PlusIcon className="w-6 h-6" />
+          Crear candidatura
+        </button>
+        {/* Botón fijo en la parte inferior solo en móvil */}
+        <div className="sm:hidden fixed bottom-0 left-0 w-full z-50 bg-neutral-900 border-t border-neutral-800 flex justify-center items-center py-3 animate-fade-in">
+          <button
+            onClick={() => navigate('/candidaturas/create')}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-base transition-all"
+          >
+            <PlusIcon className="w-6 h-6" />
+            Crear candidatura
+          </button>
+        </div>
+        {/* Botón volver al inicio (oculto en móvil) */}
+        <div className="hidden sm:flex justify-center mt-8 animate-fade-in">
           <button
             onClick={() => navigate('/index')}
             className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-lg transition-all"
@@ -284,14 +303,6 @@ export default function CandidaturasIndex() {
             Volver al inicio
           </button>
         </div>
-        {/* Botón flotante para crear candidatura */}
-        <button
-          onClick={() => navigate('/candidaturas/create')}
-          className="fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in flex items-center gap-2"
-        >
-          <PlusIcon className="w-6 h-6" />
-          Crear candidatura
-        </button>
         {/* Barra superior de filtros y botón de estadísticas */}
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8 w-full max-w-6xl mx-auto animate-fade-in">
           <div className="flex gap-2 flex-wrap">
