@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import Swal from 'sweetalert2';
 import ReactPaginate from 'react-paginate';
-import { CompanyLogo } from '../../services/companyLogos.jsx';
+import { CompanyLogo } from '../../components/CompanyLogo.jsx';
 
 export default function CandidaturasIndex() {
   const [user, setUser] = useState(null);
