@@ -11,6 +11,7 @@ import CrearDesahogo from './pages/desahogate/create';
 import AnimoIAIndex from './pages/animoia/index';
 import Fisico from './pages/retos/Fisico';
 import Welcome from './pages/Welcome';
+import EstadisticasCandidaturas from './pages/candidaturas/Estadisticas';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/index" element={<Index />} />
         <Route path="/candidaturas" element={<CandidaturasIndex />} />
         <Route path="/candidaturas/create" element={<CrearCandidatura />} />
+        <Route path="/candidaturas/estadisticas" element={<EstadisticasCandidaturas />} />
         <Route path="/desahogate" element={<Desahogate />} />
         <Route path="/desahogate/create" element={<CrearDesahogo />} />
         <Route path="/animoia" element={<AnimoIAIndex />} />

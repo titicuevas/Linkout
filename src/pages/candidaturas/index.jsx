@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
-import { PlusIcon, PencilSquareIcon, XMarkIcon, CheckIcon, FaceFrownIcon, BoltIcon, ChevronUpIcon, ChevronDownIcon, ChartBarIcon, AdjustmentsHorizontalIcon, BuildingOffice2Icon, BriefcaseIcon, GlobeAltIcon, CurrencyEuroIcon } from '@heroicons/react/24/solid';
+import { PlusIcon, PencilSquareIcon, XMarkIcon, CheckIcon, FaceFrownIcon, BoltIcon, ChevronUpIcon, ChevronDownIcon, ChartBarIcon, AdjustmentsHorizontalIcon, BuildingOffice2Icon, BriefcaseIcon, GlobeAltIcon, CurrencyEuroIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
 import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
@@ -22,6 +22,7 @@ export default function CandidaturasIndex() {
   const totalPages = Math.ceil(candidaturas.length / pageSize);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
+  const [tooltipFeedback, setTooltipFeedback] = useState({ show: false, text: '', x: 0, y: 0 });
 
   // Filtros visuales mejorados
   const ESTADOS = [
@@ -171,6 +172,38 @@ export default function CandidaturasIndex() {
             </div>
           </div>
         )}
+        {/* Filtros arriba de la tabla */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full max-w-6xl mx-auto animate-fade-in">
+          <div className="flex gap-2 flex-wrap">
+            {ESTADOS.map(e => (
+              <button
+                key={e.value}
+                onClick={() => setFiltroEstado(e.value)}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
+              >
+                {e.icon}{e.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2 flex-wrap">
+            {ORIGENES.map(o => (
+              <button
+                key={o.value}
+                onClick={() => setFiltroOrigen(o.value)}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
+              >
+                {o.icon}{o.label}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => navigate('/candidaturas/estadisticas')}
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white rounded-full shadow-2xl font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide hover:text-yellow-200 focus:text-yellow-200"
+            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
+          >
+            <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
+          </button>
+        </div>
         <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 animate-pulse">
@@ -189,6 +222,7 @@ export default function CandidaturasIndex() {
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('tipo_trabajo')}>Tipo {sortBy==='tipo_trabajo' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('ubicacion')}>Ubicación {sortBy==='ubicacion' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('origen')}>Origen {sortBy==='origen' && (sortDir==='asc'?<ChevronUpIcon className="inline w-5 h-5"/>:<ChevronDownIcon className="inline w-5 h-5"/>)}</th>
+                  <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider">Feedback</th>
                   <th className="px-10 py-4 text-left text-base font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
                 </tr>
               </thead>
@@ -227,6 +261,19 @@ export default function CandidaturasIndex() {
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.tipo_trabajo || '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-pink-200 font-bold text-lg">{c.ubicacion || '-'}</td>
                       <td className="px-8 py-4 whitespace-nowrap text-blue-200 font-bold text-lg">{c.origen ? c.origen.replace('_', ' ').toUpperCase() : '-'}</td>
+                      <td className="px-8 py-4 whitespace-nowrap text-blue-200 text-lg text-center">
+                        {c.feedback ? (
+                          <span
+                            className="relative group cursor-pointer"
+                            onMouseEnter={e => setTooltipFeedback({ show: true, text: c.feedback, x: e.clientX, y: e.clientY })}
+                            onMouseLeave={() => setTooltipFeedback({ show: false, text: '', x: 0, y: 0 })}
+                          >
+                            <ChatBubbleLeftEllipsisIcon className="w-7 h-7 text-blue-400 inline-block" />
+                          </span>
+                        ) : (
+                          <ChatBubbleLeftEllipsisIcon className="w-7 h-7 text-gray-600 inline-block opacity-40" />
+                        )}
+                      </td>
                       <td className="px-8 py-4 whitespace-nowrap flex gap-3">
                         <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 rounded-full p-3 transition" title="Editar" style={{fontSize:'1.3rem'}}>
                           <PencilSquareIcon className="w-7 h-7 text-white" />
@@ -303,38 +350,15 @@ export default function CandidaturasIndex() {
             Volver al inicio
           </button>
         </div>
-        {/* Barra superior de filtros y botón de estadísticas */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 w-full max-w-6xl mx-auto animate-fade-in">
-          <div className="flex gap-2 flex-wrap">
-            {ESTADOS.map(e => (
-              <button
-                key={e.value}
-                onClick={() => setFiltroEstado(e.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
-              >
-                {e.icon}{e.label}
-              </button>
-            ))}
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {ORIGENES.map(o => (
-              <button
-                key={o.value}
-                onClick={() => setFiltroOrigen(o.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
-              >
-                {o.icon}{o.label}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => navigate('/candidaturas/estadisticas')}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white rounded-full shadow-2xl font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide hover:text-yellow-200 focus:text-yellow-200"
-            style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
+        {/* Tooltip feedback */}
+        {tooltipFeedback.show && (
+          <div
+            className="fixed z-50 bg-blue-900 text-blue-100 px-4 py-3 rounded-xl shadow-2xl border border-blue-400 text-base max-w-xs animate-fade-in"
+            style={{ left: tooltipFeedback.x + 12, top: tooltipFeedback.y - 12 }}
           >
-            <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
-          </button>
-        </div>
+            <span className="font-bold text-blue-300">Feedback:</span> {tooltipFeedback.text}
+          </div>
+        )}
         <style>{`
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
           .animate-fade-in { animation: fade-in 0.7s; }
@@ -366,6 +390,16 @@ export default function CandidaturasIndex() {
               if (!error) {
                 setCandidaturas(candidaturas.map(c => c.id === selectedCandidatura.id ? { ...c, ...updated } : c));
                 setModalOpen(false);
+                await Swal.fire({
+                  icon: 'success',
+                  title: 'Candidatura actualizada',
+                  text: 'Los cambios se han guardado correctamente.',
+                  background: '#18181b',
+                  color: '#fff',
+                  confirmButtonColor: '#6366f1',
+                  timer: 1800,
+                  showConfirmButton: false
+                });
               } else {
                 alert('Error al guardar los cambios');
               }
