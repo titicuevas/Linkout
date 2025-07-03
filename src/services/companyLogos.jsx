@@ -1,4 +1,4 @@
-import { useState, useEffect, memo } from 'react';
+import { memo } from 'react';
 
 // Servicio para obtener logos de empresas usando Clearbit
 export const getCompanyLogo = async (companyName, companyUrl = null) => {
@@ -34,44 +34,21 @@ export const getCompanyInitials = (companyName) => {
   return words.slice(0, 2).map(word => word.charAt(0)).join('').toUpperCase();
 };
 
-// Componente de logo con fallback - versión optimizada
+// Componente de logo simplificado - sin estado complejo
 export const CompanyLogo = memo(({ companyName, companyUrl, className = "w-6 h-6 rounded-full" }) => {
-  const [logoUrl, setLogoUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    const fetchLogo = async () => {
-      if (!companyName || !companyUrl) {
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      setError(false);
-      
-      try {
-        const logo = await getCompanyLogo(companyName, companyUrl);
-        setLogoUrl(logo);
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLogo();
-  }, [companyName, companyUrl]);
-
-  if (loading) {
-    return (
-      <div className={`${className} bg-neutral-700 animate-pulse flex items-center justify-center`}>
-        <div className="w-3 h-3 bg-neutral-600 rounded-full animate-pulse"></div>
-      </div>
-    );
+  // Generar URL del logo directamente
+  let logoUrl = null;
+  if (companyUrl) {
+    try {
+      const url = new URL(companyUrl);
+      const domain = url.hostname.replace('www.', '');
+      logoUrl = `https://logo.clearbit.com/${domain}?size=32`;
+    } catch {
+      logoUrl = null;
+    }
   }
 
-  if (error || !logoUrl) {
+  if (!logoUrl) {
     // Fallback a iniciales
     return (
       <div className={`${className} bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs`}>
@@ -85,7 +62,14 @@ export const CompanyLogo = memo(({ companyName, companyUrl, className = "w-6 h-6
       src={logoUrl}
       alt={`Logo de ${companyName}`}
       className={`${className} object-cover bg-white`}
-      onError={() => setError(true)}
+      onError={(e) => {
+        // Si falla la imagen, mostrar iniciales
+        e.target.style.display = 'none';
+        const fallback = document.createElement('div');
+        fallback.className = `${className} bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs`;
+        fallback.textContent = getCompanyInitials(companyName);
+        e.target.parentNode.appendChild(fallback);
+      }}
       loading="lazy"
     />
   );
