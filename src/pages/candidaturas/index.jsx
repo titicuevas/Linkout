@@ -418,7 +418,6 @@ export default function CandidaturasIndex() {
               const updated = {
                 puesto: form.puesto.value,
                 empresa: form.empresa.value,
-                empresa_url: form.empresa_url.value,
                 estado: form.estado.value,
                 fecha: form.fecha.value,
                 fecha_actualizacion: new Date().toISOString().split('T')[0],
@@ -427,7 +426,6 @@ export default function CandidaturasIndex() {
                 tipo_trabajo: form.tipo_trabajo.value,
                 ubicacion: form.ubicacion.value,
                 origen: form.origen.value,
-                feedback: form.feedback.value,
               };
               if (selectedCandidatura.estado === 'rechazado' && updated.estado !== 'rechazado') {
                 localStorage.removeItem(`reto_completado_${selectedCandidatura.id}`);
@@ -477,16 +475,6 @@ export default function CandidaturasIndex() {
                 defaultValue={selectedCandidatura.empresa}
                 className="bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600"
                 required
-              />
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-semibold text-gray-300">URL de la empresa (opcional)</span>
-              <input
-                name="empresa_url"
-                type="url"
-                defaultValue={selectedCandidatura.empresa_url || ''}
-                placeholder="https://www.empresa.com"
-                className="bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm"
               />
             </label>
             <label className="flex flex-col gap-1">
@@ -596,15 +584,6 @@ export default function CandidaturasIndex() {
                 <option value="correo_directo">Correo directo empresa</option>
                 <option value="otro">Otro</option>
               </select>
-            </label>
-            <label className="flex flex-col gap-1">
-              <span className="text-sm font-semibold text-gray-300">Feedback de reclutador</span>
-              <textarea
-                name="feedback"
-                defaultValue={selectedCandidatura.feedback || ''}
-                className="bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 min-h-[60px]"
-                placeholder="Copia aquí el feedback recibido, comentarios de entrevistas, etc. (opcional)"
-              />
             </label>
             <div className="flex gap-2 justify-end mt-2">
               <button
