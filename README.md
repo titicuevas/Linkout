@@ -138,6 +138,7 @@ PORT=4000
 - **Supabase** para base de datos y autenticación
 - **SweetAlert2** para notificaciones
 - **React Confetti** para celebraciones
+- **Recharts** para gráficos y estadísticas visuales
 
 ### Backend
 - **Node.js** con Express

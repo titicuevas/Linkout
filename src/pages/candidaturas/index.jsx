@@ -20,7 +20,51 @@ export default function CandidaturasIndex() {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 4;
   const totalPages = Math.ceil(candidaturas.length / pageSize);
-  const paginatedCandidaturas = candidaturas.slice(currentPage*pageSize, (currentPage+1)*pageSize);
+  const [filtroEstado, setFiltroEstado] = useState('');
+  const [filtroOrigen, setFiltroOrigen] = useState('');
+
+  // Estados y orígenes posibles
+  const ESTADOS = [
+    { value: '', label: 'Todos' },
+    { value: 'entrevista_contacto', label: 'Entrevista contacto' },
+    { value: 'prueba_tecnica', label: 'Prueba técnica' },
+    { value: 'segunda_entrevista', label: '2ª Entrevista' },
+    { value: 'entrevista_final', label: 'Entrevista final' },
+    { value: 'contratacion', label: 'Contratación' },
+    { value: 'rechazado', label: 'No seleccionado' },
+  ];
+  const ORIGENES = [
+    { value: '', label: 'Todos' },
+    { value: 'LinkedIn', label: 'LinkedIn' },
+    { value: 'InfoJobs', label: 'InfoJobs' },
+    { value: 'Joppy', label: 'Joppy' },
+    { value: 'Tecnoempleo', label: 'Tecnoempleo' },
+    { value: 'Email', label: 'Email' },
+    { value: 'Otros', label: 'Otros' },
+  ];
+
+  // Filtrado
+  const candidaturasFiltradas = candidaturas.filter(c =>
+    (filtroEstado === '' || c.estado === filtroEstado) &&
+    (filtroOrigen === '' || c.origen === filtroOrigen)
+  );
+
+  // Ordenar el array filtrado
+  const candidaturasOrdenadas = [...candidaturasFiltradas].sort((a, b) => {
+    let valA = a[sortBy];
+    let valB = b[sortBy];
+    // Si es fecha, convertir a Date
+    if (sortBy === 'fecha') {
+      valA = valA ? new Date(valA) : new Date(0);
+      valB = valB ? new Date(valB) : new Date(0);
+    }
+    if (valA === undefined || valA === null) return 1;
+    if (valB === undefined || valB === null) return -1;
+    if (valA < valB) return sortDir === 'asc' ? -1 : 1;
+    if (valA > valB) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  const paginatedCandidaturas = candidaturasOrdenadas.slice(currentPage*pageSize, (currentPage+1)*pageSize);
 
   useEffect(() => {
     document.title = 'Mis Candidaturas';
@@ -195,12 +239,19 @@ export default function CandidaturasIndex() {
                             onClick={() => navigate('/retos/fisico', { state: { candidatura: c } })}
                             className="bg-yellow-400 hover:bg-yellow-500 rounded-full p-3 transition flex items-center justify-center"
                             title="Reto físico"
-                            style={{fontSize:'1.3rem'}}
-                          >
+                            style={{fontSize:'1.3rem'}}>
                             <BoltIcon className="w-7 h-7 text-yellow-900" />
                           </button>
                         )}
                       </td>
+                      {/* Mostrar feedback si existe */}
+                      {c.feedback && (
+                        <tr>
+                          <td colSpan={9} className="bg-neutral-800/80 text-blue-200 px-12 py-3 italic border-t border-neutral-700">
+                            <span className="font-bold text-blue-400">Feedback:</span> {c.feedback}
+                          </td>
+                        </tr>
+                      )}
                     </tr>
                   ))
                 )}
@@ -216,12 +267,13 @@ export default function CandidaturasIndex() {
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
           onPageChange={handlePageClick}
-          containerClassName={'flex justify-center items-center gap-2 mt-6 animate-fade-in'}
-          pageClassName={'px-3 py-2 rounded-full bg-neutral-700 hover:bg-pink-500 text-white font-bold transition-all'}
-          activeClassName={'bg-pink-500 text-white font-extrabold'}
-          previousClassName={'px-3 py-2 rounded-full bg-neutral-700 hover:bg-blue-500 text-white font-bold transition-all'}
-          nextClassName={'px-3 py-2 rounded-full bg-neutral-700 hover:bg-blue-500 text-white font-bold transition-all'}
-          disabledClassName={'bg-neutral-700 text-gray-400'}
+          containerClassName={'flex justify-center items-center gap-3 mt-8 animate-fade-in'}
+          pageClassName={'text-lg px-5 py-3 rounded-full bg-neutral-800 hover:bg-pink-500 hover:text-white text-pink-200 font-extrabold border-2 border-pink-400 shadow-md transition-all duration-200 cursor-pointer'}
+          activeClassName={'!bg-pink-600 !text-white !border-pink-600 !shadow-lg scale-110 z-10'}
+          previousClassName={'text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer'}
+          nextClassName={'text-lg px-4 py-3 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer'}
+          disabledClassName={'bg-neutral-700 text-gray-400 opacity-60 cursor-not-allowed'}
+          breakClassName={'text-lg px-4 py-3 rounded-full bg-neutral-700 text-gray-300 font-bold border-2 border-neutral-700 shadow-md'}
           forcePage={currentPage}
         />
         <div className="flex justify-center mt-8 animate-fade-in">
@@ -240,6 +292,31 @@ export default function CandidaturasIndex() {
           <PlusIcon className="w-6 h-6" />
           Crear candidatura
         </button>
+        {/* Filtros visuales */}
+        <div className="flex flex-wrap gap-2 mb-6 w-full max-w-6xl mx-auto animate-fade-in">
+          <div className="flex gap-2 flex-wrap">
+            {ESTADOS.map(e => (
+              <button
+                key={e.value}
+                onClick={() => setFiltroEstado(e.value)}
+                className={`px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
+              >
+                {e.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2 flex-wrap ml-4">
+            {ORIGENES.map(o => (
+              <button
+                key={o.value}
+                onClick={() => setFiltroOrigen(o.value)}
+                className={`px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        </div>
         <style>{`
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
           .animate-fade-in { animation: fade-in 0.7s; }
@@ -262,6 +339,7 @@ export default function CandidaturasIndex() {
                 tipo_trabajo: form.tipo_trabajo.value,
                 ubicacion: form.ubicacion.value,
                 origen: form.origen.value,
+                feedback: form.feedback.value,
               };
               if (selectedCandidatura.estado === 'rechazado' && updated.estado !== 'rechazado') {
                 localStorage.removeItem(`reto_completado_${selectedCandidatura.id}`);
@@ -399,6 +477,15 @@ export default function CandidaturasIndex() {
                 <option value="correo_directo">Correo directo empresa</option>
                 <option value="otro">Otro</option>
               </select>
+            </label>
+            <label className="flex flex-col gap-1">
+              <span className="text-sm font-semibold text-gray-300">Feedback de reclutador</span>
+              <textarea
+                name="feedback"
+                defaultValue={selectedCandidatura.feedback || ''}
+                className="bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600 min-h-[60px]"
+                placeholder="Copia aquí el feedback recibido, comentarios de entrevistas, etc. (opcional)"
+              />
             </label>
             <div className="flex gap-2 justify-end mt-2">
               <button
