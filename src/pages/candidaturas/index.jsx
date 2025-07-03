@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
 import { PlusIcon, PencilSquareIcon, XMarkIcon, CheckIcon, FaceFrownIcon, BoltIcon, ChevronUpIcon, ChevronDownIcon, ChartBarIcon, AdjustmentsHorizontalIcon, BuildingOffice2Icon, BriefcaseIcon, GlobeAltIcon, CurrencyEuroIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
-import Layout from '../../components/Layout';
+// import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import Swal from 'sweetalert2';
@@ -143,6 +143,5 @@ export default function CandidaturasIndex() {
   }, [filtroEstado, filtroOrigen]);
 
   if (!user) return null;
-
   return (<div>Test</div>);
 } 
