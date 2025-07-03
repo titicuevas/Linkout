@@ -74,7 +74,7 @@ export default function CrearDesahogo() {
                 onBlur={() => setTocado(true)}
                 maxLength={maxChars}
                 className={`w-full h-44 p-4 rounded-lg bg-neutral-900 text-white border ${tocado && !texto.trim() ? 'border-red-500' : 'border-pink-400'} focus:outline-none focus:ring-2 focus:ring-pink-400 mb-2 resize-none transition-all text-lg`}
-                placeholder="Reflexiona sobre tu día, tus candidaturas, tus aprendizajes..."
+                placeholder="Comparte tus experiencias, aprendizajes y reflexiones sobre tu búsqueda de empleo..."
                 required
                 autoComplete="off"
               />

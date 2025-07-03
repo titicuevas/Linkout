@@ -123,7 +123,7 @@ export default function CandidaturasIndex() {
               <div className="text-2xl font-bold text-red-300">
                 {candidaturas.filter(c => c.estado === 'rechazado').length}
               </div>
-              <div className="text-sm text-red-200">Descartes</div>
+              <div className="text-sm text-red-200">No seleccionadas</div>
             </div>
           </div>
         )}
@@ -317,7 +317,7 @@ export default function CandidaturasIndex() {
                 <option value="segunda_entrevista">Segunda entrevista</option>
                 <option value="entrevista_final">Entrevista final</option>
                 <option value="contratacion">Contratación</option>
-                <option value="rechazado">Descarte</option>
+                <option value="rechazado">No seleccionado</option>
               </select>
             </label>
             <label className="flex flex-col gap-1">

@@ -170,7 +170,7 @@ export default function RetoFisico() {
             </h1>
             {seleccionando && rechazadas.length > 0 ? (
               <>
-                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Selecciona una candidatura rechazada para desbloquear retos de bienestar:</div>
+                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Selecciona una candidatura para desbloquear retos de bienestar:</div>
                 <div className="flex flex-col gap-4 w-full max-w-md mx-auto">
                   {rechazadas.map(c => {
                     const completado = localStorage.getItem(`reto_completado_${c.id}`);
@@ -195,7 +195,7 @@ export default function RetoFisico() {
               </>
             ) : (
               <>
-                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Para desbloquear retos de bienestar, primero asocia una candidatura rechazada.</div>
+                <div className="text-lg text-gray-300 mb-8 text-center font-medium animate-fade-in-slow">Para desbloquear retos de bienestar, primero asocia una candidatura.</div>
                 <button
                   onClick={() => navigate('/candidaturas')}
                   className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg text-lg transition-all mt-8"
@@ -293,7 +293,7 @@ export default function RetoFisico() {
           Reto Físico
         </h1>
         <div className="text-lg text-gray-300 mb-2 text-center font-medium animate-fade-in-slow">Candidatura: <span className="text-pink-300 font-bold">{candidatura.puesto}</span> en <span className="text-pink-300 font-bold">{candidatura.empresa}</span></div>
-        <div className="text-base text-pink-200 mb-8 text-center animate-fade-in-slow">¡Convierte la frustración en energía positiva! Elige tu reto físico y libera endorfinas.</div>
+        <div className="text-base text-pink-200 mb-8 text-center animate-fade-in-slow">¡Mantén tu energía positiva! Elige tu reto físico y libera endorfinas.</div>
         <div className="flex flex-col items-center w-full mb-8">
           <div className="w-full bg-neutral-800 rounded-full h-6 mb-2 overflow-hidden border-2 border-pink-400 shadow-inner">
             <div

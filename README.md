@@ -28,9 +28,9 @@
 
 ### 📊 **Diario de Candidaturas**
 - Seguimiento detallado de todas tus candidaturas laborales
-- Estados avanzados: Contacto inicial, Entrevista, Prueba técnica, Segunda entrevista, Entrevista final, Contratación, Rechazo
+- Estados avanzados: Contacto inicial, Entrevista, Prueba técnica, Segunda entrevista, Entrevista final, Contratación, No seleccionado
 - Origen de la candidatura: InfoJobs, LinkedIn, Joppy, Tecnoempleo, Email directo, Otros
-- Estadísticas motivadoras: Total de candidaturas, Procesos en curso, Contrataciones, Rechazos
+- Estadísticas motivadoras: Total de candidaturas, Procesos en curso, Contrataciones, No seleccionadas
 - Historial organizado y fácil de consultar
 
 ### 🎯 **Motivación IA**
@@ -46,7 +46,7 @@
 - Ejercicios alternativos para cada reto
 
 ### 📝 **Desahógate**
-- Espacio seguro para expresar frustraciones y experiencias
+- Espacio seguro para expresar experiencias y reflexiones
 - Sistema de posts anónimos
 - Comunidad de apoyo entre desarrolladores
 

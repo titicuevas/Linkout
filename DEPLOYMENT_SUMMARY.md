@@ -93,7 +93,7 @@ git push origin main
 ### Frontend (React + Vite)
 - **Ánimo IA**: Consejos personalizados con diferentes roles
 - **Retos Físicos**: Generación automática de ejercicios
-- **Desahógate**: Espacio para expresar frustraciones
+- **Desahógate**: Espacio para expresar experiencias
 - **Candidaturas**: Seguimiento de aplicaciones laborales
 - **Autenticación**: Integrada con Supabase
 
@@ -154,6 +154,6 @@ npm run check-deployment
 
 ## 🎉 ¡Listo para Desplegar!
 
-Tu proyecto **Linkeout** está completamente preparado para ayudar a personas a superar el rechazo laboral. ¡Sigue la guía de despliegue y tendrás tu aplicación funcionando en producción en minutos!
+Tu proyecto **Linkeout** está completamente preparado para ayudar a desarrolladores a gestionar su búsqueda de empleo de manera organizada. ¡Sigue la guía de despliegue y tendrás tu aplicación funcionando en producción en minutos!
 
 **¡Buena suerte con el despliegue! 🚀** 

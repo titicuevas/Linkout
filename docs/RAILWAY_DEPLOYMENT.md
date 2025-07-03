@@ -110,7 +110,7 @@ Si tienes variables que se usan en ambos servicios, puedes:
 ```bash
 curl -X POST https://tu-backend-service.railway.app/api/animo \
   -H "Content-Type: application/json" \
-  -d '{"texto":"Me siento frustrado","rol":"motivador","nombre":"Usuario"}'
+  -d '{"texto":"Estoy gestionando mi búsqueda de empleo","rol":"motivador","nombre":"Usuario"}'
 ```
 
 ### 5.2 Probar el Frontend
@@ -185,4 +185,4 @@ Si tienes problemas:
 
 ---
 
-¡Tu aplicación **Linkeout** estará lista para ayudar a personas a superar el rechazo laboral! 🚀 
+¡Tu aplicación **Linkeout** estará lista para ayudar a desarrolladores a gestionar su búsqueda de empleo! 🚀 

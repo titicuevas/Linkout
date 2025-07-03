@@ -13,7 +13,7 @@ const ESTADOS = [
   { value: 'segunda_entrevista', label: 'Segunda entrevista' },
   { value: 'entrevista_final', label: 'Entrevista final' },
   { value: 'contratacion', label: 'Contratación' },
-  { value: 'rechazado', label: 'Descarte' },
+  { value: 'rechazado', label: 'No seleccionado' },
 ];
 
 const ORIGENES = [
