@@ -304,9 +304,8 @@ export default function CandidaturasIndex() {
             </div>
           )}
         </div>
-        <div className="flex items-center justify-between w-full max-w-xs mx-auto mb-2">
-          <span className="text-gray-400 text-sm">Mostrando {currentPage*pageSize+1}-{Math.min((currentPage+1)*pageSize, candidaturas.length)} de {candidaturas.length}</span>
-          <select value={pageSize} onChange={e => { setCurrentPage(0); setPageSize(Number(e.target.value)); }} className="px-2 py-1 rounded bg-neutral-800 text-gray-300 border border-neutral-700 text-sm ml-2">
+        <div className="flex justify-end w-full max-w-6xl mx-auto mt-2">
+          <select value={pageSize} onChange={e => { setCurrentPage(0); setPageSize(Number(e.target.value)); }} className="px-2 py-1 rounded bg-neutral-800 text-gray-300 border border-neutral-700 text-sm">
             {[4, 10, 20, 50].map(n => <option key={n} value={n}>{n} por página</option>)}
           </select>
         </div>
@@ -318,13 +317,13 @@ export default function CandidaturasIndex() {
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
           onPageChange={handlePageClick}
-          containerClassName={'flex justify-center items-center gap-4 mt-10 animate-fade-in'}
-          pageClassName={'text-lg px-7 py-4 rounded-full bg-neutral-900 hover:bg-pink-500 hover:text-white text-pink-300 font-extrabold border-4 border-pink-400 shadow-lg transition-all duration-200 cursor-pointer scale-100 hover:scale-110'}
-          activeClassName={'!bg-pink-600 !text-white !border-pink-600 !shadow-2xl scale-110 z-10'}
-          previousClassName={'text-lg px-6 py-4 rounded-full bg-neutral-900 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-4 border-blue-400 shadow-lg transition-all duration-200 cursor-pointer'}
-          nextClassName={'text-lg px-6 py-4 rounded-full bg-neutral-900 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-4 border-blue-400 shadow-lg transition-all duration-200 cursor-pointer'}
-          disabledClassName={'bg-neutral-800 text-gray-400 opacity-60 cursor-not-allowed'}
-          breakClassName={'text-lg px-6 py-4 rounded-full bg-neutral-800 text-gray-300 font-bold border-4 border-neutral-700 shadow-lg'}
+          containerClassName="flex justify-center items-center gap-2 mt-6"
+          pageClassName="text-lg px-4 py-2 rounded-full bg-neutral-800 text-pink-200 font-extrabold border border-pink-400 cursor-pointer"
+          activeClassName="!bg-pink-600 !text-white !border-pink-600 z-10"
+          previousClassName="text-lg px-3 py-2 rounded-full bg-neutral-800 text-blue-200 font-bold border border-blue-400 cursor-pointer"
+          nextClassName="text-lg px-3 py-2 rounded-full bg-neutral-800 text-blue-200 font-bold border border-blue-400 cursor-pointer"
+          disabledClassName="bg-neutral-800 text-gray-400 opacity-60 cursor-not-allowed"
+          breakClassName="text-lg px-3 py-2 rounded-full bg-neutral-800 text-gray-300 font-bold border border-neutral-700"
           forcePage={currentPage}
         />
         {/* Botón flotante para crear candidatura (solo escritorio) */}
