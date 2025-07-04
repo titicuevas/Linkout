@@ -48,7 +48,6 @@ export default function CrearCandidatura() {
   const [empresaUrl, setEmpresaUrl] = useState('');
   const [estado, setEstado] = useState('entrevista_contacto');
   const [fecha, setFecha] = useState('');
-  const [fechaActualizacion, setFechaActualizacion] = useState(new Date().toISOString().split('T')[0]);
   const [sueldoAnual, setSueldoAnual] = useState('');
   const [franjaSalarial, setFranjaSalarial] = useState('');
   const [tipoTrabajo, setTipoTrabajo] = useState('');
@@ -94,7 +93,7 @@ export default function CrearCandidatura() {
       return;
     }
     const { error: dbError } = await supabase.from('candidaturas').insert([
-      { user_id: user.id, puesto, empresa, empresa_url: empresaUrl, estado, fecha, fecha_actualizacion: new Date().toISOString().split('T')[0], salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion, origen }
+      { user_id: user.id, puesto, empresa, empresa_url: empresaUrl, estado, fecha, salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion, origen }
     ]);
     if (dbError) {
       await MySwal.fire({

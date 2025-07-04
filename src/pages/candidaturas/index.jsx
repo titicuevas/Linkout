@@ -22,8 +22,6 @@ export default function CandidaturasIndex() {
   const totalPages = Math.ceil(candidaturas.length / pageSize);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
-  const [filtroFranja, setFiltroFranja] = useState('');
-  const [filtroTipo, setFiltroTipo] = useState('');
   const [tooltipFeedback, setTooltipFeedback] = useState({ show: false, text: '', x: 0, y: 0 });
 
   // Filtros visuales mejorados
@@ -49,9 +47,7 @@ export default function CandidaturasIndex() {
   // Filtrado insensible a mayúsculas/minúsculas y espacios
   const candidaturasFiltradas = candidaturas.filter(c =>
     (filtroEstado === '' || (c.estado || '').toLowerCase().trim() === filtroEstado.toLowerCase().trim()) &&
-    (filtroOrigen === '' || (c.origen || '').toLowerCase().trim() === filtroOrigen.toLowerCase().trim()) &&
-    (filtroFranja === '' || (c.franja_salarial || '') === filtroFranja) &&
-    (filtroTipo === '' || (c.tipo_trabajo || '') === filtroTipo)
+    (filtroOrigen === '' || (c.origen || '').toLowerCase().trim() === filtroOrigen.toLowerCase().trim())
   );
 
   // Ordenar el array filtrado
@@ -146,29 +142,33 @@ export default function CandidaturasIndex() {
   return (
     <Layout user={user} onLogout={handleLogout}>
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario de Candidaturas</h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in animate-title-in">Mi Diario de Candidaturas</h1>
         <div className="text-gray-400 text-center mb-8 text-lg animate-fade-in">Seguimiento completo de todos tus procesos de selección.</div>
         
         {/* Contador y estadísticas */}
         {!loading && candidaturas.length > 0 && (
           <div className="w-full max-w-6xl mx-auto mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
-            <div className="bg-gradient-to-br from-blue-900/80 to-blue-800/60 rounded-xl p-4 text-center border border-blue-700">
+            <div className="bg-gradient-to-br from-blue-900/80 to-blue-800/60 rounded-xl p-4 text-center border border-blue-700 hover:scale-105 shadow-2xl transition-all">
+              <div className="text-3xl mb-1">📋</div>
               <div className="text-2xl font-bold text-blue-300">{candidaturas.length}</div>
               <div className="text-sm text-blue-200">Total Candidaturas</div>
             </div>
-            <div className="bg-gradient-to-br from-green-900/80 to-green-800/60 rounded-xl p-4 text-center border border-green-700">
+            <div className="bg-gradient-to-br from-green-900/80 to-green-800/60 rounded-xl p-4 text-center border border-green-700 hover:scale-105 shadow-2xl transition-all">
+              <div className="text-3xl mb-1">🟢</div>
               <div className="text-2xl font-bold text-green-300">
                 {candidaturas.filter(c => c.estado === 'contratacion').length}
               </div>
               <div className="text-sm text-green-200">Contrataciones</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-900/80 to-purple-800/60 rounded-xl p-4 text-center border border-purple-700">
+            <div className="bg-gradient-to-br from-purple-900/80 to-purple-800/60 rounded-xl p-4 text-center border border-purple-700 hover:scale-105 shadow-2xl transition-all">
+              <div className="text-3xl mb-1">🟣</div>
               <div className="text-2xl font-bold text-purple-300">
                 {candidaturas.filter(c => c.estado !== 'rechazado' && c.estado !== 'contratacion').length}
               </div>
               <div className="text-sm text-purple-200">En Proceso</div>
             </div>
-            <div className="bg-gradient-to-br from-red-900/80 to-red-800/60 rounded-xl p-4 text-center border border-red-700">
+            <div className="bg-gradient-to-br from-red-900/80 to-red-800/60 rounded-xl p-4 text-center border border-red-700 hover:scale-105 shadow-2xl transition-all">
+              <div className="text-3xl mb-1">❌</div>
               <div className="text-2xl font-bold text-red-300">
                 {candidaturas.filter(c => c.estado === 'rechazado').length}
               </div>
@@ -183,7 +183,7 @@ export default function CandidaturasIndex() {
               <button
                 key={e.value}
                 onClick={() => setFiltroEstado(e.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white ${e.value === filtroEstado ? 'animate-bounce' : ''}`}
               >
                 {e.label}
               </button>
@@ -194,19 +194,11 @@ export default function CandidaturasIndex() {
               <button
                 key={o.value}
                 onClick={() => setFiltroOrigen(o.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white ${o.value === filtroOrigen ? 'animate-bounce' : ''}`}
               >
                 {o.label}
               </button>
             ))}
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            <select value={filtroFranja} onChange={e => setFiltroFranja(e.target.value)} className="px-4 py-2 rounded-full border-2 font-bold text-sm bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white">
-              {['< 15.000 €','15.000 - 20.000 €','20.000 - 25.000 €','25.000 - 30.000 €','30.000 - 40.000 €','> 40.000 €'].map(f => <option key={f} value={f}>{f}</option>)}
-            </select>
-            <select value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)} className="px-4 py-2 rounded-full border-2 font-bold text-sm bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white">
-              {['Presencial','Remoto','Híbrido'].map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
           </div>
           <button
             onClick={() => navigate('/candidaturas/estadisticas')}
@@ -259,7 +251,7 @@ export default function CandidaturasIndex() {
                     </tr>
                   ) : (
                     paginatedCandidaturas.map((c, i) => (
-                      <tr key={c.id} className={`hover:bg-neutral-800/80 transition-all border-b border-neutral-800 ${i % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'}`}>
+                      <tr key={c.id} className={`hover:bg-neutral-800/80 transition-all border-b border-neutral-800 ${i % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'} animate-fade-in-row animate-pop`}>
                         <td className="px-2 py-3 text-center">
                           {c.estado === 'rechazado' && (
                             <button title="Ir a ejercicios" className="text-yellow-400 text-xl hover:scale-125 transition-transform" onClick={() => navigate('/retos/Fisico')} aria-label="Ir a ejercicios">⚡</button>
@@ -267,7 +259,7 @@ export default function CandidaturasIndex() {
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{c.puesto}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">{c.empresa}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-blue-400 underline">
+                        <td className="px-4 py-3 whitespace-nowrap text-blue-400 underline link-underline-anim">
                           {c.empresa_url ? <a href={c.empresa_url} target="_blank" rel="noopener noreferrer" title="Ver web de la empresa">🌐</a> : <span className="text-gray-500">-</span>}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap font-bold text-base">
@@ -388,6 +380,41 @@ export default function CandidaturasIndex() {
           .animate-bounce-slow {
             animation: bounce-slow 1.8s infinite cubic-bezier(.68,-0.55,.27,1.55);
             display: inline-block;
+          }
+          .animate-fade-in-row { animation: fade-in 0.7s; }
+          .animate-title-in { animation: fade-in 0.7s; }
+          .link-underline-anim { text-decoration: underline; }
+          .animate-pop { animation: pop 0.5s; }
+          @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+          }
+          .animate-ripple {
+            animation: ripple 0.5s;
+          }
+          @keyframes ripple {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+          }
+          .animate-glow {
+            animation: glow 1s infinite;
+          }
+          @keyframes glow {
+            0% { text-shadow: 0 0 5px #fff; }
+            50% { text-shadow: 0 0 10px #fff; }
+            100% { text-shadow: 0 0 5px #fff; }
+          }
+          .animate-shake {
+            animation: shake 0.5s infinite;
+          }
+          @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(5px); }
           }
         `}</style>
       </div>
