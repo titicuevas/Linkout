@@ -365,56 +365,6 @@ export default function CandidaturasIndex() {
             </button>
           </Modal>
         )}
-        <style>{`
-          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-          .animate-fade-in { animation: fade-in 0.7s; }
-          @keyframes bounce-slow {
-            0%, 100% { transform: translateY(0); }
-            20% { transform: translateY(-18px); }
-            40% { transform: translateY(0); }
-            60% { transform: translateY(-8px); }
-            80% { transform: translateY(0); }
-          }
-          .animate-bounce-slow {
-            animation: bounce-slow 1.8s infinite cubic-bezier(.68,-0.55,.27,1.55);
-            display: inline-block;
-          }
-          .animate-fade-in-row { animation: fade-in 0.7s; }
-          .animate-title-in { animation: fade-in 0.7s; }
-          .link-underline-anim { text-decoration: underline; }
-          .animate-pop { animation: pop 0.5s; }
-          @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-          }
-          .animate-ripple {
-            animation: ripple 0.5s;
-          }
-          @keyframes ripple {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1); }
-          }
-          .animate-glow {
-            animation: glow 1s infinite;
-          }
-          @keyframes glow {
-            0% { text-shadow: 0 0 5px #fff; }
-            50% { text-shadow: 0 0 10px #fff; }
-            100% { text-shadow: 0 0 5px #fff; }
-          }
-          .animate-shake {
-            animation: shake 0.5s infinite;
-          }
-          @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            50% { transform: translateX(5px); }
-            75% { transform: translateX(-5px); }
-            100% { transform: translateX(5px); }
-          }
-        `}</style>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         {selectedCandidatura && (
