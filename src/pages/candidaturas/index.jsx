@@ -25,7 +25,6 @@ export default function CandidaturasIndex() {
   const [filtroFranja, setFiltroFranja] = useState('');
   const [filtroTipo, setFiltroTipo] = useState('');
   const [tooltipFeedback, setTooltipFeedback] = useState({ show: false, text: '', x: 0, y: 0 });
-  const [vistaCompacta, setVistaCompacta] = useState(true);
 
   // Filtros visuales mejorados
   const ESTADOS = [
@@ -184,7 +183,7 @@ export default function CandidaturasIndex() {
               <button
                 key={e.value}
                 onClick={() => setFiltroEstado(e.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroEstado === e.value ? 'bg-pink-600 text-white border-pink-600 scale-105' : 'bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white'}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white`}
               >
                 {e.label}
               </button>
@@ -195,7 +194,7 @@ export default function CandidaturasIndex() {
               <button
                 key={o.value}
                 onClick={() => setFiltroOrigen(o.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-md ${filtroOrigen === o.value ? 'bg-blue-600 text-white border-blue-600 scale-105' : 'bg-neutral-800 text-blue-200 border-blue-400 hover:bg-blue-700 hover:text-white'}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white`}
               >
                 {o.label}
               </button>
@@ -216,7 +215,6 @@ export default function CandidaturasIndex() {
           >
             <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
           </button>
-          <button onClick={() => setVistaCompacta(v => !v)} className="px-6 py-3 bg-neutral-700 hover:bg-pink-600 text-white rounded-full font-bold shadow-lg text-base transition-all border-2 border-pink-400" aria-label="Alternar vista compacta">{vistaCompacta ? 'Vista completa' : 'Vista compacta'}</button>
         </div>
         <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
           {loading ? (
@@ -227,7 +225,7 @@ export default function CandidaturasIndex() {
           ) : (
             <div className="overflow-x-auto w-full max-w-6xl mx-auto mb-8 animate-fade-in">
               <table className="min-w-full divide-y divide-gray-700 bg-neutral-900 rounded-xl shadow-xl">
-                 <thead className="sticky top-0 z-20 bg-neutral-900/95 backdrop-blur border-b border-neutral-700">
+                 <thead className="sticky top-0 z-20 bg-neutral-900/95 backdrop-blur border-b border-neutral-700 shadow-lg">
                   <tr>
                     <th className="px-2 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">⚡</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Puesto</th>
@@ -235,7 +233,7 @@ export default function CandidaturasIndex() {
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Web</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Estado</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Origen</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')}>Fecha {sortBy === 'fecha' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')} title="Ordenar por fecha">Fecha {sortBy === 'fecha' && (sortDir === 'asc' ? '▲' : '▼')}</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider" title="Se actualiza al editar la candidatura o su estado">Actualizada</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Salario</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Franja</th>
@@ -260,8 +258,8 @@ export default function CandidaturasIndex() {
                       </td>
                     </tr>
                   ) : (
-                    paginatedCandidaturas.map((c) => (
-                      <tr key={c.id} className="hover:bg-neutral-800/80 transition-all border-b border-neutral-800 group">
+                    paginatedCandidaturas.map((c, i) => (
+                      <tr key={c.id} className={`hover:bg-neutral-800/80 transition-all border-b border-neutral-800 ${i % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'}`}>
                         <td className="px-2 py-3 text-center">
                           {c.estado === 'rechazado' && (
                             <button title="Ir a ejercicios" className="text-yellow-400 text-xl hover:scale-125 transition-transform" onClick={() => navigate('/retos/Fisico')} aria-label="Ir a ejercicios">⚡</button>
