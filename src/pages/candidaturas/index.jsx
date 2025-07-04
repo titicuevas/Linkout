@@ -259,17 +259,17 @@ export default function CandidaturasIndex() {
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{c.puesto}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">{c.empresa}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-blue-400 underline link-underline-anim">
+                        <td className="px-4 py-3 whitespace-nowrap text-blue-400 hover:underline hover:decoration-pink-400">
                           {c.empresa_url ? <a href={c.empresa_url} target="_blank" rel="noopener noreferrer" title="Ver web de la empresa">🌐</a> : <span className="text-gray-500">-</span>}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap font-bold text-base">
                           <span className={
-                            c.estado === 'contratacion' ? 'text-green-400' :
-                            c.estado === 'rechazado' ? 'text-pink-400' :
-                            c.estado === 'entrevista_contacto' ? 'text-blue-400' :
-                            c.estado === 'prueba_tecnica' ? 'text-orange-400' :
-                            c.estado === 'segunda_entrevista' ? 'text-violet-400' :
-                            c.estado === 'entrevista_final' ? 'text-fuchsia-400' :
+                            c.estado === 'contratacion' ? 'text-green-400 font-bold' :
+                            c.estado === 'rechazado' ? 'text-red-500 font-bold' :
+                            c.estado === 'entrevista_contacto' ? 'text-blue-400 font-bold' :
+                            c.estado === 'prueba_tecnica' ? 'text-orange-400 font-bold' :
+                            c.estado === 'segunda_entrevista' ? 'text-violet-400 font-bold' :
+                            c.estado === 'entrevista_final' ? 'text-fuchsia-400 font-bold' :
                             'text-gray-300'
                           }>
                             {c.estado}
@@ -299,7 +299,7 @@ export default function CandidaturasIndex() {
                             <span className="text-gray-500">-</span>
                           )}
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap flex gap-2">
+                        <td className="px-4 py-3 whitespace-nowrap flex gap-2 items-center h-full justify-center">
                           <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
                           <button onClick={() => handleDeleteClick(c.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-bold text-xs" title="Borrar candidatura">Borrar</button>
                         </td>
