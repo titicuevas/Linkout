@@ -142,32 +142,32 @@ export default function CandidaturasIndex() {
   return (
     <Layout user={user} onLogout={handleLogout}>
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in animate-title-in">Mi Diario de Candidaturas</h1>
-        <div className="text-gray-400 text-center mb-8 text-lg animate-fade-in">Seguimiento completo de todos tus procesos de selección.</div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Mi Diario de Candidaturas</h1>
+        <div className="text-gray-400 text-center mb-8 text-lg">Seguimiento completo de todos tus procesos de selección.</div>
         
         {/* Contador y estadísticas */}
         {!loading && candidaturas.length > 0 && (
-          <div className="w-full max-w-6xl mx-auto mb-6 grid grid-cols-2 md:grid-cols-4 gap-4 animate-fade-in">
-            <div className="bg-gradient-to-br from-blue-900/80 to-blue-800/60 rounded-xl p-4 text-center border border-blue-700 hover:scale-105 shadow-2xl transition-all">
+          <div className="w-full max-w-6xl mx-auto mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-br from-blue-900/80 to-blue-800/60 rounded-xl p-4 text-center border border-blue-700 shadow-2xl">
               <div className="text-3xl mb-1">📋</div>
               <div className="text-2xl font-bold text-blue-300">{candidaturas.length}</div>
               <div className="text-sm text-blue-200">Total Candidaturas</div>
             </div>
-            <div className="bg-gradient-to-br from-green-900/80 to-green-800/60 rounded-xl p-4 text-center border border-green-700 hover:scale-105 shadow-2xl transition-all">
+            <div className="bg-gradient-to-br from-green-900/80 to-green-800/60 rounded-xl p-4 text-center border border-green-700 shadow-2xl">
               <div className="text-3xl mb-1">🟢</div>
               <div className="text-2xl font-bold text-green-300">
                 {candidaturas.filter(c => c.estado === 'contratacion').length}
               </div>
               <div className="text-sm text-green-200">Contrataciones</div>
             </div>
-            <div className="bg-gradient-to-br from-purple-900/80 to-purple-800/60 rounded-xl p-4 text-center border border-purple-700 hover:scale-105 shadow-2xl transition-all">
+            <div className="bg-gradient-to-br from-purple-900/80 to-purple-800/60 rounded-xl p-4 text-center border border-purple-700 shadow-2xl">
               <div className="text-3xl mb-1">🟣</div>
               <div className="text-2xl font-bold text-purple-300">
                 {candidaturas.filter(c => c.estado !== 'rechazado' && c.estado !== 'contratacion').length}
               </div>
               <div className="text-sm text-purple-200">En Proceso</div>
             </div>
-            <div className="bg-gradient-to-br from-red-900/80 to-red-800/60 rounded-xl p-4 text-center border border-red-700 hover:scale-105 shadow-2xl transition-all">
+            <div className="bg-gradient-to-br from-red-900/80 to-red-800/60 rounded-xl p-4 text-center border border-red-700 shadow-2xl">
               <div className="text-3xl mb-1">❌</div>
               <div className="text-2xl font-bold text-red-300">
                 {candidaturas.filter(c => c.estado === 'rechazado').length}
@@ -177,13 +177,13 @@ export default function CandidaturasIndex() {
           </div>
         )}
         {/* Filtros arriba de la tabla */}
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full max-w-6xl mx-auto animate-fade-in">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4 w-full max-w-6xl mx-auto">
           <div className="flex gap-2 flex-wrap">
             {ESTADOS.map(e => (
               <button
                 key={e.value}
                 onClick={() => setFiltroEstado(e.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white ${e.value === filtroEstado ? 'animate-bounce' : ''}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm shadow-lg focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 ${e.value === filtroEstado ? 'bg-pink-600 text-white' : ''}`}
               >
                 {e.label}
               </button>
@@ -194,7 +194,7 @@ export default function CandidaturasIndex() {
               <button
                 key={o.value}
                 onClick={() => setFiltroOrigen(o.value)}
-                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm transition-all shadow-lg hover:scale-105 active:scale-95 focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-600 hover:text-white ${o.value === filtroOrigen ? 'animate-bounce' : ''}`}
+                className={`flex items-center px-4 py-2 rounded-full border-2 font-bold text-sm shadow-lg focus:ring-2 focus:ring-pink-400 bg-neutral-800 text-pink-200 border-pink-400 ${o.value === filtroOrigen ? 'bg-pink-600 text-white' : ''}`}
               >
                 {o.label}
               </button>
@@ -202,20 +202,20 @@ export default function CandidaturasIndex() {
           </div>
           <button
             onClick={() => navigate('/candidaturas/estadisticas')}
-            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 hover:from-pink-500 hover:to-blue-600 text-white rounded-full shadow-2xl font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide hover:text-yellow-200 focus:text-yellow-200"
+            className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 via-indigo-500 to-pink-500 text-white rounded-full shadow-2xl font-extrabold text-lg border-2 border-white outline-none focus:ring-4 focus:ring-pink-200 drop-shadow-lg tracking-wide"
             style={{boxShadow: '0 6px 32px 0 rgba(37,99,235,0.18)'}}
           >
             <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
           </button>
         </div>
-        <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
+        <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16 animate-pulse">
-              <svg className="w-12 h-12 text-blue-400 animate-spin mb-4" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+            <div className="flex flex-col items-center justify-center py-16">
+              <svg className="w-12 h-12 text-blue-400 mb-4" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
               <div className="text-lg text-gray-300 font-bold mb-2">Cargando...</div>
             </div>
           ) : (
-            <div className="overflow-x-auto w-full max-w-6xl mx-auto mb-8 animate-fade-in">
+            <div className="overflow-x-auto w-full max-w-6xl mx-auto mb-8">
               <table className="min-w-full divide-y divide-gray-700 bg-neutral-900 rounded-xl shadow-xl">
                  <thead className="sticky top-0 z-20 bg-neutral-900/95 backdrop-blur border-b border-neutral-700 shadow-lg">
                   <tr>
@@ -238,10 +238,10 @@ export default function CandidaturasIndex() {
                     <tr>
                       <td colSpan={14} className="py-12 text-center text-gray-400 text-lg">
                         <div className="flex flex-col items-center gap-2">
-                          <span className="text-5xl animate-bounce-slow">😕</span>
+                          <span className="text-5xl">😕</span>
                           <span>No tienes candidaturas registradas.</span>
                           <span className="text-sm text-gray-500">¡Empieza a crear tu primera candidatura!</span>
-                          <button onClick={() => navigate('/candidaturas/create')} className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-base transition-all">
+                          <button onClick={() => navigate('/candidaturas/create')} className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full font-bold shadow-lg text-base">
                             + Crear candidatura
                           </button>
                         </div>
@@ -249,7 +249,7 @@ export default function CandidaturasIndex() {
                     </tr>
                   ) : (
                     paginatedCandidaturas.map((c, i) => (
-                      <tr key={c.id} className={`hover:bg-neutral-800/80 transition-all border-b border-neutral-800 ${i % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'} animate-fade-in-row animate-pop`}>
+                      <tr key={c.id} className={`border-b border-neutral-800 ${i % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'}`}>
                         <td className="px-2 py-3 text-center">
                           {c.estado === 'rechazado' && (
                             <button title="Ir a ejercicios" className="text-yellow-400 text-xl" onClick={() => navigate('/retos/Fisico')} aria-label="Ir a ejercicios">⚡</button>
@@ -277,7 +277,7 @@ export default function CandidaturasIndex() {
                         <td className="px-4 py-3 whitespace-nowrap text-gray-400 relative group" title="Se actualiza al editar la candidatura o su estado">
                           {c.fecha_actualizacion ? new Date(c.fecha_actualizacion).toLocaleDateString() : '-'}
                           {c.historial_cambios && c.historial_cambios.length > 0 && (
-                            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-neutral-800 text-xs text-gray-200 rounded shadow-lg p-2 z-30 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-200">
+                            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-neutral-800 text-xs text-gray-200 rounded shadow-lg p-2 z-30 opacity-0 group-hover:opacity-100 pointer-events-none">
                               <div className="font-bold mb-1 text-pink-300">Historial de cambios:</div>
                               <ul>
                                 {c.historial_cambios.map((h, i) => <li key={i}>{h}</li>)}
@@ -329,26 +329,26 @@ export default function CandidaturasIndex() {
         {/* Botón flotante para crear candidatura (solo escritorio) */}
         <button
           onClick={() => navigate('/candidaturas/create')}
-          className="hidden sm:flex fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-2xl text-lg transition-all animate-fade-in items-center gap-2"
+          className="hidden sm:flex fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 text-white rounded-full font-bold shadow-2xl text-lg items-center gap-2"
         >
           <PlusIcon className="w-6 h-6" />
           Crear candidatura
         </button>
         {/* Botón fijo en la parte inferior solo en móvil */}
-        <div className="sm:hidden fixed bottom-0 left-0 w-full z-50 bg-neutral-900 border-t border-neutral-800 flex justify-center items-center py-3 animate-fade-in">
+        <div className="sm:hidden fixed bottom-0 left-0 w-full z-50 bg-neutral-900 border-t border-neutral-800 flex justify-center items-center py-3">
           <button
             onClick={() => navigate('/candidaturas/create')}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-base transition-all"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full font-bold shadow-lg text-base"
           >
             <PlusIcon className="w-6 h-6" />
             Crear candidatura
           </button>
         </div>
         {/* Botón volver al inicio (oculto en móvil) */}
-        <div className="hidden sm:flex justify-center mt-8 animate-fade-in">
+        <div className="hidden sm:flex justify-center mt-8">
           <button
             onClick={() => navigate('/index')}
-            className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-lg transition-all"
+            className="bg-neutral-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-lg"
           >
             Volver al inicio
           </button>
@@ -360,7 +360,7 @@ export default function CandidaturasIndex() {
             <div className="text-blue-200 text-base text-center whitespace-pre-line max-w-sm bg-neutral-800 p-4 rounded-lg border border-neutral-700">
               {tooltipFeedback.text}
             </div>
-            <button onClick={() => setTooltipFeedback({ show: false, text: '' })} className="mt-4 px-6 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-full font-bold shadow-lg text-base transition-all">
+            <button onClick={() => setTooltipFeedback({ show: false, text: '' })} className="mt-4 px-6 py-2 bg-pink-600 text-white rounded-full font-bold shadow-lg text-base">
               Cerrar
             </button>
           </Modal>
@@ -369,7 +369,7 @@ export default function CandidaturasIndex() {
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>
         {selectedCandidatura && (
           <form
-            className="flex flex-col gap-5 min-w-[320px] animate-fade-in"
+            className="flex flex-col gap-5 min-w-[320px]"
             onSubmit={async (e) => {
               e.preventDefault();
               const form = e.target;
@@ -413,7 +413,7 @@ export default function CandidaturasIndex() {
                 <PencilSquareIcon className="w-6 h-6 text-blue-500" />
                 <h2 className="text-xl font-bold text-center">Editar candidatura</h2>
               </div>
-              <button type="button" className="ml-2 p-1 rounded hover:bg-neutral-800 transition" onClick={() => setModalOpen(false)}>
+              <button type="button" className="ml-2 p-1 rounded" onClick={() => setModalOpen(false)}>
                 <XMarkIcon className="w-6 h-6 text-gray-400" />
               </button>
             </div>
@@ -544,7 +544,7 @@ export default function CandidaturasIndex() {
             <div className="flex gap-2 justify-end mt-2">
               <button
                 type="button"
-                className="bg-neutral-700 hover:bg-neutral-600 text-white font-semibold py-2 px-4 rounded flex items-center gap-2"
+                className="bg-neutral-700 text-white font-semibold py-2 px-4 rounded flex items-center gap-2"
                 onClick={() => setModalOpen(false)}
               >
                 <XMarkIcon className="w-5 h-5" />
@@ -552,7 +552,7 @@ export default function CandidaturasIndex() {
               </button>
               <button
                 type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded flex items-center gap-2"
+                className="bg-blue-600 text-white font-semibold py-2 px-4 rounded flex items-center gap-2"
               >
                 <CheckIcon className="w-5 h-5" />
                 Guardar cambios
