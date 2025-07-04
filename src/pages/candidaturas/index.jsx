@@ -252,7 +252,7 @@ export default function CandidaturasIndex() {
                       <tr key={c.id} className={`hover:bg-neutral-800/80 transition-all border-b border-neutral-800 ${i % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'} animate-fade-in-row animate-pop`}>
                         <td className="px-2 py-3 text-center">
                           {c.estado === 'rechazado' && (
-                            <button title="Ir a ejercicios" className="text-yellow-400 text-xl hover:scale-125 transition-transform" onClick={() => navigate('/retos/Fisico')} aria-label="Ir a ejercicios">⚡</button>
+                            <button title="Ir a ejercicios" className="text-yellow-400 text-xl" onClick={() => navigate('/retos/Fisico')} aria-label="Ir a ejercicios">⚡</button>
                           )}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{c.puesto}</td>
@@ -291,10 +291,10 @@ export default function CandidaturasIndex() {
                         <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.ubicacion || '-'}</td>
                         <td className="px-4 py-3 whitespace-nowrap flex gap-2 items-center h-full justify-center">
                           {c.feedback && (
-                            <button onClick={() => setTooltipFeedback({ show: true, text: c.feedback })} className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
+                            <button onClick={() => setTooltipFeedback({ show: true, text: c.feedback })} className="bg-purple-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
                           )}
-                          <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
-                          <button onClick={() => handleDeleteClick(c.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-bold text-xs" title="Borrar candidatura">Borrar</button>
+                          <button onClick={() => handleEditClick(c)} className="bg-blue-600 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
+                          <button onClick={() => handleDeleteClick(c.id)} className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xs" title="Borrar candidatura">Borrar</button>
                         </td>
                       </tr>
                     ))
@@ -304,10 +304,12 @@ export default function CandidaturasIndex() {
             </div>
           )}
         </div>
-        <div className="text-gray-400 text-sm text-center mb-2">Mostrando {currentPage*pageSize+1}-{Math.min((currentPage+1)*pageSize, candidaturas.length)} de {candidaturas.length}</div>
-        <select value={pageSize} onChange={e => { setCurrentPage(0); setPageSize(Number(e.target.value)); }} className="ml-4 px-2 py-1 rounded bg-neutral-800 text-pink-200 border border-pink-400">
-          {[4, 10, 20, 50].map(n => <option key={n} value={n}>{n} por página</option>)}
-        </select>
+        <div className="flex items-center justify-between w-full max-w-xs mx-auto mb-2">
+          <span className="text-gray-400 text-sm">Mostrando {currentPage*pageSize+1}-{Math.min((currentPage+1)*pageSize, candidaturas.length)} de {candidaturas.length}</span>
+          <select value={pageSize} onChange={e => { setCurrentPage(0); setPageSize(Number(e.target.value)); }} className="px-2 py-1 rounded bg-neutral-800 text-gray-300 border border-neutral-700 text-sm ml-2">
+            {[4, 10, 20, 50].map(n => <option key={n} value={n}>{n} por página</option>)}
+          </select>
+        </div>
         <ReactPaginate
           previousLabel={'‹'}
           nextLabel={'›'}
