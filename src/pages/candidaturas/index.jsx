@@ -142,11 +142,6 @@ export default function CandidaturasIndex() {
     setCurrentPage(event.selected);
   };
 
-  const exportarCSV = () => {
-    // Implementa la lógica para exportar las candidaturas filtradas a CSV
-    console.log('Exportar a CSV');
-  };
-
   if (!user) return null;
 
   return (
@@ -208,11 +203,9 @@ export default function CandidaturasIndex() {
           </div>
           <div className="flex gap-2 flex-wrap">
             <select value={filtroFranja} onChange={e => setFiltroFranja(e.target.value)} className="px-4 py-2 rounded-full border-2 font-bold text-sm bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white">
-              <option value="">Todas las franjas</option>
               {['< 15.000 €','15.000 - 20.000 €','20.000 - 25.000 €','25.000 - 30.000 €','30.000 - 40.000 €','> 40.000 €'].map(f => <option key={f} value={f}>{f}</option>)}
             </select>
             <select value={filtroTipo} onChange={e => setFiltroTipo(e.target.value)} className="px-4 py-2 rounded-full border-2 font-bold text-sm bg-neutral-800 text-pink-200 border-pink-400 hover:bg-pink-700 hover:text-white">
-              <option value="">Todos los tipos</option>
               {['Presencial','Remoto','Híbrido'].map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
@@ -223,7 +216,6 @@ export default function CandidaturasIndex() {
           >
             <ChartBarIcon className="w-7 h-7" /> Ver estadísticas
           </button>
-          <button onClick={exportarCSV} className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-full font-bold shadow-lg text-base transition-all border-2 border-green-400" aria-label="Exportar a CSV">Exportar CSV</button>
           <button onClick={() => setVistaCompacta(v => !v)} className="px-6 py-3 bg-neutral-700 hover:bg-pink-600 text-white rounded-full font-bold shadow-lg text-base transition-all border-2 border-pink-400" aria-label="Alternar vista compacta">{vistaCompacta ? 'Vista completa' : 'Vista compacta'}</button>
         </div>
         <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 overflow-x-auto w-full max-w-6xl mx-auto p-2 sm:p-6 animate-fade-in">
@@ -258,7 +250,7 @@ export default function CandidaturasIndex() {
                     <tr>
                       <td colSpan={14} className="py-12 text-center text-gray-400 text-lg">
                         <div className="flex flex-col items-center gap-2">
-                          <span className="text-5xl">😕</span>
+                          <span className="text-5xl animate-bounce-slow">😕</span>
                           <span>No tienes candidaturas registradas.</span>
                           <span className="text-sm text-gray-500">¡Empieza a crear tu primera candidatura!</span>
                           <button onClick={() => navigate('/candidaturas/create')} className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold shadow-lg text-base transition-all">
@@ -271,7 +263,9 @@ export default function CandidaturasIndex() {
                     paginatedCandidaturas.map((c) => (
                       <tr key={c.id} className="hover:bg-neutral-800/80 transition-all border-b border-neutral-800 group">
                         <td className="px-2 py-3 text-center">
-                          {c.estado === 'rechazado' && <span title="Descartado, puedes hacer ejercicio" className="text-yellow-400 text-xl">⚡</span>}
+                          {c.estado === 'rechazado' && (
+                            <button title="Ir a ejercicios" className="text-yellow-400 text-xl hover:scale-125 transition-transform" onClick={() => navigate('/retos/Fisico')} aria-label="Ir a ejercicios">⚡</button>
+                          )}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{c.puesto}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">{c.empresa}</td>
@@ -328,20 +322,20 @@ export default function CandidaturasIndex() {
           )}
         </div>
         <ReactPaginate
-          previousLabel={'<'}
-          nextLabel={'>'}
+          previousLabel={'‹'}
+          nextLabel={'›'}
           breakLabel={'...'}
           pageCount={totalPages}
           marginPagesDisplayed={1}
           pageRangeDisplayed={2}
           onPageChange={handlePageClick}
-          containerClassName={'flex justify-center items-center gap-3 mt-8 animate-fade-in'}
-          pageClassName={'text-lg px-6 py-4 rounded-full bg-neutral-800 hover:bg-pink-500 hover:text-white text-pink-200 font-extrabold border-2 border-pink-400 shadow-md transition-all duration-200 cursor-pointer scale-100 hover:scale-110'}
-          activeClassName={'!bg-pink-600 !text-white !border-pink-600 !shadow-lg scale-110 z-10'}
-          previousClassName={'text-lg px-5 py-4 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer'}
-          nextClassName={'text-lg px-5 py-4 rounded-full bg-neutral-800 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-2 border-blue-400 shadow-md transition-all duration-200 cursor-pointer'}
-          disabledClassName={'bg-neutral-700 text-gray-400 opacity-60 cursor-not-allowed'}
-          breakClassName={'text-lg px-5 py-4 rounded-full bg-neutral-700 text-gray-300 font-bold border-2 border-neutral-700 shadow-md'}
+          containerClassName={'flex justify-center items-center gap-4 mt-10 animate-fade-in'}
+          pageClassName={'text-lg px-7 py-4 rounded-full bg-neutral-900 hover:bg-pink-500 hover:text-white text-pink-300 font-extrabold border-4 border-pink-400 shadow-lg transition-all duration-200 cursor-pointer scale-100 hover:scale-110'}
+          activeClassName={'!bg-pink-600 !text-white !border-pink-600 !shadow-2xl scale-110 z-10'}
+          previousClassName={'text-lg px-6 py-4 rounded-full bg-neutral-900 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-4 border-blue-400 shadow-lg transition-all duration-200 cursor-pointer'}
+          nextClassName={'text-lg px-6 py-4 rounded-full bg-neutral-900 hover:bg-blue-500 hover:text-white text-blue-200 font-bold border-4 border-blue-400 shadow-lg transition-all duration-200 cursor-pointer'}
+          disabledClassName={'bg-neutral-800 text-gray-400 opacity-60 cursor-not-allowed'}
+          breakClassName={'text-lg px-6 py-4 rounded-full bg-neutral-800 text-gray-300 font-bold border-4 border-neutral-700 shadow-lg'}
           forcePage={currentPage}
         />
         {/* Botón flotante para crear candidatura (solo escritorio) */}
@@ -386,6 +380,17 @@ export default function CandidaturasIndex() {
         <style>{`
           @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
           .animate-fade-in { animation: fade-in 0.7s; }
+          @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            20% { transform: translateY(-18px); }
+            40% { transform: translateY(0); }
+            60% { transform: translateY(-8px); }
+            80% { transform: translateY(0); }
+          }
+          .animate-bounce-slow {
+            animation: bounce-slow 1.8s infinite cubic-bezier(.68,-0.55,.27,1.55);
+            display: inline-block;
+          }
         `}</style>
       </div>
       <Modal isOpen={modalOpen} onClose={() => setModalOpen(false)}>

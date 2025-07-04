@@ -183,18 +183,6 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase + ' text-sm text-gray-400'}>Fecha de última actualización</label>
-              <input
-                type="date"
-                value={fechaActualizacion}
-                onChange={e => setFechaActualizacion(e.target.value)}
-                className={inputBase + ' w-full text-sm'}
-                max={maxDate}
-                readOnly
-              />
-              <span className="text-xs text-gray-500 mt-1">Se actualiza automáticamente al cambiar el estado</span>
-            </div>
-            <div>
               <label className={labelBase + ' text-lg'}>Sueldo anual (opcional)</label>
               <input
                 type="number"
