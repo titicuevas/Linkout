@@ -18,7 +18,7 @@ export default function CandidaturasIndex() {
   const [sortBy, setSortBy] = useState('fecha');
   const [sortDir, setSortDir] = useState('desc');
   const [currentPage, setCurrentPage] = useState(0);
-  const pageSize = 4;
+  const [pageSize, setPageSize] = useState(4);
   const totalPages = Math.ceil(candidaturas.length / pageSize);
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
@@ -220,18 +220,16 @@ export default function CandidaturasIndex() {
                  <thead className="sticky top-0 z-20 bg-neutral-900/95 backdrop-blur border-b border-neutral-700 shadow-lg">
                   <tr>
                     <th className="px-2 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">⚡</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Puesto</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Empresa</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Web</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Estado</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Origen</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('puesto')} title="Ordenar por puesto">Puesto {sortBy === 'puesto' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('empresa')} title="Ordenar por empresa">Empresa {sortBy === 'empresa' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('estado')} title="Ordenar por estado">Estado {sortBy === 'estado' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('origen')} title="Ordenar por origen">Origen {sortBy === 'origen' && (sortDir === 'asc' ? '▲' : '▼')}</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')} title="Ordenar por fecha">Fecha {sortBy === 'fecha' && (sortDir === 'asc' ? '▲' : '▼')}</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider" title="Se actualiza al editar la candidatura o su estado">Actualizada</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Salario</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Franja</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Tipo</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Ubicación</th>
-                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Feedback</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('salario_anual')} title="Ordenar por salario anual">Salario {sortBy === 'salario_anual' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('franja_salarial')} title="Ordenar por franja salarial">Franja {sortBy === 'franja_salarial' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('tipo_trabajo')} title="Ordenar por tipo de trabajo">Tipo {sortBy === 'tipo_trabajo' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+                    <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('ubicacion')} title="Ordenar por ubicación">Ubicación {sortBy === 'ubicacion' && (sortDir === 'asc' ? '▲' : '▼')}</th>
                     <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
                   </tr>
                 </thead>
@@ -259,9 +257,6 @@ export default function CandidaturasIndex() {
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{c.puesto}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">{c.empresa}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-blue-400 hover:underline hover:decoration-pink-400">
-                          {c.empresa_url ? <a href={c.empresa_url} target="_blank" rel="noopener noreferrer" title="Ver web de la empresa">🌐</a> : <span className="text-gray-500">-</span>}
-                        </td>
                         <td className="px-4 py-3 whitespace-nowrap font-bold text-base">
                           <span className={
                             c.estado === 'contratacion' ? 'text-green-400 font-bold' :
@@ -275,7 +270,9 @@ export default function CandidaturasIndex() {
                             {c.estado}
                           </span>
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-blue-400">{c.origen}</td>
+                        <td className="px-4 py-3 whitespace-nowrap text-blue-400">
+                          {c.origen === 'correo_directo' ? 'Correo directo' : (c.origen ? c.origen.charAt(0).toUpperCase() + c.origen.slice(1) : '-')}
+                        </td>
                         <td className="px-4 py-3 whitespace-nowrap text-gray-400">{c.fecha ? new Date(c.fecha).toLocaleDateString() : '-'}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-gray-400 relative group" title="Se actualiza al editar la candidatura o su estado">
                           {c.fecha_actualizacion ? new Date(c.fecha_actualizacion).toLocaleDateString() : '-'}
@@ -292,14 +289,10 @@ export default function CandidaturasIndex() {
                         <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.franja_salarial || '-'}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.tipo_trabajo || '-'}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{c.ubicacion || '-'}</td>
-                        <td className="px-4 py-3 whitespace-nowrap text-center">
-                          {c.feedback ? (
-                            <button onClick={() => setTooltipFeedback({ show: true, text: c.feedback })} className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
-                          ) : (
-                            <span className="text-gray-500">-</span>
-                          )}
-                        </td>
                         <td className="px-4 py-3 whitespace-nowrap flex gap-2 items-center h-full justify-center">
+                          {c.feedback && (
+                            <button onClick={() => setTooltipFeedback({ show: true, text: c.feedback })} className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
+                          )}
                           <button onClick={() => handleEditClick(c)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
                           <button onClick={() => handleDeleteClick(c.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded font-bold text-xs" title="Borrar candidatura">Borrar</button>
                         </td>
@@ -311,6 +304,10 @@ export default function CandidaturasIndex() {
             </div>
           )}
         </div>
+        <div className="text-gray-400 text-sm text-center mb-2">Mostrando {currentPage*pageSize+1}-{Math.min((currentPage+1)*pageSize, candidaturas.length)} de {candidaturas.length}</div>
+        <select value={pageSize} onChange={e => { setCurrentPage(0); setPageSize(Number(e.target.value)); }} className="ml-4 px-2 py-1 rounded bg-neutral-800 text-pink-200 border border-pink-400">
+          {[4, 10, 20, 50].map(n => <option key={n} value={n}>{n} por página</option>)}
+        </select>
         <ReactPaginate
           previousLabel={'‹'}
           nextLabel={'›'}

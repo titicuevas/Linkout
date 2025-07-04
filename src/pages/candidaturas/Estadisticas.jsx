@@ -46,7 +46,11 @@ export default function EstadisticasCandidaturas() {
   const getDataByField = (field) => {
     const counts = {};
     candidaturas.forEach(c => {
-      const val = c[field] || 'Sin especificar';
+      let val = c[field] || 'Sin especificar';
+      if (field === 'origen') {
+        if (val === 'correo_directo') val = 'Correo directo';
+        else if (val && val !== 'Sin especificar') val = val.charAt(0).toUpperCase() + val.slice(1);
+      }
       counts[val] = (counts[val] || 0) + 1;
     });
     return Object.entries(counts).map(([name, value], i) => ({ name, value, color: COLORS[i % COLORS.length] }));
