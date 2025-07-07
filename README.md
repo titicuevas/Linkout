@@ -10,13 +10,7 @@
 
 ---
 
-## ✨ **Nuevas Funcionalidades (v2.0)**
-
-### 🏢 **Logos de Empresas**
-- **Logos automáticos**: Se obtienen automáticamente desde Clearbit usando la URL de la empresa
-- **Tamaño optimizado**: Logos pequeños (24px) que se integran perfectamente en el diseño
-- **Fallback elegante**: Iniciales de la empresa cuando no hay logo disponible
-- **Campo opcional**: URL de empresa para obtener logos automáticamente
+## ✨ **Funcionalidades Principales (v2.0)**
 
 ### 📅 **Sistema de Fechas Mejorado**
 - **Fecha de inscripción**: Cuándo se registró la candidatura inicialmente
@@ -42,12 +36,6 @@
 - **Experiencia móvil**: Modal funciona perfectamente en dispositivos móviles
 - **Edición completa**: Se puede añadir/editar feedback en cualquier momento
 
-### 📱 **Experiencia Móvil Mejorada**
-- **Filtros responsive**: Reorganizados en columna para mejor visualización móvil
-- **Botones adaptativos**: Tamaños y espaciado optimizados para móvil
-- **Tabla optimizada**: Ancho mínimo reducido para mejor visualización
-- **Botones flotantes**: Accesibles en móvil y escritorio
-
 ### 🔄 **Paginación y Ordenación**
 - **Paginador mejorado**: Mayor contraste y visibilidad con anillo de enfoque
 - **Ordenación inteligente**: Funciona sobre el array filtrado
@@ -64,12 +52,10 @@
 - Origen de la candidatura: InfoJobs, LinkedIn, Joppy, Tecnoempleo, Email directo, Otros
 - Estadísticas motivadoras: Total de candidaturas, Procesos en curso, Contrataciones, No seleccionadas
 - Historial organizado y fácil de consultar
-- **Logos de empresas** para identificación visual rápida
 - **Sistema de fechas dual** para tracking temporal completo
 
 ### 🎯 **Motivación IA**
 - Recibe consejos personalizados de diferentes roles (madre, hermano, mejor amigo, motivador, psicólogo, compañero, futuro yo)
-- **¡NUEVO!** Personajes de anime con historias inspiradoras (Goku, Naruto, Luffy, Asta, Deku, Tanjiro, Itadori, Gojo)
 - Respuestas generadas por IA usando Google Gemini
 - Interfaz intuitiva y empática con iconos y colores temáticos
 
@@ -84,16 +70,6 @@
 - Sistema de posts anónimos
 - Comunidad de apoyo entre desarrolladores
 
-### 🎌 **Personajes de Anime**
-- **Goku (Dragon Ball)**: Espíritu de lucha inquebrantable y superación de límites 🌀
-- **Naruto Uzumaki**: Determinación y creencia en los sueños ⚡
-- **Monkey D. Luffy (One Piece)**: Libertad y espíritu aventurero 🎩
-- **Asta (Black Clover)**: Trabajo duro y nunca rendirse 🐂
-- **Deku (My Hero Academia)**: Espíritu de héroe y crecimiento 💚
-- **Tanjiro (Demon Slayer)**: Compasión y perseverancia 🔥
-- **Itadori (Jujutsu Kaisen)**: Optimismo y protección 💖
-- **Gojo (Jujutsu Kaisen)**: Confianza y poder absoluto 👁️
-
 ---
 
 ## 🏗️ Estructura del Proyecto
@@ -104,10 +80,10 @@ linkeout/
 │   ├── components/         # Componentes reutilizables (Navbar, Footer, Layout, Modal...)
 │   ├── pages/              # Páginas principales y subcarpetas (candidaturas, desahogate, animoia, retos)
 │   │   └── candidaturas/   # Gestión completa de candidaturas
-│   │       ├── index.jsx   # Lista principal con filtros y logos
+│   │       ├── index.jsx   # Lista principal con filtros
 │   │       ├── create.jsx  # Crear nueva candidatura
 │   │       └── Estadisticas.jsx # Dashboard de estadísticas
-│   ├── services/           # Servicios (Supabase, API, companyLogos)
+│   ├── services/           # Servicios (Supabase, API)
 │   ├── styles/             # Helpers de Tailwind y estilos globales
 │   └── utils/              # Utilidades y validadores
 ├── backend/                # API Node.js (Express)
@@ -134,7 +110,6 @@ linkeout/
 - **Tarjetas**: Blur, sombra profunda y colores vivos según la sección.
 - **Animaciones**: Entrada suave de tarjetas, botones y feedback visual.
 - **Botones**: Modernos, grandes y con efectos de hover.
-- **Logos de empresas**: Integrados de forma elegante sin sobrecargar la interfaz.
 
 ---
 
@@ -166,7 +141,6 @@ create table candidaturas (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users not null,
   empresa text not null,
-  empresa_url text, -- URL de la empresa para obtener logos
   puesto text not null,
   estado text not null, -- entrevista_contacto, prueba_tecnica, segunda_entrevista, entrevista_final, contratacion, rechazado
   fecha date not null, -- fecha de inscripción
@@ -192,7 +166,6 @@ create table candidaturas (
 - **Autenticación**: Usa Supabase para login, registro y gestión de usuarios.
 - **Redirecciones**: Gestiona los flujos de bienvenida y dashboard en Welcome.jsx y Home.jsx.
 - **Emails**: Personaliza la plantilla de confirmación para que el usuario siempre llegue a `/welcome`.
-- **Logos de empresas**: Se obtienen automáticamente desde Clearbit usando la URL de la empresa.
 - **Filtros**: Los filtros funcionan con búsqueda parcial y se resetean automáticamente.
 
 ---
@@ -208,7 +181,6 @@ create table candidaturas (
 - **React Confetti** para celebraciones
 - **Recharts** para gráficos y estadísticas visuales
 - **React Paginate** para paginación
-- **Clearbit Logo API** para logos de empresas
 
 ### Backend
 - **Node.js** con Express
@@ -252,10 +224,10 @@ create table candidaturas (
 
 ### 🎯 **¿Qué puedes probar?**
 
-1. **Diario de Candidaturas**: Organiza y sigue tus aplicaciones laborales con logos y tracking temporal
+1. **Diario de Candidaturas**: Organiza y sigue tus aplicaciones laborales con tracking temporal
 2. **Dashboard de Estadísticas**: Visualiza tu progreso con gráficos interactivos
 3. **Filtros Avanzados**: Filtra por estado, origen y más con interfaz visual
-4. **Motivación IA**: Recibe motivación de personajes de anime o roles tradicionales
+4. **Motivación IA**: Recibe motivación de diferentes roles y perspectivas
 5. **Retos de Bienestar**: Genera retos personalizados según el puesto y empresa
 6. **Desahógate**: Comparte experiencias con otros desarrolladores
 
