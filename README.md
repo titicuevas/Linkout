@@ -1,6 +1,6 @@
-# Linkeout 🚀
+# Linkout 🚀
 
-**Linkeout** es una plataforma innovadora diseñada para ayudar a desarrolladores junior a gestionar su búsqueda de empleo de manera organizada y mantener la motivación durante todo el proceso.
+**Linkout** es una plataforma innovadora diseñada para ayudar a desarrolladores junior a gestionar su búsqueda de empleo de manera organizada y mantener la motivación durante todo el proceso.
 
 ## 🔗 **Enlaces del Proyecto**
 
@@ -75,7 +75,7 @@
 ## 🏗️ Estructura del Proyecto
 
 ```
-linkeout/
+Linkout/
 ├── src/                    # Frontend React
 │   ├── components/         # Componentes reutilizables (Navbar, Footer, Layout, Modal...)
 │   ├── pages/              # Páginas principales y subcarpetas (candidaturas, desahogate, animoia, retos)
@@ -233,4 +233,4 @@ create table candidaturas (
 
 ---
 
-¡Disfruta y sigue mejorando Linkeout! 💙
+¡Disfruta y sigue mejorando Linkout! 💙
