@@ -30,4 +30,10 @@ export default [
       ],
     },
   },
+  {
+    files: ['backend/**/*.js', 'scripts/**/*.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ]

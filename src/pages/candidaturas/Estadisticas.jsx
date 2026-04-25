@@ -74,7 +74,7 @@ export default function EstadisticasCandidaturas() {
           <div className="text-lg text-gray-300 font-bold mb-2">Cargando estadísticas...</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-6xl">
-            {campos.map((campo, idx) => {
+            {campos.map((campo) => {
               const data = getDataByField(campo.key);
               return (
                 <div key={campo.key} className="bg-neutral-800/80 rounded-2xl shadow-2xl p-6 border border-neutral-700 flex flex-col items-center">

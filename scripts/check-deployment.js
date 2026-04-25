@@ -46,7 +46,7 @@ function checkPackageJson(filePath, requiredScripts, description) {
         allChecksPassed = false;
         return false;
       }
-    } catch (error) {
+    } catch {
       console.log(`❌ ${description} - Error al leer archivo`);
       allChecksPassed = false;
       return false;
