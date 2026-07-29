@@ -8,6 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "check-deployment": "node scripts/check-deployment.js"
   },
   "dependencies": {
@@ -39,6 +41,7 @@
     "serve": "^14.2.4",
     "tailwindcss": "^3.4.17",
     "terser": "^5.43.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vitest": "^4.1.10"
   }
 }

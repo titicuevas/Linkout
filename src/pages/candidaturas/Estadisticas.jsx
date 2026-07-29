@@ -3,6 +3,10 @@ import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import PageLoader from '../../components/PageLoader';
+import { useAuth } from '../../hooks/useAuth';
+import { useTitle } from '../../hooks/useTitle';
+import { formatOrigen, isActiveProcess, getFollowUpsPendientes } from './shared';
 
 const COLORS = ['#6366f1', '#e11d48', '#f59e42', '#10b981', '#fbbf24', '#3b82f6', '#ef4444', '#a21caf', '#f472b6'];
 
@@ -15,31 +19,31 @@ const campos = [
 ];
 
 export default function EstadisticasCandidaturas() {
-  const [user, setUser] = useState(null);
+  const { user, authLoading } = useAuth();
+  useTitle('Estadísticas');
   const [candidaturas, setCandidaturas] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-      }
-    });
-  }, [navigate]);
-
-  useEffect(() => {
+    let cancelled = false;
     async function fetchCandidaturas() {
       if (!user) return;
       setLoading(true);
+      setLoadError('');
       const { data, error } = await supabase.from('candidaturas').select('*').eq('user_id', user.id);
-      if (error) console.error('Error al cargar candidaturas:', error);
-      setCandidaturas(data || []);
+      if (cancelled) return;
+      if (error) {
+        setLoadError('No se pudieron cargar las estadísticas. Inténtalo de nuevo.');
+        setCandidaturas([]);
+      } else {
+        setCandidaturas(data || []);
+      }
       setLoading(false);
     }
     fetchCandidaturas();
+    return () => { cancelled = true; };
   }, [user]);
 
   // Agrupa y cuenta por campo
@@ -48,19 +52,31 @@ export default function EstadisticasCandidaturas() {
     candidaturas.forEach(c => {
       let val = c[field] || 'Sin especificar';
       if (field === 'origen') {
-        if (val === 'correo_directo') val = 'Correo directo';
-        else if (val && val !== 'Sin especificar') val = val.charAt(0).toUpperCase() + val.slice(1);
+        const formatted = formatOrigen(c[field]);
+        val = formatted === '-' ? 'Sin especificar' : formatted;
       }
       counts[val] = (counts[val] || 0) + 1;
     });
     return Object.entries(counts).map(([name, value], i) => ({ name, value, color: COLORS[i % COLORS.length] }));
   };
 
+  const procesosActivos = candidaturas.filter(isActiveProcess);
+  const contrataciones = candidaturas.filter((candidatura) => candidatura.estado === 'contratacion').length;
+  const rechazo = candidaturas.filter((candidatura) => candidatura.estado === 'rechazado').length;
+  const followUpsPendientes = getFollowUpsPendientes(candidaturas).length;
+  const ratioExito = candidaturas.length > 0 ? Math.round((contrataciones / candidaturas.length) * 100) : 0;
+  const insightPrincipal = followUpsPendientes > 0
+    ? `Tienes ${followUpsPendientes} proceso${followUpsPendientes === 1 ? '' : 's'} que probablemente necesitan seguimiento.`
+    : procesosActivos.length > 0
+      ? 'Tus procesos activos están en movimiento. Buen momento para preparar entrevistas o reforzar candidaturas.'
+      : 'No hay procesos activos ahora mismo. Tal vez conviene reactivar la búsqueda esta semana.';
+
+  if (authLoading) return <PageLoader message="Preparando estadísticas..." />;
   if (!user) return null;
 
   return (
     <Layout user={user}>
-      <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-2 py-8 relative">
+      <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-4 sm:px-6 py-8 relative">
         <div className="w-full flex justify-start mb-8">
           <button
             onClick={() => navigate('/candidaturas')}
@@ -71,41 +87,80 @@ export default function EstadisticasCandidaturas() {
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Estadísticas de Candidaturas</h1>
         {loading ? (
-          <div className="text-lg text-gray-300 font-bold mb-2">Cargando estadísticas...</div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-6xl">
-            {campos.map((campo) => {
-              const data = getDataByField(campo.key);
-              return (
-                <div key={campo.key} className="bg-neutral-800/80 rounded-2xl shadow-2xl p-6 border border-neutral-700 flex flex-col items-center">
-                  <h2 className="text-xl font-bold mb-4 text-pink-300">{campo.label}</h2>
-                  {data.length === 0 ? (
-                    <div className="text-gray-400">Sin datos</div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height={260}>
-                      {data.length <= 6 ? (
-                        <PieChart>
-                          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                            {data.map((entry, i) => <Cell key={`cell-${i}`} fill={entry.color} />)}
-                          </Pie>
-                          <Tooltip />
-                          <Legend />
-                        </PieChart>
-                      ) : (
-                        <BarChart data={data}>
-                          <XAxis dataKey="name" stroke="#fff" fontSize={12} />
-                          <YAxis stroke="#fff" fontSize={12} />
-                          <Tooltip />
-                          <Legend />
-                          <Bar dataKey="value" fill="#e11d48" />
-                        </BarChart>
-                      )}
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              );
-            })}
+          <PageLoader message="Cargando estadísticas..." />
+        ) : loadError ? (
+          <div className="text-center py-10">
+            <p className="text-lg text-red-300 font-bold mb-4">{loadError}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold"
+            >
+              Reintentar
+            </button>
           </div>
+        ) : (
+          <>
+            <div className="w-full max-w-6xl mb-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              <div className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl">
+                <div className="text-sm font-semibold text-blue-200">Total registradas</div>
+                <div className="mt-2 text-3xl font-extrabold text-white">{candidaturas.length}</div>
+              </div>
+              <div className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl">
+                <div className="text-sm font-semibold text-purple-200">Procesos activos</div>
+                <div className="mt-2 text-3xl font-extrabold text-white">{procesosActivos.length}</div>
+              </div>
+              <div className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl">
+                <div className="text-sm font-semibold text-green-200">Ratio de contratación</div>
+                <div className="mt-2 text-3xl font-extrabold text-white">{ratioExito}%</div>
+              </div>
+              <div className="rounded-2xl border border-yellow-700 bg-yellow-950/50 p-5 shadow-xl">
+                <div className="text-sm font-semibold text-yellow-200">Seguimientos pendientes</div>
+                <div className="mt-2 text-3xl font-extrabold text-white">{followUpsPendientes}</div>
+              </div>
+            </div>
+
+            <div className="w-full max-w-6xl mb-8 rounded-3xl border border-neutral-700 bg-neutral-800/80 p-5 sm:p-6 shadow-2xl">
+              <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Lectura rápida</div>
+              <p className="mt-2 text-base sm:text-lg font-medium text-white">{insightPrincipal}</p>
+              <p className="mt-2 text-sm text-gray-400">
+                No seleccionadas: {rechazo}. Contrataciones: {contrataciones}. Usa esta lectura para decidir si te conviene hacer seguimiento o abrir más procesos nuevos.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-6xl">
+              {campos.map((campo) => {
+                const data = getDataByField(campo.key);
+                return (
+                  <div key={campo.key} className="bg-neutral-800/80 rounded-2xl shadow-2xl p-6 border border-neutral-700 flex flex-col items-center">
+                    <h2 className="text-xl font-bold mb-4 text-pink-300">{campo.label}</h2>
+                    {data.length === 0 ? (
+                      <div className="text-gray-400">Sin datos</div>
+                    ) : (
+                      <ResponsiveContainer width="100%" height={260}>
+                        {data.length <= 6 ? (
+                          <PieChart>
+                            <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
+                              {data.map((entry, i) => <Cell key={`cell-${i}`} fill={entry.color} />)}
+                            </Pie>
+                            <Tooltip />
+                            <Legend />
+                          </PieChart>
+                        ) : (
+                          <BarChart data={data}>
+                            <XAxis dataKey="name" stroke="#fff" fontSize={12} />
+                            <YAxis stroke="#fff" fontSize={12} />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="value" fill="#e11d48" />
+                          </BarChart>
+                        )}
+                      </ResponsiveContainer>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
     </Layout>

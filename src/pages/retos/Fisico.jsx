@@ -6,13 +6,18 @@ import { supabase } from '../../services/supabase';
 import Confetti from 'react-confetti';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { swalSuccess } from '../../utils/swalTheme';
+import PageLoader from '../../components/PageLoader';
+import { useAuth } from '../../hooks/useAuth';
+import { useTitle } from '../../hooks/useTitle';
 
 const ENDPOINT = import.meta.env.VITE_BACKEND_URL + '/api/retos'; // Cambia esto por tu endpoint real
 const NIVELES = ['Fácil', 'Medio', 'Difícil'];
 const PROGRESO_NIVEL = 100;
 
 export default function RetoFisico() {
-  const [user, setUser] = useState(null);
+  const { user, authLoading, logout } = useAuth();
+  useTitle('Retos de Bienestar');
   const navigate = useNavigate();
   const location = useLocation();
   const candidatura = location.state?.candidatura;
@@ -28,20 +33,6 @@ export default function RetoFisico() {
   const [showConfetti, setShowConfetti] = useState(false);
   const MySwal = withReactContent(Swal);
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-      }
-    });
-  }, [navigate]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
-  };
 
   useEffect(() => {
     if (!candidatura) return;
@@ -129,17 +120,7 @@ export default function RetoFisico() {
       localStorage.setItem(candidaturaKey, '1');
       setShowConfetti(true);
       setTimeout(async () => {
-        await MySwal.fire({
-          icon: 'success',
-          title: '¡Reto completado!',
-          text: '¡Enhorabuena! Has completado el reto de bienestar para esta candidatura. Sigue así, cada paso cuenta.',
-          background: '#18181b',
-          color: '#fff',
-          confirmButtonColor: '#6366f1',
-          timer: 2500,
-          timerProgressBar: true,
-          showConfirmButton: false
-        });
+        await MySwal.fire(swalSuccess('¡Reto completado!', '¡Enhorabuena! Has completado el reto de bienestar para esta candidatura. Sigue así, cada paso cuenta.', { timer: 2500, timerProgressBar: true, showConfirmButton: false }));
         setShowConfetti(false);
         navigate('/retos/fisico');
       }, 1200);
@@ -153,11 +134,12 @@ export default function RetoFisico() {
   // Renderizado global del confeti
   const confettiElement = showConfetti ? <Confetti width={window.innerWidth} height={window.innerHeight} numberOfPieces={350} recycle={false} /> : null;
 
+  if (authLoading) return <PageLoader message="Preparando retos..." />;
   if (!user) return null;
 
   if (!candidatura) {
     return (
-      <Layout user={user} onLogout={handleLogout}>
+      <Layout user={user} onLogout={logout}>
         {confettiElement}
         <div
           className="min-h-[100vh] w-full flex flex-col items-center justify-center px-2 py-8"
@@ -225,23 +207,6 @@ export default function RetoFisico() {
               Volver al inicio
             </button>
           </div>
-          <style>{`
-            @keyframes fade-in-slow { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
-            .animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1); }
-            @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-            .animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
-            @keyframes gradient-move {
-              0% { background-position: 0% 50%; }
-              50% { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
-            }
-            .animate-gradient-move {
-              background-size: 200% 200%;
-              animation: gradient-move 3s ease-in-out infinite;
-            }
-            .shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0,0,0,0.35); }
-            .animate-glow { box-shadow: 0 0 16px 2px #f472b6, 0 0 32px 4px #fbbf24aa; }
-          `}</style>
         </div>
       </Layout>
     );
@@ -249,7 +214,7 @@ export default function RetoFisico() {
 
   if (candidaturaKey && localStorage.getItem(candidaturaKey)) {
     return (
-      <Layout user={user} onLogout={handleLogout}>
+      <Layout user={user} onLogout={logout}>
         {confettiElement}
         <div className="w-full max-w-2xl mx-auto mt-16 flex flex-col items-center justify-center min-h-[70vh] p-4" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)', borderRadius: '2rem'}}>
           <h1 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-pink-400 flex items-center justify-center gap-3 animate-fade-in-slow">
@@ -285,7 +250,7 @@ export default function RetoFisico() {
   }
 
   return (
-    <Layout user={user} onLogout={handleLogout}>
+    <Layout user={user} onLogout={logout}>
       {confettiElement}
       <div className="w-full max-w-2xl mx-auto mt-16 flex flex-col items-center justify-center min-h-[70vh] p-4" style={{background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)', borderRadius: '2rem'}}>
         <h1 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-pink-400 flex items-center justify-center gap-3 animate-fade-in-slow">
@@ -372,13 +337,6 @@ export default function RetoFisico() {
           </>
         )}
       </div>
-      <style>{`
-        @keyframes fade-in-slow { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
-        .animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1); }
-        @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
-        .shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0,0,0,0.35); }
-      `}</style>
     </Layout>
   );
 } 

@@ -68,3 +68,66 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* ─── Animaciones globales reutilizables ──────────────────────────── */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in { animation: fade-in 0.7s; }
+
+@keyframes fade-in-slow {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: none; }
+}
+.animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+@keyframes fade-in-card {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: none; }
+}
+.animate-fade-in-card { animation: fade-in-card 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+.animate-shake { animation: shake 0.5s; }
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+.animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
+
+@keyframes gradient-move {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-move {
+  background-size: 200% 200%;
+  animation: gradient-move 3s ease-in-out infinite;
+}
+
+/* Sombra extra usada en varias cards */
+.shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0, 0, 0, 0.35); }
+
+/* Brillo animado para botones de retos/motivación */
+.animate-glow { box-shadow: 0 0 16px 2px #f472b6, 0 0 32px 4px #a78bfa33; }
+
+@keyframes ghost-float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-32px); }
+  100% { transform: translateY(0px); }
+}
+.animate-ghost-float { animation: ghost-float 2.8s ease-in-out infinite; }
+
+@keyframes fade-slide-down {
+  0%   { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-slide-down { animation: fade-slide-down 0.25s ease; }

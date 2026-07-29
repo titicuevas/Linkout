@@ -30,7 +30,7 @@ export default function Modal({ isOpen, onClose, children }) {
       aria-modal="true"
     >
       <div
-        className={`bg-neutral-900 rounded-lg shadow-xl p-8 relative min-w-[320px] max-w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}
+        className={`bg-neutral-900 rounded-lg shadow-xl p-5 sm:p-8 relative w-[calc(100vw-1.5rem)] sm:w-auto sm:min-w-[320px] max-w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${isOpen ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'}`}
         onClick={e => e.stopPropagation()}
       >
         <button

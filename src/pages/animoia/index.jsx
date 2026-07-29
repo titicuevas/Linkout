@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
-import { ArrowLeftIcon, SparklesIcon, CalendarDaysIcon, UserCircleIcon, BoltIcon, FireIcon, HeartIcon, StarIcon, EyeIcon, CloudIcon } from '@heroicons/react/24/solid';
+import { SparklesIcon, CalendarDaysIcon, UserCircleIcon, BoltIcon, FireIcon, HeartIcon, EyeIcon, CloudIcon } from '@heroicons/react/24/solid';
 import ReactMarkdown from 'react-markdown';
+import PageLoader from '../../components/PageLoader';
+import { useAuth } from '../../hooks/useAuth';
+import { useTitle } from '../../hooks/useTitle';
 
 const ROLES = [
   { value: 'madre', label: 'Madre' },
@@ -65,7 +68,7 @@ const getPersonajeInfo = (rol) => {
 };
 
 export default function AnimoIAIndex() {
-  const [user, setUser] = useState(null);
+  const { user, authLoading, logout } = useAuth();
   const [mensajes, setMensajes] = useState([]);
   const [respuestas, setRespuestas] = useState({});
   const [rolesSeleccionados, setRolesSeleccionados] = useState({});
@@ -73,25 +76,12 @@ export default function AnimoIAIndex() {
   const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    document.title = 'Ánimo IA | LinkOut';
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-        fetchMensajes(data.user.id);
-      }
-    });
-    // eslint-disable-next-line
-  }, []);
+  useTitle('Motivación IA');
 
   useEffect(() => {
-    if (user) {
-      supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => {
-        setProfile(data);
-      });
-    }
+    if (!user) return;
+    fetchMensajes(user.id);
+    supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setProfile(data));
   }, [user]);
 
   const fetchMensajes = async (userId) => {
@@ -130,11 +120,12 @@ export default function AnimoIAIndex() {
     }
   };
 
+  if (authLoading) return <PageLoader message="Preparando Motivación IA..." />;
   if (!user) return null;
 
   return (
-    <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
-      <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
+    <Layout user={user} onLogout={logout}>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 sm:px-6 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center animate-fade-in-slow backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-3xl p-4">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg flex items-center justify-center gap-3 animate-gradient-move">
             <span className="relative flex items-center justify-center">
@@ -220,25 +211,6 @@ export default function AnimoIAIndex() {
             </button>
           </div>
         </div>
-        <style>{`
-          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-          .animate-fade-in { animation: fade-in 0.7s; }
-          @keyframes fade-in-slow { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
-          .animate-fade-in-slow { animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1); }
-          @keyframes bounce-slow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-          .animate-bounce-slow { animation: bounce-slow 1.8s infinite; }
-          @keyframes gradient-move {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-          .animate-gradient-move {
-            background-size: 200% 200%;
-            animation: gradient-move 3s ease-in-out infinite;
-          }
-          .shadow-3xl { box-shadow: 0 12px 48px 0 rgba(0,0,0,0.35); }
-          .animate-glow { box-shadow: 0 0 16px 2px #f472b6, 0 0 32px 4px #a78bfa33; }
-        `}</style>
       </div>
     </Layout>
   );

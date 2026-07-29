@@ -3,13 +3,14 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import logo from '../assets/Logo.png';
 import Layout from '../components/Layout';
+import { useTitle } from '../hooks/useTitle';
 
 export default function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
-  useEffect(() => { document.title = 'LinkOut'; }, []);
+  useTitle();
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data?.user) {
@@ -31,7 +32,7 @@ export default function Home() {
   if (isCheckingAuth) {
     return (
       <Layout>
-        <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
+        <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 sm:px-6 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
           <div className="flex flex-col items-center">
             <img 
               src={logo} 
@@ -47,7 +48,7 @@ export default function Home() {
 
   return (
     <Layout>
-      <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 sm:px-6 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <img 
           src={logo} 
           alt="Logo Linkout" 
@@ -70,16 +71,6 @@ export default function Home() {
           Tu espacio para gestionar candidaturas y mantener la motivación.<br />
           <span className="font-bold text-pink-200">Construye tu futuro profesional.</span>
         </p>
-        <style>{`
-          @keyframes ghost-float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-32px); }
-            100% { transform: translateY(0px); }
-          }
-          .animate-ghost-float {
-            animation: ghost-float 2.8s ease-in-out infinite;
-          }
-        `}</style>
       </div>
     </Layout>
   );

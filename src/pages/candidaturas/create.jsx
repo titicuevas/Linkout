@@ -1,47 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
 import { inputBase, labelBase } from '../../styles/twHelpers';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { swalSuccess, swalError, swalWarning } from '../../utils/swalTheme';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { formatEstado, FORM_ESTADOS, FORM_ORIGENES, FRANJAS_SALARIAL, TIPOS_TRABAJO, suggestFranjaFromSalary, normalizeOrigen } from './shared';
+import PageLoader from '../../components/PageLoader';
+import { useAuth } from '../../hooks/useAuth';
+import { useTitle } from '../../hooks/useTitle';
 
-const ESTADOS = [
-  { value: 'entrevista_contacto', label: 'Entrevista de contacto' },
-  { value: 'prueba_tecnica', label: 'Prueba técnica' },
-  { value: 'segunda_entrevista', label: 'Segunda entrevista' },
-  { value: 'entrevista_final', label: 'Entrevista final' },
-  { value: 'contratacion', label: 'Contratación' },
-  { value: 'rechazado', label: 'No seleccionado' },
-];
-
-const ORIGENES = [
-  { value: 'infojobs', label: 'InfoJobs' },
-  { value: 'linkedin', label: 'LinkedIn' },
-  { value: 'joppy', label: 'Joppy' },
-  { value: 'tecnoempleo', label: 'Tecnoempleo' },
-  { value: 'correo_directo', label: 'Correo directo empresa' },
-  { value: 'otro', label: 'Otro' },
-];
-
-const FRANJAS_SALARIAL = [
-  '< 15.000 €',
-  '15.000 - 20.000 €',
-  '20.000 - 25.000 €',
-  '25.000 - 30.000 €',
-  '30.000 - 40.000 €',
-  '> 40.000 €',
-];
-
-const TIPOS_TRABAJO = [
-  'Presencial',
-  'Remoto',
-  'Híbrido',
-];
+const CANDIDATURA_DRAFT_KEY = 'linkout_candidatura_draft';
 
 export default function CrearCandidatura() {
-  const [user, setUser] = useState(null);
+  const { user, authLoading, logout } = useAuth();
+  useTitle('Nueva Candidatura');
   const [error, setError] = useState('');
   const [puesto, setPuesto] = useState('');
   const [empresa, setEmpresa] = useState('');
@@ -56,33 +31,59 @@ export default function CrearCandidatura() {
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
-  // Obtener usuario autenticado
-  useState(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-      }
-    });
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(CANDIDATURA_DRAFT_KEY);
+    if (!savedDraft) return;
+
+    try {
+      const draft = JSON.parse(savedDraft);
+      setPuesto(draft.puesto || '');
+      setEmpresa(draft.empresa || '');
+      setEmpresaUrl(draft.empresaUrl || '');
+      setEstado(draft.estado || 'entrevista_contacto');
+      setFecha(draft.fecha || '');
+      setSueldoAnual(draft.sueldoAnual || '');
+      setFranjaSalarial(draft.franjaSalarial || '');
+      setTipoTrabajo(draft.tipoTrabajo || '');
+      setUbicacion(draft.ubicacion || '');
+      setOrigen(draft.origen || '');
+    } catch {
+      localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
+    }
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem(
+      CANDIDATURA_DRAFT_KEY,
+      JSON.stringify({
+        puesto,
+        empresa,
+        empresaUrl,
+        estado,
+        fecha,
+        sueldoAnual,
+        franjaSalarial,
+        tipoTrabajo,
+        ubicacion,
+        origen,
+      }),
+    );
+  }, [puesto, empresa, empresaUrl, estado, fecha, sueldoAnual, franjaSalarial, tipoTrabajo, ubicacion, origen]);
+
+  if (authLoading) return <PageLoader message="Preparando formulario..." />;
   if (!user) return null;
 
   const handleCancel = async () => {
-    const result = await MySwal.fire({
-      title: '¿Cancelar candidatura?',
-      text: '¿Seguro que quieres cancelar? Los datos no se guardarán.',
-      icon: 'warning',
-      showCancelButton: true,
+    const result = await MySwal.fire(swalWarning('¿Cancelar candidatura?', '¿Seguro que quieres cancelar? Los datos no se guardarán.', {
       confirmButtonText: 'Sí, cancelar',
       cancelButtonText: 'No',
-      background: '#18181b',
-      color: '#fff',
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#6366f1',
-    });
-    if (result.isConfirmed) navigate('/candidaturas');
+    }));
+    if (result.isConfirmed) {
+      localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
+      navigate('/candidaturas');
+    }
   };
 
   const handleCreate = async (e) => {
@@ -92,38 +93,40 @@ export default function CrearCandidatura() {
       setError('Completa todos los campos obligatorios.');
       return;
     }
+    const creationTimestamp = new Date().toLocaleString();
     const { error: dbError } = await supabase.from('candidaturas').insert([
-      { user_id: user.id, puesto, empresa, empresa_url: empresaUrl, estado, fecha, salario_anual: sueldoAnual ? Number(sueldoAnual) : null, franja_salarial: franjaSalarial, tipo_trabajo: tipoTrabajo, ubicacion, origen }
+      {
+        user_id: user.id,
+        puesto,
+        empresa,
+        empresa_url: empresaUrl,
+        estado,
+        fecha,
+        salario_anual: sueldoAnual ? Number(sueldoAnual) : null,
+        franja_salarial: franjaSalarial,
+        tipo_trabajo: tipoTrabajo,
+        ubicacion,
+        origen: normalizeOrigen(origen),
+        historial_cambios: [`[${creationTimestamp}] Candidatura creada con estado inicial: ${formatEstado(estado)}`],
+        fecha_actualizacion: new Date().toISOString(),
+      }
     ]);
     if (dbError) {
-      await MySwal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'No se pudo crear la candidatura.',
-        background: '#18181b',
-        color: '#fff',
-        confirmButtonColor: '#ef4444',
-      });
+      await MySwal.fire(swalError('Error', 'No se pudo crear la candidatura.', { confirmButtonColor: '#ef4444' }));
       setError('No se pudo crear la candidatura.');
       return;
     }
-    await MySwal.fire({
-      icon: 'success',
-      title: '¡Candidatura creada!',
-      text: 'Tu candidatura ha sido guardada.',
-      background: '#18181b',
-      color: '#fff',
-      confirmButtonColor: '#6366f1',
-    });
+    await MySwal.fire(swalSuccess('¡Candidatura creada!', 'Tu candidatura ha sido guardada.'));
+    localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
     navigate('/candidaturas');
   };
 
   const maxDate = dayjs().format('YYYY-MM-DD');
 
   return (
-    <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
-      <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-2 py-8">
-        <div className="w-full max-w-md bg-neutral-900/90 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
+    <Layout user={user} onLogout={logout}>
+      <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-4 sm:px-6 py-8">
+        <div className="w-full max-w-md bg-neutral-900/90 rounded-2xl shadow-2xl p-5 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-6 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg">Registrar Nueva Candidatura</h1>
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
           <form onSubmit={handleCreate} className="space-y-5 w-full text-lg">
@@ -165,7 +168,7 @@ export default function CrearCandidatura() {
                 className={inputBase + ' w-full'}
                 required
               >
-                {ESTADOS.map(opt => (
+                {FORM_ESTADOS.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
@@ -190,15 +193,7 @@ export default function CrearCandidatura() {
                 value={sueldoAnual}
                 onChange={e => {
                   setSueldoAnual(e.target.value);
-                  // Sugerir franja automáticamente
-                  const v = Number(e.target.value);
-                  if (!v) return setFranjaSalarial('');
-                  if (v < 15000) setFranjaSalarial('< 15.000 €');
-                  else if (v < 20000) setFranjaSalarial('15.000 - 20.000 €');
-                  else if (v < 25000) setFranjaSalarial('20.000 - 25.000 €');
-                  else if (v < 30000) setFranjaSalarial('25.000 - 30.000 €');
-                  else if (v < 40000) setFranjaSalarial('30.000 - 40.000 €');
-                  else setFranjaSalarial('> 40.000 €');
+                  setFranjaSalarial(suggestFranjaFromSalary(e.target.value));
                 }}
                 className={inputBase + ' text-lg py-3 w-full'}
                 placeholder="Ej: 22000"
@@ -247,7 +242,7 @@ export default function CrearCandidatura() {
                 required
               >
                 <option value="">Selecciona origen</option>
-                {ORIGENES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                {FORM_ORIGENES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
             <div className="flex w-full gap-2 mt-6 flex-col sm:flex-row">
@@ -256,12 +251,6 @@ export default function CrearCandidatura() {
             </div>
           </form>
         </div>
-        <style>{`
-          @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-          .animate-fade-in { animation: fade-in 0.7s; }
-          @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
-          .animate-shake { animation: shake 0.5s; }
-        `}</style>
       </div>
     </Layout>
   );

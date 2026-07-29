@@ -5,9 +5,13 @@ import { PlusIcon, PencilSquareIcon, TrashIcon, XMarkIcon, ArrowLeftIcon, FaceFr
 import Layout from '../../components/Layout';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { swalSuccess, swalError, swalWarning } from '../../utils/swalTheme';
+import PageLoader from '../../components/PageLoader';
+import { useAuth } from '../../hooks/useAuth';
+import { useTitle } from '../../hooks/useTitle';
 
 export default function DesahogateIndex() {
-  const [user, setUser] = useState(null);
+  const { user, authLoading, logout } = useAuth();
   const [mensajes, setMensajes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editId, setEditId] = useState(null);
@@ -16,18 +20,25 @@ export default function DesahogateIndex() {
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
+  useTitle('Mi Diario de Reflexiones');
+
   useEffect(() => {
-    document.title = 'Mis Desahogos | LinkOut';
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-        fetchMensajes(data.user.id);
-      }
-    });
-    // eslint-disable-next-line
-  }, []);
+    let cancelled = false;
+    async function load() {
+      if (!user) return;
+      setLoading(true);
+      const { data } = await supabase
+        .from('desahogos')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      if (cancelled) return;
+      setMensajes(data || []);
+      setLoading(false);
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [user]);
 
   const fetchMensajes = async (userId) => {
     setLoading(true);
@@ -40,45 +51,20 @@ export default function DesahogateIndex() {
     setLoading(false);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
-  };
 
   const handleDelete = async (id) => {
-    const result = await MySwal.fire({
-      title: '¿Eliminar reflexión?',
-      text: 'Esta acción no se puede deshacer.',
-      icon: 'warning',
-      showCancelButton: true,
+    const result = await MySwal.fire(swalWarning('¿Eliminar reflexión?', 'Esta acción no se puede deshacer.', {
       confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      background: '#18181b',
-      color: '#fff',
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#6366f1',
-    });
+    }));
     if (result.isConfirmed) {
       const { error } = await supabase.from('desahogos').delete().eq('id', id);
       if (!error) {
         fetchMensajes(user.id);
-        await MySwal.fire({
-          icon: 'success',
-          title: 'Reflexión eliminada',
-          background: '#18181b',
-          color: '#fff',
-          confirmButtonColor: '#6366f1',
-          timer: 1200,
-          showConfirmButton: false
-        });
+        await MySwal.fire(swalSuccess('Reflexión eliminada', '', { timer: 1200, showConfirmButton: false }));
       } else {
-        await MySwal.fire({
-          icon: 'error',
-          title: 'Error al eliminar',
-          background: '#18181b',
-          color: '#fff',
-          confirmButtonColor: '#ef4444',
-        });
+        await MySwal.fire(swalError('Error al eliminar', ''));
       }
     }
   };
@@ -98,23 +84,9 @@ export default function DesahogateIndex() {
       setEditId(null);
       setEditTexto('');
       fetchMensajes(user.id);
-      await MySwal.fire({
-        icon: 'success',
-        title: 'Reflexión actualizada',
-        background: '#18181b',
-        color: '#fff',
-        confirmButtonColor: '#6366f1',
-        timer: 1200,
-        showConfirmButton: false
-      });
+      await MySwal.fire(swalSuccess('Reflexión actualizada', '', { timer: 1200, showConfirmButton: false }));
     } else {
-      await MySwal.fire({
-        icon: 'error',
-        title: 'Error al actualizar',
-        background: '#18181b',
-        color: '#fff',
-        confirmButtonColor: '#ef4444',
-      });
+      await MySwal.fire(swalError('Error al actualizar', ''));
     }
   };
 
@@ -128,11 +100,12 @@ export default function DesahogateIndex() {
     return then.toLocaleDateString();
   }
 
+  if (authLoading) return <PageLoader message="Cargando tus reflexiones..." />;
   if (!user) return null;
 
   return (
-    <Layout user={user} onLogout={handleLogout}>
-      <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
+    <Layout user={user} onLogout={logout}>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center px-4 sm:px-6 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-3xl p-4">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Mi Diario de Reflexiones</h1>
           <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto animate-fade-in">
@@ -162,10 +135,10 @@ export default function DesahogateIndex() {
                     <div className="text-xs text-pink-400 font-semibold">{tiempoDesde(m.created_at)}</div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
-                    <button title="Editar" className="p-2 rounded-full bg-neutral-900 hover:bg-pink-900 transition shadow group-hover:scale-110" onClick={() => handleEdit(m.id, m.texto)}>
+                    <button title="Editar" aria-label="Editar reflexión" className="p-2 rounded-full bg-neutral-900 hover:bg-pink-900 transition shadow group-hover:scale-110" onClick={() => handleEdit(m.id, m.texto)}>
                       <PencilSquareIcon className="w-6 h-6 text-pink-400" />
                     </button>
-                    <button title="Eliminar" className="p-2 rounded-full bg-neutral-900 hover:bg-red-900 transition shadow group-hover:scale-110" onClick={() => handleDelete(m.id)}>
+                    <button title="Eliminar" aria-label="Eliminar reflexión" className="p-2 rounded-full bg-neutral-900 hover:bg-red-900 transition shadow group-hover:scale-110" onClick={() => handleDelete(m.id)}>
                       <TrashIcon className="w-6 h-6 text-red-400" />
                     </button>
                   </div>
@@ -204,13 +177,6 @@ export default function DesahogateIndex() {
               Volver al inicio
             </button>
           </div>
-          <style>{`
-            @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-            .animate-fade-in { animation: fade-in 0.7s; }
-            @media (max-width: 640px) {
-              .mb-for-fab { margin-bottom: 6rem; }
-            }
-          `}</style>
         </div>
         {/* Modal de edición */}
         {showModal && (

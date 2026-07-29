@@ -1,52 +1,80 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-// import logo from '../assets/Logo.png';
-import { ClipboardDocumentListIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, BoltIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ClipboardDocumentListIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, BoltIcon } from '@heroicons/react/24/solid';
 import Layout from '../components/Layout';
+import PageLoader from '../components/PageLoader';
+import { useAuth } from '../hooks/useAuth';
+import { useTitle } from '../hooks/useTitle';
+import { isActiveProcess, getFollowUpsPendientes, getReferenceDate } from './candidaturas/shared';
 
 export default function Index() {
-  const [user, setUser] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const { user, authLoading, logout } = useAuth();
   const navigate = useNavigate();
-  const menuRef = useRef();
   const [profile, setProfile] = useState(null);
+  const [candidaturas, setCandidaturas] = useState([]);
+
+  useTitle('Panel');
 
   useEffect(() => {
-    document.title = 'Panel | LinkOut';
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-        // Obtener perfil
-        const { data: profileData } = await supabase.from('profiles').select('*').eq('id', data.user.id).single();
-        setProfile(profileData);
-      }
-    });
-  }, [navigate]);
+    if (!user) return;
+    supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setProfile(data));
+  }, [user]);
 
-  // Cerrar menú al hacer click fuera
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setMenuOpen(false);
+    let cancelled = false;
+    async function fetchCandidaturas() {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('candidaturas')
+        .select('id, estado, fecha, fecha_actualizacion, created_at')
+        .eq('user_id', user.id);
+
+      if (cancelled) return;
+      if (!error) {
+        setCandidaturas(data || []);
       }
     }
-    if (menuOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [menuOpen]);
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
-  };
+    fetchCandidaturas();
+    return () => { cancelled = true; };
+  }, [user]);
 
+  const resumen = useMemo(() => {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 7);
+
+    const activeStates = candidaturas.filter(isActiveProcess);
+    const recentApplications = candidaturas.filter((candidatura) => candidatura.fecha && new Date(candidatura.fecha) >= sevenDaysAgo).length;
+    const followUpsPending = getFollowUpsPendientes(candidaturas).length;
+
+    const latestUpdate = [...candidaturas]
+      .map(getReferenceDate)
+      .filter(Boolean)
+      .sort((a, b) => new Date(b) - new Date(a))[0];
+
+    return {
+      total: candidaturas.length,
+      activeProcesses: activeStates.length,
+      recentApplications,
+      followUpsPending,
+      latestUpdate: latestUpdate ? new Date(latestUpdate).toLocaleDateString() : null,
+    };
+  }, [candidaturas]);
+
+  const insightMessage = resumen.followUpsPending > 0
+    ? `Tienes ${resumen.followUpsPending} proceso${resumen.followUpsPending === 1 ? '' : 's'} sin movimiento reciente. Quizá toca hacer seguimiento.`
+    : resumen.activeProcesses > 0
+      ? 'Tus procesos activos están al día. Buen momento para seguir aplicando o preparar entrevistas.'
+      : 'Aún no tienes procesos activos. Crear una nueva candidatura puede ser tu mejor siguiente paso.';
+
+  if (authLoading) return <PageLoader message="Preparando tu panel..." />;
   if (!user) return null;
 
   return (
-    <Layout user={user} onLogout={handleLogout}>
-      <div className="min-h-screen w-full flex flex-col items-center justify-center px-2 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
+    <Layout user={user} onLogout={logout}>
+      <div className="min-h-screen w-full overflow-x-hidden flex flex-col items-center justify-center px-4 sm:px-6 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight drop-shadow-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-fade-in">
           ¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!
         </h1>
@@ -56,6 +84,43 @@ export default function Index() {
         </div>
         <div className="text-pink-300 text-center font-semibold mb-10 animate-fade-in-slow text-lg flex items-center justify-center gap-2">
           <span>💡 Recuerda: ¡Cada candidatura es un paso hacia tu próximo trabajo! 🚀</span>
+        </div>
+        <div className="w-full max-w-5xl mx-auto mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+            <div className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl">
+              <div className="text-sm font-semibold text-blue-200">Candidaturas totales</div>
+              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.total}</div>
+            </div>
+            <div className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl">
+              <div className="text-sm font-semibold text-purple-200">Procesos activos</div>
+              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.activeProcesses}</div>
+            </div>
+            <div className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl">
+              <div className="text-sm font-semibold text-green-200">Últimos 7 días</div>
+              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.recentApplications}</div>
+            </div>
+            <div className="rounded-2xl border border-pink-800 bg-pink-950/60 p-5 shadow-xl">
+              <div className="text-sm font-semibold text-pink-200">Seguimientos pendientes</div>
+              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.followUpsPending}</div>
+            </div>
+          </div>
+        </div>
+        <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-neutral-700 bg-neutral-900/70 p-5 sm:p-6 shadow-2xl">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Siguiente foco recomendado</div>
+              <p className="mt-2 text-base sm:text-lg font-medium text-white">{insightMessage}</p>
+              <p className="mt-2 text-sm text-gray-400">
+                {resumen.latestUpdate ? `Última actividad registrada: ${resumen.latestUpdate}.` : 'Todavía no hay actividad registrada en candidaturas.'}
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/candidaturas')}
+              className="rounded-full bg-pink-600 px-5 py-3 text-sm sm:text-base font-bold text-white shadow-lg transition hover:bg-pink-500"
+            >
+              Revisar candidaturas
+            </button>
+          </div>
         </div>
         <div className="w-full max-w-5xl mx-auto mb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
@@ -82,12 +147,6 @@ export default function Index() {
           </div>
         </div>
       </div>
-      <style>{`
-        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-        .animate-fade-in { animation: fade-in 0.7s; }
-        @keyframes fade-in-card { from { opacity: 0; transform: translateY(30px);} to { opacity: 1; transform: none; } }
-        .animate-fade-in-card { animation: fade-in-card 1.2s cubic-bezier(.4,0,.2,1); }
-      `}</style>
     </Layout>
   );
 } 

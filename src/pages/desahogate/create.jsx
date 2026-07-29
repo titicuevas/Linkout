@@ -1,12 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { swalSuccess } from '../../utils/swalTheme';
+import PageLoader from '../../components/PageLoader';
+import { useAuth } from '../../hooks/useAuth';
+import { useTitle } from '../../hooks/useTitle';
 
 export default function CrearDesahogo() {
-  const [user, setUser] = useState(null);
+  const { user, authLoading, logout } = useAuth();
+  useTitle('Nueva Reflexión');
   const [error, setError] = useState('');
   const [texto, setTexto] = useState('');
   const [tocado, setTocado] = useState(false);
@@ -14,18 +19,7 @@ export default function CrearDesahogo() {
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data?.user) {
-        navigate('/login');
-      } else {
-        setUser(data.user);
-      }
-    });
-    setTexto('');
-    return () => setTexto('');
-  }, [navigate]);
-
+  if (authLoading) return <PageLoader message="Preparando tu diario..." />;
   if (!user) return null;
 
   const handleCancel = () => {
@@ -47,19 +41,12 @@ export default function CrearDesahogo() {
       setError('No se pudo guardar el mensaje.');
       return;
     }
-    await MySwal.fire({
-      icon: 'success',
-      title: '¡Entrada guardada!',
-      text: 'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!',
-      background: '#18181b',
-      color: '#fff',
-      confirmButtonColor: '#e11d48',
-    });
+    await MySwal.fire(swalSuccess('¡Entrada guardada!', 'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!', { confirmButtonColor: '#e11d48' }));
     navigate('/desahogate');
   };
 
   return (
-    <Layout user={user} onLogout={async () => { await supabase.auth.signOut(); navigate('/login'); }}>
+    <Layout user={user} onLogout={logout}>
       <div className="flex flex-col items-center justify-center min-h-[80vh] w-full bg-neutral-900 px-2 py-8">
         <div className="w-full max-w-md backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl p-6 sm:p-10 border border-neutral-700 flex flex-col items-center relative animate-fade-in">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-2 tracking-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-lg">Nueva Entrada en mi Diario</h1>
@@ -98,12 +85,6 @@ export default function CrearDesahogo() {
               </button>
             </div>
           </form>
-          <style>{`
-            @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-            .animate-fade-in { animation: fade-in 0.7s; }
-            @keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
-            .animate-shake { animation: shake 0.5s; }
-          `}</style>
         </div>
       </div>
     </Layout>
