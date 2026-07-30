@@ -77,13 +77,25 @@ create table retos (
 
 ---
 
-## 4. Actualización de la tabla candidaturas existente
+## 4. Bootstrap rápido (proyecto nuevo)
 
-Si ya tienes la tabla candidaturas creada, ejecuta estos comandos para añadir los campos nuevos:
+Si ves `relation "public.candidaturas" does not exist`, tu proyecto aún no tiene las tablas.
+Ejecuta en el SQL Editor de Supabase el archivo:
+
+`supabase/migrations/20260730183000_align_schema_with_frontend.sql`
+
+Ese script **crea** `profiles`, `candidaturas` y `desahogos` si faltan, añade columnas nuevas y activa RLS.
+
+---
+
+## 5. Actualización de la tabla candidaturas existente
+
+Si ya tienes la tabla candidaturas creada, el mismo bootstrap añade solo lo que falte. También puedes ejecutar a mano:
 
 ```sql
 -- Añadir campo para URL de empresa
 ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS empresa_url text;
+
 
 -- Añadir campo para fecha de actualización
 ALTER TABLE candidaturas ADD COLUMN IF NOT EXISTS fecha_actualizacion date DEFAULT current_date;
@@ -112,9 +124,9 @@ UPDATE candidaturas SET fecha_actualizacion = fecha WHERE fecha_actualizacion IS
 
 ---
 
-## 5. Policies recomendadas (Row Level Security)
+## 6. Policies recomendadas (Row Level Security)
 
-Activa RLS en cada tabla y añade una policy básica:
+El bootstrap ya crea policies básicas. Si las configuras a mano:
 
 ```sql
 -- Permitir a cada usuario ver y modificar solo sus propios registros
