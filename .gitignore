@@ -33,6 +33,12 @@ build
 # Cobertura de tests
 coverage
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Archivos temporales de sistema
 Thumbs.db
 *.tmp

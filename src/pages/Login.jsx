@@ -39,7 +39,7 @@ export default function Login() {
         return;
       }
       await Swal.fire(swalSuccess('¡Bienvenido!', 'Inicio de sesión exitoso.'));
-      navigate('/');
+      navigate('/index');
     } catch {
       await Swal.fire(swalError('Error de conexión', 'No pudimos completar el inicio de sesión. Comprueba tu conexión e inténtalo de nuevo.'));
     } finally {

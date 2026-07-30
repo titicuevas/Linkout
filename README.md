@@ -205,6 +205,13 @@ create table candidaturas (
 5. Ejecuta el frontend con `npm run dev`
 6. (Opcional) Arranca el backend en `backend/` solo para el health-check
 
+### Tests
+```bash
+npm test          # unitarios (Vitest)
+npm run test:e2e  # smoke E2E (Playwright, por defecto contra producción)
+# Opcional: PLAYWRIGHT_BASE_URL=http://localhost:5173 E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
+```
+
 ---
 
 ## 📚 Documentación adicional
