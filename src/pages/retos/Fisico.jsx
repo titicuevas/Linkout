@@ -196,7 +196,7 @@ export default function RetoFisico() {
         candidatura?._libre
           ? '¡Buen trabajo! Ya tienes tu reto libre de hoy. Vuelve mañana o elige una candidatura.'
           : '¡Enhorabuena! Has completado el reto de bienestar para esta candidatura. Sigue así, cada paso cuenta.',
-        { timer: 2500, timerProgressBar: true, showConfirmButton: false },
+        { timer: 1600, timerProgressBar: true, showConfirmButton: false },
       ));
       setShowConfetti(false);
       navigate('/retos/fisico', { replace: true });
@@ -235,6 +235,7 @@ export default function RetoFisico() {
 
             <button
               type="button"
+              aria-label={libreDone ? 'Reto libre de hoy (ya completado)' : 'Reto libre de hoy'}
               disabled={libreDone}
               onClick={() => !libreDone && navigate('/retos/fisico', { state: { candidatura: buildLibreCandidatura() } })}
               className={`w-full max-w-md mb-6 flex items-center justify-between gap-2 py-4 px-6 rounded-2xl shadow-lg text-base border-2 font-semibold transition-all ${
@@ -276,6 +277,7 @@ export default function RetoFisico() {
                       <button
                         key={c.id}
                         type="button"
+                        aria-label={done ? `Reto para ${c.puesto} (ya completado)` : `Reto para ${c.puesto} en ${c.empresa}`}
                         disabled={done}
                         onClick={() => !done && navigate('/retos/fisico', { state: { candidatura: c } })}
                         className={`flex items-center justify-between gap-2 py-3 px-5 rounded-xl shadow-lg text-left border-2 transition-all font-semibold ${

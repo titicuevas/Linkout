@@ -12,6 +12,14 @@ async function dismissOptionalOk(page) {
   }
 }
 
+async function clearRetoCompletadoKeys(page) {
+  await page.evaluate(() => {
+    Object.keys(localStorage)
+      .filter((key) => key.startsWith('reto_completado_'))
+      .forEach((key) => localStorage.removeItem(key));
+  });
+}
+
 async function login(page) {
   await page.goto('/login');
   await expect(page.getByRole('heading', { name: /iniciar sesión/i })).toBeVisible();
@@ -143,5 +151,32 @@ test.describe('Smoke LinkOut', () => {
     const greeting = page.getByText(/¡hola,/i);
     await expect(greeting).toBeVisible();
     await expect(greeting).not.toContainText(email);
+  });
+
+  test('reto libre: generar, alternativa y completar', async ({ page }) => {
+    test.setTimeout(90_000);
+    await login(page);
+
+    await page.goto('/retos/fisico');
+    await expect(page.getByRole('heading', { name: /retos de bienestar/i })).toBeVisible();
+    await clearRetoCompletadoKeys(page);
+    await page.reload();
+    await expect(page.getByRole('heading', { name: /retos de bienestar/i })).toBeVisible();
+
+    await page.getByRole('button', { name: /reto libre de hoy/i }).click();
+    await expect(page.getByRole('heading', { name: /reto libre de hoy/i })).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(/reto fácil/i)).toBeVisible();
+    await expect(page.getByText(/reto medio/i)).toBeVisible();
+    await expect(page.getByText(/reto difícil/i)).toBeVisible();
+
+    await page.getByRole('button', { name: /no puedes hacer este ejercicio/i }).first().click();
+    await expect(page.getByText(/alternativa:/i).first()).toBeVisible();
+
+    await page.getByRole('button', { name: /marcar como completado/i }).first().click();
+    await expect(page.getByText(/¡reto completado!/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: /retos de bienestar/i })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole('button', { name: /reto libre de hoy/i })).toBeDisabled();
+
+    await clearRetoCompletadoKeys(page);
   });
 });
