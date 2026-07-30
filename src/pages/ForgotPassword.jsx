@@ -46,10 +46,11 @@ export default function ForgotPassword() {
         <div className="text-center text-gray-300 mb-6 text-base sm:text-lg">Introduce tu correo y te enviaremos un enlace para restablecer tu contraseña.</div>
         <form onSubmit={handleSubmit} className="space-y-4 w-full">
           <div>
-            <label className={labelBase}>Correo electrónico</label>
+            <label htmlFor="forgot-email" className={labelBase}>Correo electrónico</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><EnvelopeIcon className="w-5 h-5" /></span>
               <input
+                id="forgot-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

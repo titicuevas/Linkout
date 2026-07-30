@@ -9,8 +9,15 @@ async function login(page) {
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill(password);
   await page.getByRole('button', { name: /iniciar sesión/i }).click();
-  // SweetAlert bloquea la navegación hasta confirmar
-  await page.getByRole('button', { name: /^OK$/i }).click({ timeout: 15_000 });
+
+  // Compat: toast automático (nuevo) o botón OK (despliegue antiguo)
+  const ok = page.getByRole('button', { name: /^OK$/i });
+  try {
+    await ok.click({ timeout: 2_500 });
+  } catch {
+    // timer toast: no requiere click
+  }
+
   await expect(page.getByText(/centro de control/i)).toBeVisible({ timeout: 20_000 });
 }
 

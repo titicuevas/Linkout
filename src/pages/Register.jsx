@@ -79,10 +79,11 @@ export default function Register() {
         {error && <div className={errorMsg + ' w-full text-center mb-2'}>{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4 w-full">
           <div>
-            <label className={labelBase}>Nombre</label>
+            <label htmlFor="register-nombre" className={labelBase}>Nombre</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><UserIcon className="w-5 h-5" /></span>
               <input
+                id="register-nombre"
                 type="text"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
@@ -93,10 +94,11 @@ export default function Register() {
             </div>
           </div>
           <div>
-            <label className={labelBase}>Correo electrónico</label>
+            <label htmlFor="register-email" className={labelBase}>Correo electrónico</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><EnvelopeIcon className="w-5 h-5" /></span>
               <input
+                id="register-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -107,10 +109,11 @@ export default function Register() {
             </div>
           </div>
           <div>
-            <label className={labelBase}>Contraseña</label>
+            <label htmlFor="register-password" className={labelBase}>Contraseña</label>
             <div className="flex w-full relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><LockClosedIcon className="w-5 h-5" /></span>
               <input
+                id="register-password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -133,10 +136,11 @@ export default function Register() {
             </div>
           </div>
           <div>
-            <label className={labelBase}>Repetir contraseña</label>
+            <label htmlFor="register-password-confirm" className={labelBase}>Repetir contraseña</label>
             <div className="flex w-full relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><LockClosedIcon className="w-5 h-5" /></span>
               <input
+                id="register-password-confirm"
                 type={showConfirm ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -148,7 +152,7 @@ export default function Register() {
               <button
                 type="button"
                 tabIndex={0}
-                aria-label="Mostrar u ocultar contraseña"
+                aria-label="Mostrar u ocultar confirmación de contraseña"
                 className="rounded-r bg-neutral-700 border-t border-b border-r border-neutral-600 text-gray-400 hover:text-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-opacity opacity-60 hover:opacity-100 px-3 flex items-center z-10"
                 style={{height: '2.5rem'}}
                 onMouseDown={e => e.preventDefault()}

@@ -38,7 +38,10 @@ export default function Login() {
         await Swal.fire(swalError('No se pudo iniciar sesión', mapAuthErrorMessage(error, 'No se pudo iniciar sesión. Inténtalo de nuevo.')));
         return;
       }
-      await Swal.fire(swalSuccess('¡Bienvenido!', 'Inicio de sesión exitoso.'));
+      await Swal.fire(swalSuccess('¡Bienvenido!', 'Inicio de sesión exitoso.', {
+        timer: 1200,
+        showConfirmButton: false,
+      }));
       navigate('/index');
     } catch {
       await Swal.fire(swalError('Error de conexión', 'No pudimos completar el inicio de sesión. Comprueba tu conexión e inténtalo de nuevo.'));
@@ -55,10 +58,11 @@ export default function Login() {
         <div className="text-center text-gray-300 mb-6 text-base sm:text-lg">¡Bienvenido de nuevo! Accede a tu espacio seguro para desahogarte y avanzar.</div>
         <form onSubmit={handleSubmit} className="space-y-4 w-full">
           <div>
-            <label className={labelBase}>Correo electrónico</label>
+            <label htmlFor="login-email" className={labelBase}>Correo electrónico</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><EnvelopeIcon className="w-5 h-5" /></span>
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -69,10 +73,11 @@ export default function Login() {
             </div>
           </div>
           <div>
-            <label className={labelBase}>Contraseña</label>
+            <label htmlFor="login-password" className={labelBase}>Contraseña</label>
             <div className="flex w-full relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><LockClosedIcon className="w-5 h-5" /></span>
               <input
+                id="login-password"
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
