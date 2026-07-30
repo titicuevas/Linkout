@@ -133,6 +133,8 @@ export function buildChangeHistory(previousValues, nextValues) {
     ubicacion: 'Ubicación',
     origen: 'Origen',
     feedback: 'Feedback',
+    notas: 'Notas',
+    empresa_url: 'URL de la empresa',
   };
 
   const entries = Object.entries(labels).flatMap(([field, label]) => {
@@ -169,11 +171,89 @@ export function matchesCandidaturaSearch(candidatura, query) {
     candidatura.empresa,
     candidatura.ubicacion,
     candidatura.feedback,
+    candidatura.notas,
   ]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();
   return haystack.includes(q);
+}
+
+export const SAVED_VIEWS_KEY = 'linkout_candidaturas_saved_views';
+
+/** Snapshot de filtros actuales listo para guardar como vista. */
+export function buildSavedViewFilters({ filtroEstado, filtroOrigen, filtroSeguimiento, searchQuery }) {
+  return {
+    filtroEstado: filtroEstado || '',
+    filtroOrigen: filtroOrigen || '',
+    filtroSeguimiento: Boolean(filtroSeguimiento),
+    searchQuery: searchQuery || '',
+  };
+}
+
+export function loadSavedViews(storage = localStorage) {
+  try {
+    const raw = storage.getItem(SAVED_VIEWS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function persistSavedViews(views, storage = localStorage) {
+  storage.setItem(SAVED_VIEWS_KEY, JSON.stringify(views));
+}
+
+export function createSavedView(name, filters, existingViews = []) {
+  const trimmed = (name || '').trim();
+  if (!trimmed) return { error: 'empty', views: existingViews };
+
+  const alreadyExists = existingViews.some(
+    (view) => view.name.toLowerCase() === trimmed.toLowerCase(),
+  );
+  if (alreadyExists) return { error: 'duplicate', views: existingViews };
+
+  const nextViews = [
+    {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      name: trimmed,
+      ...buildSavedViewFilters(filters),
+      createdAt: new Date().toISOString(),
+    },
+    ...existingViews,
+  ];
+
+  return { error: null, views: nextViews };
+}
+
+export function removeSavedView(viewId, existingViews = []) {
+  return existingViews.filter((view) => view.id !== viewId);
+}
+
+export function hasActiveCandidaturaFilters({ filtroEstado, filtroOrigen, filtroSeguimiento, searchQuery }) {
+  return Boolean(
+    (filtroEstado || '').trim()
+    || (filtroOrigen || '').trim()
+    || filtroSeguimiento
+    || (searchQuery || '').trim(),
+  );
+}
+
+/** Devuelve una URL segura para abrir en nueva pestaña, o null si está vacía/inválida. */
+export function toExternalUrl(value) {
+  const raw = (value || '').trim();
+  if (!raw) return null;
+
+  try {
+    const withProtocol = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    const url = new URL(withProtocol);
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
 }
 
 /** Payload para actualizar solo el estado (historial + fecha_actualizacion) */
@@ -211,6 +291,7 @@ export function buildDuplicatePayload(candidatura, userId) {
     ubicacion: candidatura.ubicacion || '',
     origen: normalizeOrigen(candidatura.origen) || '',
     feedback: '',
+    notas: candidatura.notas || '',
     fecha_actualizacion: now.toISOString(),
     historial_cambios: [
       `[${timestamp}] Candidatura duplicada desde "${candidatura.puesto || 'sin puesto'}" en "${candidatura.empresa || 'sin empresa'}" con estado: ${formatEstado(candidatura.estado)}`,

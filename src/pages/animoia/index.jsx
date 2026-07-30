@@ -7,6 +7,7 @@ import ReactMarkdown from 'react-markdown';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
+import { PROFILE_UPDATED_EVENT } from '../../utils/profileEvents';
 
 const ROLES = [
   { value: 'madre', label: 'Madre' },
@@ -83,6 +84,15 @@ export default function AnimoIAIndex() {
     fetchMensajes(user.id);
     supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setProfile(data));
   }, [user]);
+
+  useEffect(() => {
+    const handleProfileUpdated = (event) => {
+      setProfile((current) => ({ ...(current || {}), ...(event.detail || {}) }));
+    };
+
+    window.addEventListener(PROFILE_UPDATED_EVENT, handleProfileUpdated);
+    return () => window.removeEventListener(PROFILE_UPDATED_EVENT, handleProfileUpdated);
+  }, []);
 
   const fetchMensajes = async (userId) => {
     const { data } = await supabase

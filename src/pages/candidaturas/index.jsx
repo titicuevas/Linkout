@@ -12,7 +12,22 @@ import CandidaturasFilters from './CandidaturasFilters';
 import CandidaturasMobileList from './CandidaturasMobileList';
 import CandidaturasDesktopTable from './CandidaturasDesktopTable';
 import CandidaturaEditModal from './CandidaturaEditModal';
-import { ESTADOS, ORIGENES, getFollowUpsPendientes, normalizeOrigen, matchesCandidaturaSearch, buildStatusUpdate, needsFollowUp, buildDuplicatePayload } from './shared';
+import {
+  ESTADOS,
+  ORIGENES,
+  getFollowUpsPendientes,
+  normalizeOrigen,
+  matchesCandidaturaSearch,
+  buildStatusUpdate,
+  needsFollowUp,
+  buildDuplicatePayload,
+  loadSavedViews,
+  persistSavedViews,
+  createSavedView,
+  removeSavedView,
+  hasActiveCandidaturaFilters,
+  isActiveProcess,
+} from './shared';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 import { swalSuccess, swalError, swalWarning, swalInfo } from '../../utils/swalTheme';
@@ -35,23 +50,29 @@ export default function CandidaturasIndex() {
   const [filtroOrigen, setFiltroOrigen] = useState('');
   const [filtroSeguimiento, setFiltroSeguimiento] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [savedViews, setSavedViews] = useState([]);
   const [statusUpdatingId, setStatusUpdatingId] = useState(null);
-  const [tooltipFeedback, setTooltipFeedback] = useState({ show: false, text: '', x: 0, y: 0 });
+  const [detailModal, setDetailModal] = useState({ show: false, title: '', text: '' });
 
   // Filtrado: estado, origen, búsqueda, seguimiento
-  const candidaturasFiltradas = candidaturas.filter((c) =>
-    (filtroEstado === '' || (c.estado || '').toLowerCase().trim() === filtroEstado.toLowerCase().trim()) &&
-    (filtroOrigen === '' || normalizeOrigen(c.origen) === filtroOrigen) &&
-    matchesCandidaturaSearch(c, searchQuery) &&
-    (!filtroSeguimiento || needsFollowUp(c))
-  );
+  const candidaturasFiltradas = candidaturas.filter((c) => {
+    const matchesEstado = filtroEstado === ''
+      ? true
+      : filtroEstado === 'en_proceso'
+        ? isActiveProcess(c)
+        : (c.estado || '').toLowerCase().trim() === filtroEstado.toLowerCase().trim();
+
+    return matchesEstado
+      && (filtroOrigen === '' || normalizeOrigen(c.origen) === filtroOrigen)
+      && matchesCandidaturaSearch(c, searchQuery)
+      && (!filtroSeguimiento || needsFollowUp(c));
+  });
 
   // Ordenar el array filtrado
   const candidaturasOrdenadas = [...candidaturasFiltradas].sort((a, b) => {
     let valA = a[sortBy];
     let valB = b[sortBy];
-    // Si es fecha, convertir a Date
-    if (sortBy === 'fecha') {
+    if (sortBy === 'fecha' || sortBy === 'fecha_actualizacion') {
       valA = valA ? new Date(valA) : new Date(0);
       valB = valB ? new Date(valB) : new Date(0);
     }
@@ -64,6 +85,12 @@ export default function CandidaturasIndex() {
   const totalPages = Math.max(1, Math.ceil(candidaturasOrdenadas.length / pageSize) || 1);
   const paginatedCandidaturas = candidaturasOrdenadas.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
   const followUpsPendientes = getFollowUpsPendientes(candidaturas);
+  const filtersActive = hasActiveCandidaturaFilters({
+    filtroEstado,
+    filtroOrigen,
+    filtroSeguimiento,
+    searchQuery,
+  });
 
   useTitle('Mis Candidaturas');
 
@@ -84,6 +111,10 @@ export default function CandidaturasIndex() {
     } catch {
       localStorage.removeItem(CANDIDATURAS_PREFS_KEY);
     }
+  }, []);
+
+  useEffect(() => {
+    setSavedViews(loadSavedViews());
   }, []);
 
   useEffect(() => {
@@ -214,6 +245,7 @@ export default function CandidaturasIndex() {
     const headers = [
       'Puesto',
       'Empresa',
+      'URL empresa',
       'Estado',
       'Origen',
       'Fecha',
@@ -223,12 +255,14 @@ export default function CandidaturasIndex() {
       'Tipo de trabajo',
       'Ubicacion',
       'Feedback',
+      'Notas',
     ];
 
     const escapeCsv = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
     const rows = candidaturasOrdenadas.map((candidatura) => ([
       candidatura.puesto,
       candidatura.empresa,
+      candidatura.empresa_url,
       candidatura.estado,
       candidatura.origen,
       candidatura.fecha,
@@ -238,6 +272,7 @@ export default function CandidaturasIndex() {
       candidatura.tipo_trabajo,
       candidatura.ubicacion,
       candidatura.feedback,
+      candidatura.notas,
     ].map(escapeCsv).join(',')));
 
     const csvContent = [headers.join(','), ...rows].join('\n');
@@ -257,7 +292,84 @@ export default function CandidaturasIndex() {
   const goToCreate = () => navigate('/candidaturas/create');
   const goToStats = () => navigate('/candidaturas/estadisticas');
   const goToRetos = () => navigate('/retos/Fisico');
-  const openFeedback = (text) => setTooltipFeedback({ show: true, text });
+  const openDetail = (title, text) => setDetailModal({ show: true, title, text });
+  const closeDetail = () => setDetailModal({ show: false, title: '', text: '' });
+
+  const handleSaveView = async () => {
+    const { value: name } = await Swal.fire({
+      ...swalInfo('Guardar vista', 'Pon un nombre a esta combinación de filtros.'),
+      input: 'text',
+      inputPlaceholder: 'Ej: Seguimiento LinkedIn',
+      inputAttributes: { maxlength: 40 },
+      showCancelButton: true,
+      confirmButtonText: 'Guardar',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#2563eb',
+    });
+
+    if (!name) return;
+
+    const { error, views } = createSavedView(name, {
+      filtroEstado,
+      filtroOrigen,
+      filtroSeguimiento,
+      searchQuery,
+    }, savedViews);
+
+    if (error === 'empty') {
+      await Swal.fire(swalError('Nombre vacío', 'Introduce un nombre para la vista.'));
+      return;
+    }
+
+    if (error === 'duplicate') {
+      await Swal.fire(swalError('Nombre duplicado', 'Ya tienes una vista con ese nombre.'));
+      return;
+    }
+
+    persistSavedViews(views);
+    setSavedViews(views);
+    await Swal.fire(swalSuccess('Vista guardada', `"${name.trim()}" ya está disponible.`, {
+      timer: 1400,
+      showConfirmButton: false,
+    }));
+  };
+
+  const handleApplyView = (view) => {
+    setFiltroEstado(view.filtroEstado || '');
+    setFiltroOrigen(view.filtroOrigen || '');
+    setFiltroSeguimiento(Boolean(view.filtroSeguimiento));
+    setSearchQuery(view.searchQuery || '');
+    setCurrentPage(0);
+  };
+
+  const handleClearFilters = () => {
+    setFiltroEstado('');
+    setFiltroOrigen('');
+    setFiltroSeguimiento(false);
+    setSearchQuery('');
+    setCurrentPage(0);
+  };
+
+  const handleFilterEstadoFromStats = (estado) => {
+    setFiltroEstado(estado || '');
+    setFiltroSeguimiento(false);
+    setCurrentPage(0);
+  };
+
+  const handleDeleteView = async (viewId) => {
+    const view = savedViews.find((item) => item.id === viewId);
+    const result = await Swal.fire(swalWarning(
+      '¿Eliminar vista?',
+      `Se borrará la vista "${view?.name || ''}".`,
+      { confirmButtonText: 'Sí, eliminar', confirmButtonColor: '#ef4444' },
+    ));
+
+    if (!result.isConfirmed) return;
+
+    const nextViews = removeSavedView(viewId, savedViews);
+    persistSavedViews(nextViews);
+    setSavedViews(nextViews);
+  };
 
   if (authLoading) return <PageLoader message="Cargando tus candidaturas..." />;
   if (!user) return null;
@@ -270,7 +382,16 @@ export default function CandidaturasIndex() {
         
         {/* Contador y estadísticas */}
         {!loading && candidaturas.length > 0 && (
-          <CandidaturasStats candidaturas={candidaturas} />
+          <CandidaturasStats
+            candidaturas={candidaturas}
+            followUpCount={followUpsPendientes.length}
+            onFilterEstado={handleFilterEstadoFromStats}
+            onShowFollowUps={() => {
+              setFiltroSeguimiento(true);
+              setFiltroEstado('');
+              setCurrentPage(0);
+            }}
+          />
         )}
         {!loading && followUpsPendientes.length > 0 && (
           <div className="w-full max-w-6xl mx-auto mb-6 rounded-2xl border border-yellow-500/40 bg-yellow-500/10 p-4 sm:p-5 shadow-xl">
@@ -316,6 +437,12 @@ export default function CandidaturasIndex() {
           followUpCount={followUpsPendientes.length}
           searchQuery={searchQuery}
           resultCount={candidaturasOrdenadas.length}
+          hasActiveFilters={filtersActive}
+          savedViews={savedViews}
+          onSaveView={handleSaveView}
+          onApplyView={handleApplyView}
+          onDeleteView={handleDeleteView}
+          onClearFilters={handleClearFilters}
           onSelectEstado={(value) => {
             setFiltroEstado(value);
             setCurrentPage(0);
@@ -357,13 +484,16 @@ export default function CandidaturasIndex() {
                 <CandidaturasMobileList
                   candidaturas={paginatedCandidaturas}
                   onCreate={goToCreate}
-                  onOpenFeedback={openFeedback}
+                  onOpenFeedback={(text) => openDetail('Feedback del reclutador', text)}
+                  onOpenNotas={(text) => openDetail('Notas personales', text)}
                   onEdit={handleEditClick}
                   onDelete={handleDeleteClick}
                   onDuplicate={handleDuplicateClick}
                   onGoToRetos={goToRetos}
                   onStatusChange={handleStatusChange}
                   statusUpdatingId={statusUpdatingId}
+                  hasActiveFilters={filtersActive}
+                  onClearFilters={handleClearFilters}
                 />
               </div>
 
@@ -377,10 +507,13 @@ export default function CandidaturasIndex() {
                   onEdit={handleEditClick}
                   onDelete={handleDeleteClick}
                   onDuplicate={handleDuplicateClick}
-                  onOpenFeedback={openFeedback}
+                  onOpenFeedback={(text) => openDetail('Feedback del reclutador', text)}
+                  onOpenNotas={(text) => openDetail('Notas personales', text)}
                   onGoToRetos={goToRetos}
                   onStatusChange={handleStatusChange}
                   statusUpdatingId={statusUpdatingId}
+                  hasActiveFilters={filtersActive}
+                  onClearFilters={handleClearFilters}
                 />
               </div>
             </>
@@ -435,14 +568,14 @@ export default function CandidaturasIndex() {
             Volver al inicio
           </button>
         </div>
-        {/* Modal feedback */}
-        {tooltipFeedback.show && (
-          <Modal isOpen={tooltipFeedback.show} onClose={() => setTooltipFeedback({ show: false, text: '' })}>
-            <div className="text-lg text-white font-bold mb-2">Feedback del reclutador</div>
+        {/* Modal feedback / notas */}
+        {detailModal.show && (
+          <Modal isOpen={detailModal.show} onClose={closeDetail}>
+            <div className="text-lg text-white font-bold mb-2">{detailModal.title}</div>
             <div className="text-blue-200 text-base text-center whitespace-pre-line max-w-sm bg-neutral-800 p-4 rounded-lg border border-neutral-700">
-              {tooltipFeedback.text}
+              {detailModal.text}
             </div>
-            <button onClick={() => setTooltipFeedback({ show: false, text: '' })} className="mt-4 px-6 py-2 bg-pink-600 text-white rounded-full font-bold shadow-lg text-base">
+            <button onClick={closeDetail} className="mt-4 px-6 py-2 bg-pink-600 text-white rounded-full font-bold shadow-lg text-base">
               Cerrar
             </button>
           </Modal>

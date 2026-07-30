@@ -10,9 +10,15 @@ export default function CandidaturasFilters({
   onSelectOrigen,
   onToggleSeguimiento,
   onSearchChange,
+  onClearFilters,
+  hasActiveFilters = false,
   onOpenStats,
   onExport,
   resultCount,
+  savedViews = [],
+  onSaveView,
+  onApplyView,
+  onDeleteView,
 }) {
   return (
     <div className="flex flex-col gap-4 mb-4 w-full max-w-6xl mx-auto">
@@ -23,13 +29,72 @@ export default function CandidaturasFilters({
           type="search"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Buscar por puesto, empresa, ubicación o feedback..."
+          placeholder="Buscar por puesto, empresa, ubicación, feedback o notas..."
           className="w-full rounded-2xl border border-neutral-700 bg-neutral-800 px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
-        {typeof resultCount === 'number' && (
-          <p className="mt-2 text-sm text-gray-400">
-            {resultCount} resultado{resultCount === 1 ? '' : 's'}
-          </p>
+        <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
+          {typeof resultCount === 'number' && (
+            <p className="text-sm text-gray-400">
+              {resultCount} resultado{resultCount === 1 ? '' : 's'}
+            </p>
+          )}
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={onClearFilters}
+              className="text-sm font-semibold text-pink-300 hover:text-pink-200"
+            >
+              Limpiar filtros
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-neutral-700 bg-neutral-900/70 p-3 sm:p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-sm font-semibold text-blue-200">Vistas guardadas</div>
+            <p className="text-xs text-gray-400 mt-1">
+              Guarda la combinación actual de filtros para reutilizarla.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onSaveView}
+            className="rounded-full bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg transition hover:bg-blue-500"
+          >
+            Guardar vista actual
+          </button>
+        </div>
+
+        {savedViews.length === 0 ? (
+          <p className="mt-3 text-sm text-gray-500">Aún no tienes vistas guardadas.</p>
+        ) : (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {savedViews.map((view) => (
+              <div
+                key={view.id}
+                className="flex items-center gap-1 rounded-full border border-neutral-600 bg-neutral-800 pl-3 pr-1 py-1"
+              >
+                <button
+                  type="button"
+                  onClick={() => onApplyView(view)}
+                  className="text-sm font-semibold text-white hover:text-pink-200"
+                  title="Aplicar esta vista"
+                >
+                  {view.name}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onDeleteView(view.id)}
+                  className="ml-1 rounded-full px-2 py-0.5 text-xs font-bold text-red-300 hover:bg-red-500/20"
+                  aria-label={`Eliminar vista ${view.name}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

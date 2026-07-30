@@ -5,6 +5,7 @@ import { ArrowRightOnRectangleIcon, PencilSquareIcon } from '@heroicons/react/24
 import { supabase } from '../services/supabase';
 import Swal from 'sweetalert2';
 import { swalSuccess, swalError } from '../utils/swalTheme';
+import { emitProfileUpdated } from '../utils/profileEvents';
 
 export default function Navbar({ user, onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -63,6 +64,7 @@ export default function Navbar({ user, onLogout }) {
 
     setNombre(next);
     setEditing(false);
+    emitProfileUpdated({ nombre: next });
     await Swal.fire(swalSuccess('Perfil actualizado', 'Tu nombre se ha guardado.', { timer: 1400, showConfirmButton: false }));
   };
 

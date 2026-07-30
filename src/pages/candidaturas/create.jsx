@@ -28,6 +28,7 @@ export default function CrearCandidatura() {
   const [tipoTrabajo, setTipoTrabajo] = useState('');
   const [ubicacion, setUbicacion] = useState('');
   const [origen, setOrigen] = useState('');
+  const [notas, setNotas] = useState('');
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
@@ -47,6 +48,7 @@ export default function CrearCandidatura() {
       setTipoTrabajo(draft.tipoTrabajo || '');
       setUbicacion(draft.ubicacion || '');
       setOrigen(draft.origen || '');
+      setNotas(draft.notas || '');
     } catch {
       localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
     }
@@ -66,9 +68,10 @@ export default function CrearCandidatura() {
         tipoTrabajo,
         ubicacion,
         origen,
+        notas,
       }),
     );
-  }, [puesto, empresa, empresaUrl, estado, fecha, sueldoAnual, franjaSalarial, tipoTrabajo, ubicacion, origen]);
+  }, [puesto, empresa, empresaUrl, estado, fecha, sueldoAnual, franjaSalarial, tipoTrabajo, ubicacion, origen, notas]);
 
   if (authLoading) return <PageLoader message="Preparando formulario..." />;
   if (!user) return null;
@@ -107,6 +110,7 @@ export default function CrearCandidatura() {
         tipo_trabajo: tipoTrabajo,
         ubicacion,
         origen: normalizeOrigen(origen),
+        notas: notas.trim(),
         historial_cambios: [`[${creationTimestamp}] Candidatura creada con estado inicial: ${formatEstado(estado)}`],
         fecha_actualizacion: new Date().toISOString(),
       }
@@ -244,6 +248,15 @@ export default function CrearCandidatura() {
                 <option value="">Selecciona origen</option>
                 {FORM_ORIGENES.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
+            </div>
+            <div>
+              <label className={labelBase + ' text-lg'}>Notas (opcional)</label>
+              <textarea
+                value={notas}
+                onChange={e => setNotas(e.target.value)}
+                className={inputBase + ' text-lg py-3 w-full min-h-[120px]'}
+                placeholder="Apunta detalles de la oferta, sensaciones, dudas o próximos pasos..."
+              />
             </div>
             <div className="flex w-full gap-2 mt-6 flex-col sm:flex-row">
               <button type="button" onClick={handleCancel} className="flex-1 px-4 py-3 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition text-lg shadow-md">Cancelar candidatura</button>

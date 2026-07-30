@@ -7,6 +7,7 @@ import PageLoader from '../components/PageLoader';
 import { useAuth } from '../hooks/useAuth';
 import { useTitle } from '../hooks/useTitle';
 import { isActiveProcess, getFollowUpsPendientes, getReferenceDate } from './candidaturas/shared';
+import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
 
 export default function Index() {
   const { user, authLoading, logout } = useAuth();
@@ -20,6 +21,15 @@ export default function Index() {
     if (!user) return;
     supabase.from('profiles').select('*').eq('id', user.id).single().then(({ data }) => setProfile(data));
   }, [user]);
+
+  useEffect(() => {
+    const handleProfileUpdated = (event) => {
+      setProfile((current) => ({ ...(current || {}), ...(event.detail || {}) }));
+    };
+
+    window.addEventListener(PROFILE_UPDATED_EVENT, handleProfileUpdated);
+    return () => window.removeEventListener(PROFILE_UPDATED_EVENT, handleProfileUpdated);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

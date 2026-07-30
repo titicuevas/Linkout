@@ -1,4 +1,4 @@
-import { formatOrigen, formatInactivityLabel, needsFollowUp, isActiveProcess } from './shared';
+import { formatOrigen, formatInactivityLabel, needsFollowUp, isActiveProcess, toExternalUrl } from './shared';
 import CandidaturasEmptyState from './CandidaturasEmptyState';
 import EstadoQuickSelect from './EstadoQuickSelect';
 
@@ -6,15 +6,24 @@ export default function CandidaturasMobileList({
   candidaturas,
   onCreate,
   onOpenFeedback,
+  onOpenNotas,
   onEdit,
   onDelete,
   onDuplicate,
   onGoToRetos,
   onStatusChange,
   statusUpdatingId,
+  hasActiveFilters = false,
+  onClearFilters,
 }) {
   if (candidaturas.length === 0) {
-    return <CandidaturasEmptyState onCreate={onCreate} />;
+    return (
+      <CandidaturasEmptyState
+        onCreate={onCreate}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={onClearFilters}
+      />
+    );
   }
 
   return (
@@ -22,6 +31,7 @@ export default function CandidaturasMobileList({
       {candidaturas.map((candidatura) => {
         const inactivity = formatInactivityLabel(candidatura);
         const urgent = needsFollowUp(candidatura);
+        const empresaUrl = toExternalUrl(candidatura.empresa_url);
 
         return (
           <article
@@ -32,6 +42,16 @@ export default function CandidaturasMobileList({
               <div className="min-w-0">
                 <h2 className="text-lg font-bold text-white break-words">{candidatura.puesto}</h2>
                 <p className="text-sm text-gray-300 break-words">{candidatura.empresa}</p>
+                {empresaUrl && (
+                  <a
+                    href={empresaUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-block text-xs font-semibold text-blue-300 hover:text-blue-200 break-all"
+                  >
+                    Abrir web de la empresa
+                  </a>
+                )}
                 {isActiveProcess(candidatura) && inactivity && (
                   <p className={`mt-1 text-xs font-semibold ${urgent ? 'text-yellow-300' : 'text-gray-400'}`}>
                     {urgent ? '⚠ ' : ''}{inactivity}
@@ -80,6 +100,12 @@ export default function CandidaturasMobileList({
             {candidatura.feedback && (
               <button onClick={() => onOpenFeedback(candidatura.feedback)} className="mt-3 w-full rounded-xl bg-purple-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Ver feedback">
                 Ver feedback
+              </button>
+            )}
+
+            {candidatura.notas?.trim() && (
+              <button onClick={() => onOpenNotas(candidatura.notas)} className="mt-3 w-full rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Ver notas">
+                Ver notas
               </button>
             )}
 

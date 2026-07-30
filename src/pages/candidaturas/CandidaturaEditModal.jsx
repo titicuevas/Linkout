@@ -42,7 +42,9 @@ export default function CandidaturaEditModal({ isOpen, candidatura, onClose, onS
       tipo_trabajo: form.tipo_trabajo.value,
       ubicacion: form.ubicacion.value,
       origen: normalizeOrigen(form.origen.value),
+      empresa_url: form.empresa_url.value.trim(),
       feedback: form.feedback.value,
+      notas: form.notas.value,
       fecha_actualizacion: new Date().toISOString(),
     };
 
@@ -99,6 +101,17 @@ export default function CandidaturaEditModal({ isOpen, candidatura, onClose, onS
         <label className={labelCls}>
           <span className={spanCls}>Empresa</span>
           <input name="empresa" defaultValue={candidatura.empresa} className={inputCls} required />
+        </label>
+
+        <label className={labelCls}>
+          <span className={`${spanCls} text-gray-400`}>URL de la empresa (opcional)</span>
+          <input
+            name="empresa_url"
+            type="url"
+            defaultValue={candidatura.empresa_url || ''}
+            className={`${inputCls} text-sm`}
+            placeholder="https://www.empresa.com"
+          />
         </label>
 
         <label className={labelCls}>
@@ -186,6 +199,16 @@ export default function CandidaturaEditModal({ isOpen, candidatura, onClose, onS
             defaultValue={candidatura.feedback || ''}
             className={`${inputCls} min-h-[60px]`}
             placeholder="Feedback recibido, comentarios de entrevistas... (opcional)"
+          />
+        </label>
+
+        <label className={labelCls}>
+          <span className={spanCls}>Notas personales</span>
+          <textarea
+            name="notas"
+            defaultValue={candidatura.notas || ''}
+            className={`${inputCls} min-h-[120px]`}
+            placeholder="Detalles de la oferta, sensaciones, acciones pendientes... (opcional)"
           />
         </label>
 

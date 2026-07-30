@@ -12,6 +12,10 @@ import {
   buildStatusUpdate,
   formatInactivityLabel,
   buildDuplicatePayload,
+  createSavedView,
+  removeSavedView,
+  hasActiveCandidaturaFilters,
+  toExternalUrl,
 } from './shared';
 
 // ─── formatEstado ───────────────────────────────────────────────────────────
@@ -137,6 +141,14 @@ describe('buildChangeHistory', () => {
     expect(result[0]).toContain('Empresa:');
   });
 
+  it('incluye notas cuando cambian', () => {
+    const prev = { notas: 'Primera llamada pendiente' };
+    const next = { notas: 'Primera llamada hecha' };
+    const result = buildChangeHistory(prev, next);
+    expect(result).toHaveLength(1);
+    expect(result[0]).toContain('Notas:');
+  });
+
   it('ignora campos que no están en el mapa de etiquetas', () => {
     const prev = { campo_extra: 'foo' };
     const next = { campo_extra: 'bar' };
@@ -188,6 +200,11 @@ describe('matchesCandidaturaSearch', () => {
     expect(matchesCandidaturaSearch(c, 'madrid')).toBe(true);
     expect(matchesCandidaturaSearch(c, 'backend')).toBe(false);
   });
+
+  it('también busca dentro de las notas', () => {
+    const c = { puesto: 'Frontend Developer', empresa: 'ACME Corp', notas: 'Preguntar por guardias y equipo' };
+    expect(matchesCandidaturaSearch(c, 'guardias')).toBe(true);
+  });
 });
 
 describe('buildStatusUpdate', () => {
@@ -231,6 +248,7 @@ describe('buildDuplicatePayload', () => {
       ubicacion: 'Madrid',
       origen: 'LinkedIn',
       feedback: 'No copiar',
+      notas: 'Preguntar por el stack real',
     };
 
     const payload = buildDuplicatePayload(source, 'user-1');
@@ -239,9 +257,84 @@ describe('buildDuplicatePayload', () => {
     expect(payload.empresa).toBe('ACME');
     expect(payload.origen).toBe('linkedin');
     expect(payload.feedback).toBe('');
+    expect(payload.notas).toBe('Preguntar por el stack real');
     expect(payload.historial_cambios).toHaveLength(1);
     expect(payload.historial_cambios[0]).toContain('duplicada');
     expect(payload.id).toBeUndefined();
     expect(payload.fecha).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+});
+
+describe('createSavedView / removeSavedView', () => {
+  it('crea una vista con los filtros actuales', () => {
+    const { error, views } = createSavedView('Seguimiento LinkedIn', {
+      filtroEstado: 'prueba_tecnica',
+      filtroOrigen: 'linkedin',
+      filtroSeguimiento: true,
+      searchQuery: 'remoto',
+    }, []);
+
+    expect(error).toBeNull();
+    expect(views).toHaveLength(1);
+    expect(views[0].name).toBe('Seguimiento LinkedIn');
+    expect(views[0].filtroEstado).toBe('prueba_tecnica');
+    expect(views[0].filtroOrigen).toBe('linkedin');
+    expect(views[0].filtroSeguimiento).toBe(true);
+    expect(views[0].searchQuery).toBe('remoto');
+  });
+
+  it('rechaza nombres vacíos o duplicados', () => {
+    const existing = [{ id: '1', name: 'Activas' }];
+    expect(createSavedView('   ', {}, existing).error).toBe('empty');
+    expect(createSavedView('activas', {}, existing).error).toBe('duplicate');
+  });
+
+  it('elimina una vista por id', () => {
+    const existing = [
+      { id: '1', name: 'Activas' },
+      { id: '2', name: 'LinkedIn' },
+    ];
+    expect(removeSavedView('1', existing)).toEqual([{ id: '2', name: 'LinkedIn' }]);
+  });
+});
+
+describe('hasActiveCandidaturaFilters', () => {
+  it('detecta si hay algún filtro activo', () => {
+    expect(hasActiveCandidaturaFilters({
+      filtroEstado: '',
+      filtroOrigen: '',
+      filtroSeguimiento: false,
+      searchQuery: '',
+    })).toBe(false);
+
+    expect(hasActiveCandidaturaFilters({
+      filtroEstado: 'prueba_tecnica',
+      filtroOrigen: '',
+      filtroSeguimiento: false,
+      searchQuery: '',
+    })).toBe(true);
+
+    expect(hasActiveCandidaturaFilters({
+      filtroEstado: '',
+      filtroOrigen: '',
+      filtroSeguimiento: true,
+      searchQuery: '',
+    })).toBe(true);
+
+    expect(hasActiveCandidaturaFilters({
+      filtroEstado: '',
+      filtroOrigen: '',
+      filtroSeguimiento: false,
+      searchQuery: 'remoto',
+    })).toBe(true);
+  });
+});
+
+describe('toExternalUrl', () => {
+  it('normaliza URLs y rechaza valores inválidos', () => {
+    expect(toExternalUrl('https://acme.test')).toBe('https://acme.test/');
+    expect(toExternalUrl('acme.test')).toBe('https://acme.test/');
+    expect(toExternalUrl('')).toBeNull();
+    expect(toExternalUrl('javascript:alert(1)')).toBeNull();
   });
 });

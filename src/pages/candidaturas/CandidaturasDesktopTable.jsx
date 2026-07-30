@@ -1,6 +1,6 @@
 import CandidaturasEmptyState from './CandidaturasEmptyState';
 import EstadoQuickSelect from './EstadoQuickSelect';
-import { formatOrigen, formatInactivityLabel, needsFollowUp, isActiveProcess } from './shared';
+import { formatOrigen, formatInactivityLabel, needsFollowUp, isActiveProcess, toExternalUrl } from './shared';
 
 export default function CandidaturasDesktopTable({
   candidaturas,
@@ -12,9 +12,12 @@ export default function CandidaturasDesktopTable({
   onDelete,
   onDuplicate,
   onOpenFeedback,
+  onOpenNotas,
   onGoToRetos,
   onStatusChange,
   statusUpdatingId,
+  hasActiveFilters = false,
+  onClearFilters,
 }) {
   return (
     <table className="min-w-full divide-y divide-gray-700 bg-neutral-900 rounded-xl shadow-xl">
@@ -26,7 +29,13 @@ export default function CandidaturasDesktopTable({
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('estado')} title="Ordenar por estado">Estado {sortBy === 'estado' && (sortDir === 'asc' ? '▲' : '▼')}</th>
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('origen')} title="Ordenar por origen">Origen {sortBy === 'origen' && (sortDir === 'asc' ? '▲' : '▼')}</th>
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('fecha')} title="Ordenar por fecha">Fecha {sortBy === 'fecha' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider" title="Se actualiza al editar la candidatura o su estado">Actualizada</th>
+          <th
+            className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer"
+            onClick={() => onSort('fecha_actualizacion')}
+            title="Ordenar por fecha de actualización"
+          >
+            Actualizada {sortBy === 'fecha_actualizacion' && (sortDir === 'asc' ? '▲' : '▼')}
+          </th>
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('salario_anual')} title="Ordenar por salario anual">Salario {sortBy === 'salario_anual' && (sortDir === 'asc' ? '▲' : '▼')}</th>
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('franja_salarial')} title="Ordenar por franja salarial">Franja {sortBy === 'franja_salarial' && (sortDir === 'asc' ? '▲' : '▼')}</th>
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('tipo_trabajo')} title="Ordenar por tipo de trabajo">Tipo {sortBy === 'tipo_trabajo' && (sortDir === 'asc' ? '▲' : '▼')}</th>
@@ -38,13 +47,18 @@ export default function CandidaturasDesktopTable({
         {candidaturas.length === 0 ? (
           <tr>
             <td colSpan={14} className="py-12 text-center text-gray-400 text-lg">
-              <CandidaturasEmptyState onCreate={onCreate} />
+              <CandidaturasEmptyState
+                onCreate={onCreate}
+                hasActiveFilters={hasActiveFilters}
+                onClearFilters={onClearFilters}
+              />
             </td>
           </tr>
         ) : (
           candidaturas.map((candidatura, index) => {
             const inactivity = formatInactivityLabel(candidatura);
             const urgent = needsFollowUp(candidatura);
+            const empresaUrl = toExternalUrl(candidatura.empresa_url);
 
             return (
               <tr
@@ -57,7 +71,19 @@ export default function CandidaturasDesktopTable({
                   )}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{candidatura.puesto}</td>
-                <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">{candidatura.empresa}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-gray-300 text-base">
+                  <div>{candidatura.empresa}</div>
+                  {empresaUrl && (
+                    <a
+                      href={empresaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs font-semibold text-blue-300 hover:text-blue-200"
+                    >
+                      Web
+                    </a>
+                  )}
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap font-bold text-base">
                   <EstadoQuickSelect
                     value={candidatura.estado}
@@ -92,6 +118,9 @@ export default function CandidaturasDesktopTable({
                 <td className="px-4 py-3 whitespace-nowrap flex gap-2 items-center h-full justify-center">
                   {candidatura.feedback && (
                     <button onClick={() => onOpenFeedback(candidatura.feedback)} className="bg-purple-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
+                  )}
+                  {candidatura.notas?.trim() && (
+                    <button onClick={() => onOpenNotas(candidatura.notas)} className="bg-teal-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver notas">Ver notas</button>
                   )}
                   <button onClick={() => onEdit(candidatura)} className="bg-blue-600 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
                   <button onClick={() => onDuplicate(candidatura)} className="bg-indigo-600 text-white px-3 py-1 rounded font-bold text-xs" title="Duplicar candidatura">Duplicar</button>
