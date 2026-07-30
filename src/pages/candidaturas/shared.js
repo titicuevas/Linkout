@@ -305,6 +305,51 @@ export function buildFollowUpUpdate(candidatura, now = new Date()) {
   };
 }
 
+/** Escapa un valor para CSV (comillas y comas). */
+export function escapeCsvValue(value) {
+  return `"${String(value ?? '').replaceAll('"', '""')}"`;
+}
+
+const CSV_HEADERS = [
+  'Puesto',
+  'Empresa',
+  'URL empresa',
+  'Estado',
+  'Origen',
+  'Fecha',
+  'Fecha actualizacion',
+  'Salario anual',
+  'Franja salarial',
+  'Tipo de trabajo',
+  'Ubicacion',
+  'Feedback',
+  'Notas',
+];
+
+/** Construye el contenido CSV (sin BOM) de candidaturas filtradas/ordenadas. */
+export function buildCandidaturasCsv(candidaturas = []) {
+  const rows = candidaturas.map((candidatura) => {
+    const origenLabel = formatOrigen(candidatura.origen);
+    return [
+      candidatura.puesto,
+      candidatura.empresa,
+      candidatura.empresa_url,
+      formatEstado(candidatura.estado),
+      origenLabel === '-' ? '' : origenLabel,
+      candidatura.fecha,
+      candidatura.fecha_actualizacion,
+      candidatura.salario_anual,
+      candidatura.franja_salarial,
+      candidatura.tipo_trabajo,
+      candidatura.ubicacion,
+      candidatura.feedback,
+      candidatura.notas,
+    ].map(escapeCsvValue).join(',');
+  });
+
+  return [CSV_HEADERS.join(','), ...rows].join('\n');
+}
+
 /**
  * Crea el payload de una copia nueva a partir de una candidatura existente.
  * No incluye id ni created_at (los genera la BD).

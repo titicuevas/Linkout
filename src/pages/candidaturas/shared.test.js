@@ -11,6 +11,8 @@ import {
   matchesCandidaturaSearch,
   buildStatusUpdate,
   buildFollowUpUpdate,
+  escapeCsvValue,
+  buildCandidaturasCsv,
   formatInactivityLabel,
   buildDuplicatePayload,
   createSavedView,
@@ -239,6 +241,43 @@ describe('buildFollowUpUpdate', () => {
     const payload = buildFollowUpUpdate({}, new Date('2026-07-30T12:00:00'));
     expect(payload.historial_cambios).toHaveLength(1);
     expect(payload.historial_cambios[0]).toContain('Seguimiento registrado');
+  });
+});
+
+describe('buildCandidaturasCsv', () => {
+  it('escapa comillas y comas', () => {
+    expect(escapeCsvValue('hola "mundo"')).toBe('"hola ""mundo"""');
+  });
+
+  it('genera cabeceras y filas con estados/orígenes legibles', () => {
+    const csv = buildCandidaturasCsv([
+      {
+        puesto: 'Dev, Senior',
+        empresa: 'Acme "Labs"',
+        empresa_url: 'https://acme.test',
+        estado: 'entrevista_contacto',
+        origen: 'linkedin',
+        fecha: '2026-07-01',
+        fecha_actualizacion: '2026-07-10',
+        salario_anual: 40000,
+        franja_salarial: '30k-45k',
+        tipo_trabajo: 'Remoto',
+        ubicacion: 'Madrid',
+        feedback: 'Bien',
+        notas: 'Seguir',
+      },
+    ]);
+
+    expect(csv.startsWith('Puesto,Empresa,')).toBe(true);
+    expect(csv).toContain('"Dev, Senior"');
+    expect(csv).toContain('"Acme ""Labs"""');
+    expect(csv).toContain('"Entrevista de contacto"');
+    expect(csv).toContain('"LinkedIn"');
+  });
+
+  it('devuelve solo cabeceras si no hay datos', () => {
+    const csv = buildCandidaturasCsv([]);
+    expect(csv).toBe('Puesto,Empresa,URL empresa,Estado,Origen,Fecha,Fecha actualizacion,Salario anual,Franja salarial,Tipo de trabajo,Ubicacion,Feedback,Notas');
   });
 });
 

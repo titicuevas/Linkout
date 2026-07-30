@@ -20,6 +20,7 @@ import {
   matchesCandidaturaSearch,
   buildStatusUpdate,
   buildFollowUpUpdate,
+  buildCandidaturasCsv,
   needsFollowUp,
   buildDuplicatePayload,
   loadSavedViews,
@@ -337,40 +338,7 @@ export default function CandidaturasIndex() {
       return;
     }
 
-    const headers = [
-      'Puesto',
-      'Empresa',
-      'URL empresa',
-      'Estado',
-      'Origen',
-      'Fecha',
-      'Fecha actualizacion',
-      'Salario anual',
-      'Franja salarial',
-      'Tipo de trabajo',
-      'Ubicacion',
-      'Feedback',
-      'Notas',
-    ];
-
-    const escapeCsv = (value) => `"${String(value ?? '').replaceAll('"', '""')}"`;
-    const rows = candidaturasOrdenadas.map((candidatura) => ([
-      candidatura.puesto,
-      candidatura.empresa,
-      candidatura.empresa_url,
-      candidatura.estado,
-      candidatura.origen,
-      candidatura.fecha,
-      candidatura.fecha_actualizacion,
-      candidatura.salario_anual,
-      candidatura.franja_salarial,
-      candidatura.tipo_trabajo,
-      candidatura.ubicacion,
-      candidatura.feedback,
-      candidatura.notas,
-    ].map(escapeCsv).join(',')));
-
-    const csvContent = [headers.join(','), ...rows].join('\n');
+    const csvContent = buildCandidaturasCsv(candidaturasOrdenadas);
     const blob = new Blob([`\uFEFF${csvContent}`], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -382,6 +350,12 @@ export default function CandidaturasIndex() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+
+    Swal.fire(swalSuccess(
+      'CSV exportado',
+      `${candidaturasOrdenadas.length} candidatura${candidaturasOrdenadas.length === 1 ? '' : 's'} descargada${candidaturasOrdenadas.length === 1 ? '' : 's'}.`,
+      { timer: 1400, showConfirmButton: false },
+    ));
   };
 
   const goToCreate = () => navigate('/candidaturas/create');

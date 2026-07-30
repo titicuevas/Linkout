@@ -122,7 +122,7 @@ export default function CrearCandidatura() {
         origen: normalizeOrigen(origen),
         notas: notas.trim(),
         historial_cambios: [`[${creationTimestamp}] Candidatura creada con estado inicial: ${formatEstado(estado)}`],
-        fecha_actualizacion: new Date().toISOString().slice(0, 10),
+        fecha_actualizacion: fecha,
       }
     ]);
     if (dbError) {

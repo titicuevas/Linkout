@@ -179,4 +179,92 @@ test.describe('Smoke LinkOut', () => {
 
     await clearRetoCompletadoKeys(page);
   });
+
+  test('guardar vista, exportar CSV y limpiar vista', async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await login(page);
+
+    const stamp = Date.now();
+    const viewName = `E2E Vista ${stamp}`;
+
+    await page.goto('/candidaturas');
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
+    await page.evaluate(() => localStorage.removeItem('linkout_candidaturas_saved_views'));
+    await page.reload();
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
+
+    await page.getByRole('button', { name: /seguimiento pendiente/i }).click();
+    await page.getByRole('button', { name: /guardar vista actual/i }).click();
+    await page.locator('.swal2-input').fill(viewName);
+    await page.locator('.swal2-popup').getByRole('button', { name: /^guardar$/i }).click();
+    await expect(page.getByText(/vista guardada/i)).toBeVisible({ timeout: 10_000 });
+
+    await page.getByRole('button', { name: /limpiar filtros/i }).click();
+
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: /exportar csv/i }).click();
+    const download = await downloadPromise;
+    expect(download.suggestedFilename()).toMatch(/^linkout-candidaturas-\d{4}-\d{2}-\d{2}\.csv$/);
+    await expect(page.getByText(/csv exportado/i)).toBeVisible({ timeout: 8_000 });
+
+    await page.getByRole('button', { name: viewName, exact: true }).click();
+    await expect(page.getByRole('button', { name: /seguimiento pendiente/i })).toHaveAttribute('aria-pressed', 'true');
+
+    await page.getByRole('button', { name: `Eliminar vista ${viewName}` }).click();
+    await page.getByRole('button', { name: /sí, eliminar/i }).click();
+    await expect(page.getByRole('button', { name: viewName, exact: true })).toHaveCount(0);
+  });
+
+  test('crear candidatura antigua, marcar seguimiento y borrar', async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await login(page);
+
+    const stamp = Date.now();
+    const puesto = `E2E Seguimiento ${stamp}`;
+    const empresa = `FollowUp Co ${stamp}`;
+    const old = new Date();
+    old.setDate(old.getDate() - 20);
+    const fecha = old.toISOString().slice(0, 10);
+
+    await page.goto('/candidaturas/create');
+    await expect(page.getByRole('heading', { name: /registrar nueva candidatura/i })).toBeVisible();
+
+    const control = async (id, labelRegex) => {
+      const byId = page.locator(`#${id}`);
+      if (await byId.count()) return byId;
+      return page.locator('label', { hasText: labelRegex }).locator('xpath=following-sibling::*[1]');
+    };
+
+    await (await control('cand-puesto', /^puesto$/i)).fill(puesto);
+    await (await control('cand-empresa', /^empresa$/i)).fill(empresa);
+    await (await control('cand-fecha', /^fecha$/i)).fill(fecha);
+    await (await control('cand-tipo', /^tipo de trabajo$/i)).selectOption({ label: 'Remoto' });
+    await (await control('cand-ubicacion', /^ubicaci[oó]n$/i)).fill('Madrid');
+    await (await control('cand-origen', /^origen de la candidatura$/i)).selectOption({ label: 'LinkedIn' });
+    await (await control('cand-notas', /^notas/i)).fill('E2E seguimiento; se borrará.');
+
+    await page.getByRole('button', { name: /crear candidatura/i }).click();
+    await dismissOptionalOk(page);
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible({ timeout: 20_000 });
+
+    await page.getByRole('button', { name: /seguimiento pendiente/i }).click();
+    const search = page.getByPlaceholder(/buscar por puesto/i);
+    await search.fill(empresa);
+    await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
+
+    const row = page.locator('table tbody tr').filter({ hasText: empresa });
+    await row.getByRole('button', { name: /he hecho seguimiento/i }).click();
+    await expect(page.getByText(/seguimiento marcado/i)).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
+
+    await page.getByRole('button', { name: /limpiar filtros/i }).click();
+    await search.fill(empresa);
+    await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
+    await page.locator('table tbody tr').filter({ hasText: empresa }).getByRole('button', { name: /^borrar$/i }).click();
+    await page.getByRole('button', { name: /sí, borrar/i }).click();
+    await dismissOptionalOk(page);
+    await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
+  });
 });

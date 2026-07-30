@@ -124,6 +124,7 @@ export default function CandidaturasDesktopTable({
                       onClick={() => onMarkFollowUp?.(candidatura)}
                       className="bg-pink-600 text-white px-3 py-1 rounded font-bold text-xs disabled:opacity-60"
                       title="Marcar seguimiento"
+                      aria-label="He hecho seguimiento"
                     >
                       {statusUpdatingId === candidatura.id ? '…' : 'Seguimiento'}
                     </button>
