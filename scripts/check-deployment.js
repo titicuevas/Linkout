@@ -83,23 +83,27 @@ console.log('\n💻 CÓDIGO:');
 checkFile('src/services/supabase.js', 'Configuración de Supabase');
 checkFile('backend/index.js', 'Servidor backend');
 
-// Verificar que las URLs del backend usen variables de entorno
-console.log('\n🔧 CONFIGURACIÓN DE VARIABLES DE ENTORNO:');
+// Verificar que Motivación/Retos ya no dependen del backend
+console.log('\n🔧 FEATURES LOCALES (sin API de pago):');
 
-const frontendFiles = [
-  'src/pages/animoia/index.jsx',
-  'src/pages/retos/Fisico.jsx'
+const localFeatureFiles = [
+  { file: 'src/utils/animoLocal.js', label: 'Generador local de Motivación' },
+  { file: 'src/utils/retosLocal.js', label: 'Generador local de Retos' },
 ];
 
-frontendFiles.forEach(file => {
+localFeatureFiles.forEach(({ file, label }) => {
+  checkFile(file, label);
+});
+
+['src/pages/animoia/index.jsx', 'src/pages/retos/Fisico.jsx'].forEach((file) => {
   const fullPath = path.join(projectRoot, file);
   if (fs.existsSync(fullPath)) {
     const content = fs.readFileSync(fullPath, 'utf8');
-    if (content.includes('import.meta.env.VITE_BACKEND_URL')) {
-      console.log(`✅ ${file} - Usa variables de entorno correctamente`);
-    } else {
-      console.log(`❌ ${file} - No usa variables de entorno para URL del backend`);
+    if (content.includes('VITE_BACKEND_URL') || content.includes('/api/animo') || content.includes('/api/retos')) {
+      console.log(`❌ ${file} - Todavía depende del backend/IA`);
       allChecksPassed = false;
+    } else {
+      console.log(`✅ ${file} - Independiente del backend`);
     }
   }
 });
@@ -124,10 +128,9 @@ console.log('\n📝 VARIABLES DE ENTORNO NECESARIAS:');
 console.log('\nFrontend:');
 console.log('- VITE_SUPABASE_URL');
 console.log('- VITE_SUPABASE_ANON_KEY');
-console.log('- VITE_BACKEND_URL');
 
-console.log('\nBackend:');
-console.log('- GEMINI_API_KEY');
+console.log('\nBackend (opcional, solo health-check):');
+console.log('- CORS_ORIGIN');
 console.log('- PORT (Railway lo configura automáticamente)');
 
 process.exit(allChecksPassed ? 0 : 1); 
