@@ -68,6 +68,7 @@ export default function CandidaturasStats({
         onClick={onShowFollowUps}
         className={`${cardBase} bg-gradient-to-br from-yellow-900/80 to-yellow-800/60 border-yellow-600 hover:border-yellow-400 focus:ring-yellow-300`}
         title="Ver candidaturas con seguimiento pendiente"
+        aria-label="KPI seguimiento pendiente"
       >
         <div className="text-3xl mb-1" aria-hidden="true">⏳</div>
         <div className="text-2xl font-bold text-yellow-300">{pendientes}</div>

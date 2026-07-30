@@ -20,6 +20,10 @@ async function clearRetoCompletadoKeys(page) {
   });
 }
 
+function followUpFilterButton(page) {
+  return page.locator('button[aria-pressed]').filter({ hasText: /seguimiento pendiente/i });
+}
+
 async function login(page) {
   await page.goto('/login');
   await expect(page.getByRole('heading', { name: /iniciar sesión/i })).toBeVisible();
@@ -194,7 +198,7 @@ test.describe('Smoke LinkOut', () => {
     await page.reload();
     await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
 
-    await page.getByRole('button', { name: /seguimiento pendiente/i }).click();
+    await followUpFilterButton(page).click();
     await page.getByRole('button', { name: /guardar vista actual/i }).click();
     await page.locator('.swal2-input').fill(viewName);
     await page.locator('.swal2-popup').getByRole('button', { name: /^guardar$/i }).click();
@@ -209,7 +213,7 @@ test.describe('Smoke LinkOut', () => {
     await expect(page.getByText(/csv exportado/i)).toBeVisible({ timeout: 8_000 });
 
     await page.getByRole('button', { name: viewName, exact: true }).click();
-    await expect(page.getByRole('button', { name: /seguimiento pendiente/i })).toHaveAttribute('aria-pressed', 'true');
+    await expect(followUpFilterButton(page)).toHaveAttribute('aria-pressed', 'true');
 
     await page.getByRole('button', { name: `Eliminar vista ${viewName}` }).click();
     await page.getByRole('button', { name: /sí, eliminar/i }).click();
@@ -249,7 +253,7 @@ test.describe('Smoke LinkOut', () => {
     await dismissOptionalOk(page);
     await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible({ timeout: 20_000 });
 
-    await page.getByRole('button', { name: /seguimiento pendiente/i }).click();
+    await followUpFilterButton(page).click();
     const search = page.getByPlaceholder(/buscar por puesto/i);
     await search.fill(empresa);
     await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });

@@ -104,6 +104,7 @@ export default function CandidaturasFilters({
         <button
           type="button"
           aria-pressed={filtroSeguimiento}
+          aria-label="Filtrar por seguimiento pendiente"
           onClick={onToggleSeguimiento}
           className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full border-2 font-bold text-xs sm:text-sm shadow-lg focus:ring-2 focus:ring-yellow-300 ${
             filtroSeguimiento
