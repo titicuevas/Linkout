@@ -263,8 +263,9 @@ test.describe('Smoke LinkOut', () => {
     await expect(page.getByText(/seguimiento marcado/i)).toBeVisible({ timeout: 10_000 });
     await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
 
-    await page.getByRole('button', { name: /limpiar filtros/i }).click();
-    await search.fill(empresa);
+    await page.goto('/candidaturas');
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
+    await page.getByPlaceholder(/buscar por puesto/i).fill(empresa);
     await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
     await page.locator('table tbody tr').filter({ hasText: empresa }).getByRole('button', { name: /^borrar$/i }).click();
     await page.getByRole('button', { name: /sí, borrar/i }).click();
