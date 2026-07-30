@@ -12,6 +12,13 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 import { generateLocalRetos } from '../../utils/retosLocal';
 import { formatEstado, isActiveProcess } from '../candidaturas/shared';
+import {
+  isRetoCompletado,
+  setRetoCompletado,
+  isRetoLibreCompletado,
+} from '../../utils/storageKeys';
+import InlineLoader from '../../components/InlineLoader';
+import LoadErrorState from '../../components/LoadErrorState';
 
 const PROGRESO_NIVEL = 100;
 
@@ -64,8 +71,8 @@ export default function RetoFisico() {
   const [showConfetti, setShowConfetti] = useState(false);
   const MySwal = withReactContent(Swal);
 
-  const candidaturaKey = candidatura ? `reto_completado_${candidatura.id}` : null;
-  const libreDone = Boolean(localStorage.getItem(`reto_completado_libre_${todayKey()}`));
+  const candidaturaDone = candidatura?.id ? isRetoCompletado(candidatura.id) : false;
+  const libreDone = isRetoLibreCompletado(todayKey());
 
   useEffect(() => {
     if (!candidatura) return;
@@ -100,12 +107,12 @@ export default function RetoFisico() {
   }, [user]);
 
   useEffect(() => {
-    if (candidaturaKey && localStorage.getItem(candidaturaKey)) {
+    if (candidatura?.id && isRetoCompletado(candidatura.id)) {
       setCompletado([true, true, true]);
     } else {
       setCompletado([false, false, false]);
     }
-  }, [candidaturaKey]);
+  }, [candidatura?.id]);
 
   useEffect(() => {
     if (!user || candidatura) return;
@@ -157,8 +164,8 @@ export default function RetoFisico() {
 
   const sortedElegibles = useMemo(() => {
     return [...elegibles].sort((a, b) => {
-      const aDone = localStorage.getItem(`reto_completado_${a.id}`) ? 1 : 0;
-      const bDone = localStorage.getItem(`reto_completado_${b.id}`) ? 1 : 0;
+      const aDone = isRetoCompletado(a.id) ? 1 : 0;
+      const bDone = isRetoCompletado(b.id) ? 1 : 0;
       if (aDone !== bDone) return aDone - bDone;
       const aActive = isActiveProcess(a) ? 0 : 1;
       const bActive = isActiveProcess(b) ? 0 : 1;
@@ -167,7 +174,7 @@ export default function RetoFisico() {
   }, [elegibles]);
 
   const handleCompletado = async (i) => {
-    if (completado[i] || !candidaturaKey || localStorage.getItem(candidaturaKey)) return;
+    if (completado[i] || !candidatura?.id || isRetoCompletado(candidatura.id)) return;
 
     const nuevos = [false, false, false];
     nuevos[i] = true;
@@ -188,7 +195,7 @@ export default function RetoFisico() {
 
     setPuntos(nuevosPuntos);
     setNivel(nuevoNivel);
-    localStorage.setItem(candidaturaKey, '1');
+    setRetoCompletado(candidatura.id);
     setShowConfetti(true);
     setTimeout(async () => {
       await MySwal.fire(swalSuccess(
@@ -256,23 +263,15 @@ export default function RetoFisico() {
             </button>
 
             {listLoading ? (
-              <div className="flex flex-col items-center py-10">
-                <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-neutral-700 border-t-orange-400" />
-                <div className="text-gray-300 font-semibold">Cargando candidaturas...</div>
-              </div>
+              <InlineLoader message="Cargando candidaturas..." size="sm" accent="orange" />
             ) : listError ? (
-              <div className="text-center py-6">
-                <p className="text-red-300 font-bold mb-3">{listError}</p>
-                <button type="button" onClick={retryLoadElegibles} className="rounded-full bg-blue-600 px-5 py-2 font-bold text-white hover:bg-blue-500">
-                  Reintentar
-                </button>
-              </div>
+              <LoadErrorState message={listError} onRetry={retryLoadElegibles} />
             ) : sortedElegibles.length > 0 ? (
               <>
                 <div className="text-sm font-semibold uppercase tracking-wide text-pink-300 mb-3 w-full max-w-md">Por candidatura</div>
                 <div className="flex flex-col gap-3 w-full max-w-md mx-auto">
                   {sortedElegibles.map((c) => {
-                    const done = Boolean(localStorage.getItem(`reto_completado_${c.id}`));
+                    const done = isRetoCompletado(c.id);
                     return (
                       <button
                         key={c.id}
@@ -326,7 +325,7 @@ export default function RetoFisico() {
     );
   }
 
-  if (candidaturaKey && localStorage.getItem(candidaturaKey)) {
+  if (candidaturaDone) {
     return (
       <Layout user={user} onLogout={logout}>
         {confettiElement}
@@ -376,21 +375,31 @@ export default function RetoFisico() {
         <div className="text-base text-pink-200 mb-6 text-center">Elige un nivel, mueve el cuerpo y marca el reto.</div>
         <ProgressBar puntos={puntos} nivel={nivel} />
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-700 border-t-pink-500" />
-            <div className="text-lg text-gray-300 font-bold mb-2">Generando retos...</div>
-          </div>
+          <InlineLoader message="Generando retos..." />
         ) : error ? (
-          <div className="flex flex-col items-center justify-center py-8">
-            <div className="text-red-400 font-bold mb-4">{error}</div>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-6 rounded-full shadow"
-            >
-              Reintentar
-            </button>
-          </div>
+          <LoadErrorState
+            message={error}
+            onRetry={() => {
+              setLoading(true);
+              setError('');
+              try {
+                const generated = generateLocalRetos({
+                  puesto: candidatura.puesto,
+                  empresa: candidatura.empresa,
+                  salt: candidatura.id || Date.now(),
+                });
+                setRetos(generated);
+                if (!generated.length) {
+                  setError('No se pudieron generar los retos. Inténtalo de nuevo.');
+                }
+              } catch {
+                setError('No se pudieron generar los retos. Inténtalo de nuevo.');
+                setRetos([]);
+              } finally {
+                setLoading(false);
+              }
+            }}
+          />
         ) : (
           <>
             <div className="flex flex-col gap-6 w-full">
@@ -402,9 +411,9 @@ export default function RetoFisico() {
                   </div>
                   <div className="text-pink-200 text-lg font-semibold text-center">{reto.ejercicio}</div>
                   <button
+                    type="button"
                     onClick={() => handleAlternativa(i)}
                     className="text-yellow-300 underline font-semibold hover:text-yellow-400 transition"
-                    type="button"
                     disabled={completado.some((v) => v)}
                   >
                     ¿No puedes hacer este ejercicio?

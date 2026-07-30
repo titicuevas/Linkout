@@ -17,8 +17,11 @@ import { swalSuccess, swalError, swalWarning } from '../../utils/swalTheme';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
+import { STORAGE_KEYS } from '../../utils/storageKeys';
+import InlineLoader from '../../components/InlineLoader';
+import LoadErrorState from '../../components/LoadErrorState';
 
-const DESAHOGO_DRAFT_KEY = 'linkout_desahogo_draft';
+const DESAHOGO_DRAFT_KEY = STORAGE_KEYS.desahogoDraft;
 
 function hasDraft() {
   try {
@@ -168,20 +171,12 @@ export default function DesahogateIndex() {
 
           <div className="flex flex-col gap-4 w-full max-w-2xl mx-auto animate-fade-in">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-12 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700">
-                <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-700 border-t-pink-500" />
-                <div className="text-lg text-gray-300 font-bold mb-2">Cargando tus reflexiones...</div>
+              <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700">
+                <InlineLoader message="Cargando tus reflexiones..." />
               </div>
             ) : loadError ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700">
-                <p className="text-lg text-red-300 font-bold mb-4">{loadError}</p>
-                <button
-                  type="button"
-                  onClick={() => fetchMensajes(user.id)}
-                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold"
-                >
-                  Reintentar
-                </button>
+              <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700">
+                <LoadErrorState message={loadError} onRetry={() => fetchMensajes(user.id)} />
               </div>
             ) : mensajes.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 animate-fade-in text-center px-4">
@@ -217,7 +212,7 @@ export default function DesahogateIndex() {
                     <div className="text-xs text-pink-400 font-semibold">{tiempoDesde(m.created_at)}</div>
                   </div>
                   <div className="flex items-center gap-2 sm:ml-4 shrink-0">
-                    <button
+                    <button type="button"
                       title="Recibir motivación"
                       aria-label="Recibir motivación"
                       className="p-2 rounded-full bg-neutral-900 hover:bg-green-900 transition shadow"
@@ -225,10 +220,10 @@ export default function DesahogateIndex() {
                     >
                       <ChatBubbleLeftRightIcon className="w-6 h-6 text-green-400" />
                     </button>
-                    <button title="Editar" aria-label="Editar reflexión" className="p-2 rounded-full bg-neutral-900 hover:bg-pink-900 transition shadow" onClick={() => handleEdit(m.id, m.texto)}>
+                    <button type="button" title="Editar" aria-label="Editar reflexión" className="p-2 rounded-full bg-neutral-900 hover:bg-pink-900 transition shadow" onClick={() => handleEdit(m.id, m.texto)}>
                       <PencilSquareIcon className="w-6 h-6 text-pink-400" />
                     </button>
-                    <button title="Eliminar" aria-label="Eliminar reflexión" className="p-2 rounded-full bg-neutral-900 hover:bg-red-900 transition shadow" onClick={() => handleDelete(m.id)}>
+                    <button type="button" title="Eliminar" aria-label="Eliminar reflexión" className="p-2 rounded-full bg-neutral-900 hover:bg-red-900 transition shadow" onClick={() => handleDelete(m.id)}>
                       <TrashIcon className="w-6 h-6 text-red-400" />
                     </button>
                   </div>

@@ -7,6 +7,8 @@ import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 import { formatOrigen, formatEstado, isActiveProcess, getFollowUpsPendientes } from './shared';
+import InlineLoader from '../../components/InlineLoader';
+import LoadErrorState from '../../components/LoadErrorState';
 
 const COLORS = ['#6366f1', '#e11d48', '#f59e42', '#10b981', '#fbbf24', '#3b82f6', '#ef4444', '#a21caf', '#f472b6'];
 
@@ -45,6 +47,20 @@ export default function EstadisticasCandidaturas() {
     fetchCandidaturas();
     return () => { cancelled = true; };
   }, [user]);
+
+  const retryLoad = async () => {
+    if (!user) return;
+    setLoading(true);
+    setLoadError('');
+    const { data, error } = await supabase.from('candidaturas').select('*').eq('user_id', user.id);
+    if (error) {
+      setLoadError('No se pudieron cargar las estadísticas. Inténtalo de nuevo.');
+      setCandidaturas([]);
+    } else {
+      setCandidaturas(data || []);
+    }
+    setLoading(false);
+  };
 
   const getDataByField = (field) => {
     const counts = {};
@@ -95,18 +111,9 @@ export default function EstadisticasCandidaturas() {
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-center mb-8 tracking-tight bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-lg animate-fade-in">Estadísticas de Candidaturas</h1>
         {loading ? (
-          <PageLoader message="Cargando estadísticas..." />
+          <InlineLoader message="Cargando estadísticas..." />
         ) : loadError ? (
-          <div className="text-center py-10">
-            <p className="text-lg text-red-300 font-bold mb-4">{loadError}</p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold"
-            >
-              Reintentar
-            </button>
-          </div>
+          <LoadErrorState message={loadError} onRetry={retryLoad} />
         ) : candidaturas.length === 0 ? (
           <div className="w-full max-w-xl text-center rounded-3xl border border-neutral-700 bg-neutral-800/80 p-8 shadow-2xl">
             <p className="text-xl font-bold text-white mb-2">Aún no hay datos que mostrar</p>

@@ -13,6 +13,7 @@ import {
   toExternalUrl,
 } from './shared';
 import { swalSuccess, swalError } from '../../utils/swalTheme';
+import { clearRetoCompletado } from '../../utils/storageKeys';
 
 const inputCls = 'bg-neutral-800 border border-neutral-700 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-600';
 const labelCls = 'flex flex-col gap-1';
@@ -58,7 +59,7 @@ export default function CandidaturaEditModal({ isOpen, candidatura, onClose, onS
     };
 
     if (candidatura.estado === 'rechazado' && updated.estado !== 'rechazado') {
-      localStorage.removeItem(`reto_completado_${candidatura.id}`);
+      clearRetoCompletado(candidatura.id);
     }
 
     setSaving(true);

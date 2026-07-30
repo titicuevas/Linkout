@@ -68,7 +68,7 @@ export default function CandidaturasDesktopTable({
               >
                 <td className="px-2 py-3 text-center">
                   {candidatura.estado !== 'contratacion' && (
-                    <button title="Ir a ejercicios" className="text-yellow-400 text-xl" onClick={() => onGoToRetos(candidatura)} aria-label="Ir a ejercicios">⚡</button>
+                    <button type="button" title="Ir a ejercicios" className="text-yellow-400 text-xl" onClick={() => onGoToRetos(candidatura)} aria-label="Ir a ejercicios">⚡</button>
                   )}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{candidatura.puesto}</td>
@@ -130,14 +130,14 @@ export default function CandidaturasDesktopTable({
                     </button>
                   )}
                   {candidatura.feedback && (
-                    <button onClick={() => onOpenFeedback(candidatura.feedback)} className="bg-purple-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
+                    <button type="button" onClick={() => onOpenFeedback(candidatura.feedback)} className="bg-purple-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
                   )}
                   {candidatura.notas?.trim() && (
-                    <button onClick={() => onOpenNotas(candidatura.notas)} className="bg-teal-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver notas">Ver notas</button>
+                    <button type="button" onClick={() => onOpenNotas(candidatura.notas)} className="bg-teal-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver notas">Ver notas</button>
                   )}
-                  <button onClick={() => onEdit(candidatura)} className="bg-blue-600 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
-                  <button onClick={() => onDuplicate(candidatura)} className="bg-indigo-600 text-white px-3 py-1 rounded font-bold text-xs" title="Duplicar candidatura">Duplicar</button>
-                  <button onClick={() => onDelete(candidatura.id)} className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xs" title="Borrar candidatura">Borrar</button>
+                  <button type="button" onClick={() => onEdit(candidatura)} className="bg-blue-600 text-white px-3 py-1 rounded font-bold text-xs" title="Editar candidatura">Editar</button>
+                  <button type="button" onClick={() => onDuplicate(candidatura)} className="bg-indigo-600 text-white px-3 py-1 rounded font-bold text-xs" title="Duplicar candidatura">Duplicar</button>
+                  <button type="button" onClick={() => onDelete(candidatura.id)} className="bg-red-600 text-white px-3 py-1 rounded font-bold text-xs" title="Borrar candidatura">Borrar</button>
                 </td>
               </tr>
             );

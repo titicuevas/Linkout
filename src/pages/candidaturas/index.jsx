@@ -19,7 +19,6 @@ import {
   normalizeOrigen,
   matchesCandidaturaSearch,
   buildStatusUpdate,
-  buildFollowUpUpdate,
   buildCandidaturasCsv,
   needsFollowUp,
   buildDuplicatePayload,
@@ -35,8 +34,12 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 import { swalSuccess, swalError, swalWarning, swalInfo } from '../../utils/swalTheme';
+import { STORAGE_KEYS, clearRetoCompletado } from '../../utils/storageKeys';
+import { markCandidaturaFollowUp } from '../../services/candidaturaActions';
+import InlineLoader from '../../components/InlineLoader';
+import LoadErrorState from '../../components/LoadErrorState';
 
-const CANDIDATURAS_PREFS_KEY = 'linkout_candidaturas_prefs';
+const CANDIDATURAS_PREFS_KEY = STORAGE_KEYS.candidaturasPrefs;
 
 export default function CandidaturasIndex() {
   const { user, authLoading, logout } = useAuth();
@@ -209,6 +212,20 @@ export default function CandidaturasIndex() {
     return () => { cancelled = true; };
   }, [user]);
 
+  const retryLoadCandidaturas = async () => {
+    if (!user) return;
+    setLoading(true);
+    setLoadError('');
+    const { data, error } = await supabase.from('candidaturas').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
+    if (error) {
+      setLoadError('No se pudieron cargar las candidaturas. Inténtalo de nuevo.');
+      setCandidaturas([]);
+    } else {
+      setCandidaturas(data || []);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     if (!prefsReady) return;
     localStorage.setItem(
@@ -246,7 +263,7 @@ export default function CandidaturasIndex() {
     const payload = buildStatusUpdate(candidatura, newEstado);
 
     if (candidatura.estado === 'rechazado' && newEstado !== 'rechazado') {
-      localStorage.removeItem(`reto_completado_${candidatura.id}`);
+      clearRetoCompletado(candidatura.id);
     }
 
     const { error } = await supabase.from('candidaturas').update(payload).eq('id', candidatura.id);
@@ -263,12 +280,11 @@ export default function CandidaturasIndex() {
   const handleMarkFollowUp = async (candidatura) => {
     if (!candidatura?.id || statusUpdatingId) return;
     setStatusUpdatingId(candidatura.id);
-    const payload = buildFollowUpUpdate(candidatura);
-    const { error } = await supabase.from('candidaturas').update(payload).eq('id', candidatura.id);
+    const { error, payload } = await markCandidaturaFollowUp(candidatura, { userId: user.id });
     setStatusUpdatingId(null);
 
     if (error) {
-      await Swal.fire(swalError('Error', 'No se pudo marcar el seguimiento.'));
+      await Swal.fire(swalError('Error', 'No se pudo marcar el seguimiento. Inténtalo de nuevo.'));
       return;
     }
 
@@ -546,20 +562,9 @@ export default function CandidaturasIndex() {
         />
         <div className="backdrop-blur-md bg-neutral-900/80 rounded-2xl shadow-2xl border border-neutral-700 w-full max-w-6xl mx-auto p-3 sm:p-6">
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-16">
-              <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-700 border-t-pink-500" />
-              <div className="text-lg text-gray-300 font-bold mb-2">Cargando...</div>
-            </div>
+            <InlineLoader message="Cargando..." />
           ) : loadError ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <p className="text-lg text-red-300 font-bold mb-4">{loadError}</p>
-              <button
-                onClick={() => window.location.reload()}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold"
-              >
-                Reintentar
-              </button>
-            </div>
+            <LoadErrorState message={loadError} onRetry={retryLoadCandidaturas} />
           ) : (
             <>
               <div className="flex flex-col gap-4 mb-8 sm:hidden">
@@ -626,7 +631,7 @@ export default function CandidaturasIndex() {
           forcePage={currentPage}
         />
         {/* Botón flotante para crear candidatura (solo escritorio) */}
-        <button
+        <button type="button"
           onClick={goToCreate}
           className="hidden sm:flex fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-600 text-white rounded-full font-bold shadow-2xl text-lg items-center gap-2"
         >
@@ -635,7 +640,7 @@ export default function CandidaturasIndex() {
         </button>
         {/* Botón fijo en la parte inferior solo en móvil */}
         <div className="sm:hidden fixed bottom-0 left-0 w-full z-50 bg-neutral-900 border-t border-neutral-800 flex justify-center items-center py-3">
-          <button
+          <button type="button"
             onClick={goToCreate}
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-full font-bold shadow-lg text-base"
           >
@@ -645,7 +650,7 @@ export default function CandidaturasIndex() {
         </div>
         {/* Botón volver al inicio (oculto en móvil) */}
         <div className="hidden sm:flex justify-center mt-8">
-          <button
+          <button type="button"
             onClick={() => navigate('/index')}
             className="bg-neutral-700 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-lg"
           >
@@ -659,7 +664,7 @@ export default function CandidaturasIndex() {
             <div className="text-blue-200 text-base text-center whitespace-pre-line max-w-sm bg-neutral-800 p-4 rounded-lg border border-neutral-700">
               {detailModal.text}
             </div>
-            <button onClick={closeDetail} className="mt-4 px-6 py-2 bg-pink-600 text-white rounded-full font-bold shadow-lg text-base">
+            <button type="button" onClick={closeDetail} className="mt-4 px-6 py-2 bg-pink-600 text-white rounded-full font-bold shadow-lg text-base">
               Cerrar
             </button>
           </Modal>

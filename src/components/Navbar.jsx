@@ -105,7 +105,7 @@ export default function Navbar({ user, onLogout }) {
 
       {user && (
         <div className="relative flex items-center shrink-0" ref={menuRef}>
-          <button
+          <button type="button"
             onClick={() => setMenuOpen((v) => !v)}
             className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition hover:scale-105"
             aria-label="Abrir menú de usuario"
@@ -187,7 +187,7 @@ export default function Navbar({ user, onLogout }) {
                 ))}
               </div>
 
-              <button
+              <button type="button"
                 onClick={onLogout}
                 className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-500 font-bold bg-neutral-800 hover:bg-red-600 hover:text-white rounded-lg transition text-base shadow-sm mt-2"
               >

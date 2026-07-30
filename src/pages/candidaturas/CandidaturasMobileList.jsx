@@ -99,13 +99,13 @@ export default function CandidaturasMobileList({
             </div>
 
             {candidatura.feedback && (
-              <button onClick={() => onOpenFeedback(candidatura.feedback)} className="mt-3 w-full rounded-xl bg-purple-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Ver feedback">
+              <button type="button" onClick={() => onOpenFeedback(candidatura.feedback)} className="mt-3 w-full rounded-xl bg-purple-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Ver feedback">
                 Ver feedback
               </button>
             )}
 
             {candidatura.notas?.trim() && (
-              <button onClick={() => onOpenNotas(candidatura.notas)} className="mt-3 w-full rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Ver notas">
+              <button type="button" onClick={() => onOpenNotas(candidatura.notas)} className="mt-3 w-full rounded-xl bg-teal-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Ver notas">
                 Ver notas
               </button>
             )}
@@ -122,17 +122,17 @@ export default function CandidaturasMobileList({
                   {statusUpdatingId === candidatura.id ? 'Guardando…' : 'He hecho seguimiento'}
                 </button>
               )}
-              <button onClick={() => onEdit(candidatura)} className="flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Editar candidatura">
+              <button type="button" onClick={() => onEdit(candidatura)} className="flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Editar candidatura">
                 Editar
               </button>
-              <button onClick={() => onDuplicate(candidatura)} className="flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Duplicar candidatura">
+              <button type="button" onClick={() => onDuplicate(candidatura)} className="flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Duplicar candidatura">
                 Duplicar
               </button>
-              <button onClick={() => onDelete(candidatura.id)} className="flex-1 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Borrar candidatura">
+              <button type="button" onClick={() => onDelete(candidatura.id)} className="flex-1 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Borrar candidatura">
                 Borrar
               </button>
               {candidatura.estado !== 'contratacion' && (
-                <button title="Ir a ejercicios" className="w-full rounded-xl bg-yellow-500 px-4 py-2 text-sm font-bold text-neutral-900 shadow-lg" onClick={() => onGoToRetos(candidatura)} aria-label="Ir a ejercicios">
+                <button type="button" title="Ir a ejercicios" className="w-full rounded-xl bg-yellow-500 px-4 py-2 text-sm font-bold text-neutral-900 shadow-lg" onClick={() => onGoToRetos(candidatura)} aria-label="Ir a ejercicios">
                   Reto de bienestar
                 </button>
               )}

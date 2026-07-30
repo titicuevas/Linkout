@@ -4,6 +4,8 @@ import { supabase } from '../services/supabase';
 import { ClipboardDocumentListIcon, PencilSquareIcon, ChatBubbleLeftRightIcon, BoltIcon } from '@heroicons/react/24/solid';
 import Layout from '../components/Layout';
 import PageLoader from '../components/PageLoader';
+import InlineLoader from '../components/InlineLoader';
+import LoadErrorState from '../components/LoadErrorState';
 import { useAuth } from '../hooks/useAuth';
 import { useTitle } from '../hooks/useTitle';
 import Swal from 'sweetalert2';
@@ -13,11 +15,11 @@ import {
   getReferenceDate,
   formatEstado,
   formatInactivityLabel,
-  buildFollowUpUpdate,
 } from './candidaturas/shared';
 import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
 import { getDisplayName } from '../utils/displayName';
 import { swalSuccess, swalError } from '../utils/swalTheme';
+import { markCandidaturaFollowUp } from '../services/candidaturaActions';
 
 export default function Index() {
   const { user, authLoading, logout } = useAuth();
@@ -27,7 +29,6 @@ export default function Index() {
   const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [updatingFollowUpId, setUpdatingFollowUpId] = useState(null);
-  const [followUpError, setFollowUpError] = useState('');
 
   useTitle('Panel');
 
@@ -128,18 +129,11 @@ export default function Index() {
   const handleMarkFollowUp = async (candidatura) => {
     if (!user || updatingFollowUpId || !candidatura?.id) return;
     setUpdatingFollowUpId(candidatura.id);
-    setFollowUpError('');
-    const payload = buildFollowUpUpdate(candidatura);
-    const { error } = await supabase
-      .from('candidaturas')
-      .update(payload)
-      .eq('id', candidatura.id)
-      .eq('user_id', user.id);
+    const { error, payload } = await markCandidaturaFollowUp(candidatura, { userId: user.id });
 
     if (error) {
-      setFollowUpError('No se pudo marcar el seguimiento. Inténtalo de nuevo.');
       setUpdatingFollowUpId(null);
-      await Swal.fire(swalError('Error', 'No se pudo marcar el seguimiento.'));
+      await Swal.fire(swalError('Error', 'No se pudo marcar el seguimiento. Inténtalo de nuevo.'));
       return;
     }
 
@@ -173,20 +167,12 @@ export default function Index() {
         </div>
 
         {dataLoading ? (
-          <div className="w-full max-w-5xl mx-auto mb-10 flex flex-col items-center py-12 rounded-3xl border border-neutral-700 bg-neutral-900/70">
-            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-700 border-t-pink-500" />
-            <div className="text-lg text-gray-300 font-bold">Cargando tu resumen...</div>
+          <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-neutral-700 bg-neutral-900/70">
+            <InlineLoader message="Cargando tu resumen..." />
           </div>
         ) : loadError ? (
-          <div className="w-full max-w-5xl mx-auto mb-10 flex flex-col items-center py-12 rounded-3xl border border-red-800/50 bg-red-950/30 text-center px-4">
-            <p className="text-lg text-red-300 font-bold mb-4" role="alert">{loadError}</p>
-            <button
-              type="button"
-              onClick={retryLoad}
-              className="rounded-full bg-blue-600 px-5 py-2 font-bold text-white hover:bg-blue-500"
-            >
-              Reintentar
-            </button>
+          <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-red-800/50 bg-red-950/30">
+            <LoadErrorState message={loadError} onRetry={retryLoad} />
           </div>
         ) : (
           <>
@@ -283,9 +269,6 @@ export default function Index() {
                     </button>
                   )}
                 </div>
-                {followUpError && (
-                  <p className="mb-3 text-sm font-semibold text-red-300" role="alert">{followUpError}</p>
-                )}
                 <ul className="space-y-3">
                   {followUps.slice(0, 5).map((item) => (
                     <li

@@ -8,8 +8,10 @@ import { swalSuccess, swalInfo } from '../../utils/swalTheme';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
+import { STORAGE_KEYS } from '../../utils/storageKeys';
 
-const DESAHOGO_DRAFT_KEY = 'linkout_desahogo_draft';
+const DESAHOGO_DRAFT_KEY = STORAGE_KEYS.desahogoDraft;
+
 
 export default function CrearDesahogo() {
   const { user, authLoading, logout } = useAuth();

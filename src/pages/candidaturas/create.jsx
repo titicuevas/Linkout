@@ -11,8 +11,9 @@ import { formatEstado, FORM_ESTADOS, FORM_ORIGENES, FRANJAS_SALARIAL, TIPOS_TRAB
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
+import { STORAGE_KEYS } from '../../utils/storageKeys';
 
-const CANDIDATURA_DRAFT_KEY = 'linkout_candidatura_draft';
+const CANDIDATURA_DRAFT_KEY = STORAGE_KEYS.candidaturaDraft;
 
 export default function CrearCandidatura() {
   const { user, authLoading, logout } = useAuth();

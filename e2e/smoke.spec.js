@@ -15,7 +15,7 @@ async function dismissOptionalOk(page) {
 async function clearRetoCompletadoKeys(page) {
   await page.evaluate(() => {
     Object.keys(localStorage)
-      .filter((key) => key.startsWith('reto_completado_'))
+      .filter((key) => key.startsWith('linkout_reto_completado_') || key.startsWith('reto_completado_'))
       .forEach((key) => localStorage.removeItem(key));
   });
 }
