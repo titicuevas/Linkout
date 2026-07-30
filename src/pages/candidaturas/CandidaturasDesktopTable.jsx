@@ -66,8 +66,8 @@ export default function CandidaturasDesktopTable({
                 className={`border-b border-neutral-800 ${urgent ? 'bg-yellow-500/5' : index % 2 === 0 ? 'bg-neutral-900' : 'bg-neutral-800/80'}`}
               >
                 <td className="px-2 py-3 text-center">
-                  {candidatura.estado === 'rechazado' && (
-                    <button title="Ir a ejercicios" className="text-yellow-400 text-xl" onClick={onGoToRetos} aria-label="Ir a ejercicios">⚡</button>
+                  {candidatura.estado !== 'contratacion' && (
+                    <button title="Ir a ejercicios" className="text-yellow-400 text-xl" onClick={() => onGoToRetos(candidatura)} aria-label="Ir a ejercicios">⚡</button>
                   )}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap text-white font-medium text-base">{candidatura.puesto}</td>

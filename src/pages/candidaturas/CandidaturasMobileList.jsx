@@ -119,9 +119,9 @@ export default function CandidaturasMobileList({
               <button onClick={() => onDelete(candidatura.id)} className="flex-1 rounded-xl bg-red-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Borrar candidatura">
                 Borrar
               </button>
-              {candidatura.estado === 'rechazado' && (
-                <button title="Ir a ejercicios" className="w-full rounded-xl bg-yellow-500 px-4 py-2 text-sm font-bold text-neutral-900 shadow-lg" onClick={onGoToRetos} aria-label="Ir a ejercicios">
-                  Ir a retos de bienestar
+              {candidatura.estado !== 'contratacion' && (
+                <button title="Ir a ejercicios" className="w-full rounded-xl bg-yellow-500 px-4 py-2 text-sm font-bold text-neutral-900 shadow-lg" onClick={() => onGoToRetos(candidatura)} aria-label="Ir a ejercicios">
+                  Reto de bienestar
                 </button>
               )}
             </div>

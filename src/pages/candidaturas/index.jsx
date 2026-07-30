@@ -348,7 +348,7 @@ export default function CandidaturasIndex() {
 
   const goToCreate = () => navigate('/candidaturas/create');
   const goToStats = () => navigate('/candidaturas/estadisticas');
-  const goToRetos = () => navigate('/retos/Fisico');
+  const goToRetos = (candidatura) => navigate('/retos/fisico', { state: { candidatura } });
   const openDetail = (title, text) => setDetailModal({ show: true, title, text });
   const closeDetail = () => setDetailModal({ show: false, title: '', text: '' });
 
