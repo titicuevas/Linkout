@@ -131,7 +131,7 @@ test.describe('Smoke LinkOut', () => {
 
     await page.goto('/desahogate');
     await expect(page.getByRole('heading', { name: /diario de reflexiones/i })).toBeVisible();
-    const entry = page.locator('div').filter({ hasText: texto }).filter({ has: page.getByRole('button', { name: /eliminar reflexión/i }) }).first();
+    const entry = page.locator('div.group').filter({ hasText: texto });
     await entry.getByRole('button', { name: /eliminar reflexión/i }).click();
     await page.getByRole('button', { name: /sí, eliminar/i }).click();
     await dismissOptionalOk(page);
