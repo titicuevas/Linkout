@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import Layout from '../components/Layout';
 import { useTitle } from '../hooks/useTitle';
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../services/supabase';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import { useTitle } from '../hooks/useTitle';
 
 export default function Welcome() {

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import { ArrowRightOnRectangleIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 import { supabase } from '../services/supabase';
 import Swal from 'sweetalert2';

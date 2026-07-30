@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
 import { EnvelopeIcon } from '@heroicons/react/24/solid';
 import { mapAuthErrorMessage } from '../utils/authErrors';

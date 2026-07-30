@@ -215,7 +215,7 @@ export default function Index() {
                   <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
                     <button
                       type="button"
-                      onClick={() => navigate('/candidaturas?seguimiento=1')}
+                      onClick={() => navigate(`/candidaturas?id=${item.id}`)}
                       className="rounded-full border border-neutral-600 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:border-blue-400 hover:text-white"
                     >
                       Abrir

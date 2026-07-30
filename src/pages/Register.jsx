@@ -3,7 +3,7 @@ import { supabase } from '../services/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { inputBase, buttonPrimary, labelBase, errorMsg } from '../styles/twHelpers';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import { LockClosedIcon, EnvelopeIcon, UserIcon } from '@heroicons/react/24/solid';
 import { mapAuthErrorMessage } from '../utils/authErrors';
 import EyeIcon from '../components/EyeIcon';

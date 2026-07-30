@@ -131,7 +131,9 @@ export default function CandidaturasIndex() {
     const estado = searchParams.get('estado');
     const seguimiento = searchParams.get('seguimiento');
     const recientes = searchParams.get('recientes');
-    if (estado === null && seguimiento === null && recientes === null) return;
+    const candidaturaId = searchParams.get('id');
+    const hasFilterParams = estado !== null || seguimiento !== null || recientes !== null;
+    if (!hasFilterParams) return;
 
     if (estado !== null) setFiltroEstado(estado);
     if (seguimiento !== null) {
@@ -145,8 +147,27 @@ export default function CandidaturasIndex() {
       }
     }
     setCurrentPage(0);
-    setSearchParams({}, { replace: true });
+
+    // Conserva el deep-link `id` si venía junto a filtros
+    if (candidaturaId) {
+      setSearchParams({ id: candidaturaId }, { replace: true });
+    } else {
+      setSearchParams({}, { replace: true });
+    }
   }, [prefsReady, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (loading || !prefsReady) return;
+    const candidaturaId = searchParams.get('id');
+    if (!candidaturaId) return;
+
+    const target = candidaturas.find((item) => item.id === candidaturaId);
+    if (target) {
+      setSelectedCandidatura(target);
+      setModalOpen(true);
+    }
+    setSearchParams({}, { replace: true });
+  }, [loading, prefsReady, candidaturas, searchParams, setSearchParams]);
 
   useEffect(() => {
     setSavedViews(loadSavedViews());

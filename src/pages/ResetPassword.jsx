@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import Swal from 'sweetalert2';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
 import { LockClosedIcon } from '@heroicons/react/24/solid';
 import EyeIcon from '../components/EyeIcon';

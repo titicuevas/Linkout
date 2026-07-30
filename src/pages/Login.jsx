@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Footer from '../components/Footer';
 import { inputBase, buttonPrimary, labelBase } from '../styles/twHelpers';
-import logo from '../assets/Logo.png';
+import logo from '../assets/Logo.webp';
 import { LockClosedIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
 import { mapAuthErrorMessage } from '../utils/authErrors';
 import EyeIcon from '../components/EyeIcon';
