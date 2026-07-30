@@ -6,7 +6,7 @@
 
 - **🌐 Demo en vivo**: https://linkout.up.railway.app/
 - **📂 Código fuente**: https://github.com/titicuevas/Linkout
-- **👤 Usuario demo**: demo@demo.es / 12345678
+- **👤 Usuario demo**: `demo@demo.es` / `12345678` (cuenta **pública**; no guardes datos reales ahí)
 
 ---
 
@@ -115,7 +115,9 @@ Linkout/
 
 ## 🚀 Despliegue y variables de entorno
 
-### Frontend (.env)
+Copia `env.example` a `.env` en local. **No subas `.env` al repo** (está en `.gitignore`).
+
+### Frontend (`.env`)
 ```
 VITE_SUPABASE_URL=tu_url_de_supabase
 VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
@@ -123,7 +125,7 @@ VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
 # VITE_BACKEND_URL=https://tu-backend.up.railway.app
 ```
 
-### Backend (opcional)
+### Backend (opcional, ver `backend/env.example`)
 ```
 CORS_ORIGIN=https://linkout.up.railway.app
 PORT=4000
@@ -131,6 +133,13 @@ PORT=4000
 
 - Motivación y Retos **no necesitan backend**.
 - **Railway**: basta con desplegar el frontend; el backend es solo un health-check opcional.
+
+### Seguridad (resumen)
+
+- La **anon key** de Supabase es pública por diseño en el frontend (Vite solo expone variables `VITE_*`).
+- La protección real de datos es **RLS en Supabase** (`auth.uid()`), no ocultar la anon key.
+- **Nunca** uses ni commits la clave `service_role` en el frontend ni en este repositorio.
+- La cuenta demo del README/CI es compartida: cualquiera puede entrar; úsala solo para probar la UI.
 
 ---
 
@@ -208,9 +217,14 @@ create table candidaturas (
 ### Tests
 ```bash
 npm test          # unitarios (Vitest)
-npm run test:e2e  # smoke E2E (Playwright, por defecto contra producción)
-# Opcional: PLAYWRIGHT_BASE_URL=http://localhost:5173 E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
+npm run test:e2e  # smoke E2E (Playwright; por defecto contra la demo en Railway)
+# Local opcional:
+# PLAYWRIGHT_BASE_URL=http://localhost:5173 E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
 ```
+
+**Qué cubren:** lint/build, tests unitarios y smoke E2E (login demo, candidaturas, diario, retos, vistas/CSV, seguimientos, a11y básicos). En CI, Playwright usa `E2E_EMAIL` / `E2E_PASSWORD` (secrets) o, si no hay, la cuenta demo.
+
+**Qué no garantizan solos:** ausencia de secretos en el historial de git, políticas RLS ante un atacante, ni toda la configuración de producción. Verde en CI = los flujos críticos funcionan en el entorno probado.
 
 ---
 
@@ -222,22 +236,23 @@ npm run test:e2e  # smoke E2E (Playwright, por defecto contra producción)
 
 ---
 
-## 🎮 **Demo en Vivo**
+## 🎮 **Demo en vivo**
 
-**¡Prueba LinkOut sin registrarte!**
+**Prueba LinkOut sin registrarte** en https://linkout.up.railway.app/
 
-- **🌐 Enlace**: https://linkout.up.railway.app/
-- **👤 Usuario demo**: demo@demo.es
-- **🔑 Contraseña**: 12345678
+| | |
+|---|---|
+| Usuario | `demo@demo.es` |
+| Contraseña | `12345678` |
 
-### 🎯 **¿Qué puedes probar?**
+Esta cuenta es **pública y compartida** (README + CI). No introduzcas datos personales ni contraseñas reales; el contenido puede cambiar o borrarse.
 
-1. **Diario de Candidaturas**: Organiza y sigue tus aplicaciones laborales con tracking temporal
-2. **Dashboard de Estadísticas**: Visualiza tu progreso con gráficos interactivos
-3. **Filtros Avanzados**: Filtra por estado, origen y más con interfaz visual
-4. **Motivación**: Mensajes de ánimo locales por diferentes roles
-5. **Retos de Bienestar**: Retos personalizados según el puesto y empresa
-6. **Desahógate**: Comparte experiencias con otros desarrolladores
+### ¿Qué puedes probar?
+
+1. Diario de candidaturas (filtros, seguimiento, exportación CSV)
+2. Dashboard de estadísticas
+3. Motivación y retos de bienestar (generación local)
+4. Desahógate
 
 ---
 
