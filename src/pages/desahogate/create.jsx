@@ -68,7 +68,11 @@ export default function CrearDesahogo() {
       return;
     }
     localStorage.removeItem(DESAHOGO_DRAFT_KEY);
-    await MySwal.fire(swalSuccess('¡Entrada guardada!', 'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!', { confirmButtonColor: '#e11d48' }));
+    await MySwal.fire(swalSuccess(
+      '¡Entrada guardada!',
+      'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!',
+      { confirmButtonColor: '#e11d48', timer: 1400, showConfirmButton: false },
+    ));
 
     const goMotivation = await MySwal.fire(swalInfo(
       '¿Quieres recibir motivación?',
@@ -93,8 +97,9 @@ export default function CrearDesahogo() {
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
           <form onSubmit={handleCreate} className="space-y-5 w-full" autoComplete="off">
             <div>
-              <label className="block text-gray-300 font-bold mb-2">Mensaje</label>
+              <label htmlFor="desahogo-mensaje" className="block text-gray-300 font-bold mb-2">Mensaje</label>
               <textarea
+                id="desahogo-mensaje"
                 value={texto}
                 onChange={e => setTexto(e.target.value)}
                 onBlur={() => setTocado(true)}

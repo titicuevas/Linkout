@@ -6,6 +6,7 @@ import { supabase } from '../services/supabase';
 import Swal from 'sweetalert2';
 import { swalSuccess, swalError } from '../utils/swalTheme';
 import { emitProfileUpdated } from '../utils/profileEvents';
+import { getDisplayName } from '../utils/displayName';
 
 const NAV_LINKS = [
   { to: '/candidaturas', label: 'Candidaturas' },
@@ -37,9 +38,9 @@ export default function Navbar({ user, onLogout }) {
       .single()
       .then(({ data }) => {
         if (cancelled) return;
-        const resolved = data?.nombre || user?.user_metadata?.nombre || '';
-        setNombre(resolved);
-        setDraftNombre(resolved);
+        const resolved = getDisplayName(data, user);
+        setNombre(resolved === 'tú' ? '' : resolved);
+        setDraftNombre(resolved === 'tú' ? '' : resolved);
       });
     return () => { cancelled = true; };
   }, [user]);
@@ -80,7 +81,8 @@ export default function Navbar({ user, onLogout }) {
     await Swal.fire(swalSuccess('Perfil actualizado', 'Tu nombre se ha guardado.', { timer: 1400, showConfirmButton: false }));
   };
 
-  const initial = (nombre || user?.email || '?').charAt(0).toUpperCase();
+  const displayName = nombre || getDisplayName(null, user);
+  const initial = (displayName || '?').charAt(0).toUpperCase();
 
   return (
     <nav className="w-full flex items-center justify-between gap-3 px-4 py-2 bg-neutral-900 border-b border-neutral-800 shadow-sm">
@@ -151,12 +153,12 @@ export default function Navbar({ user, onLogout }) {
                   </form>
                 ) : (
                   <>
-                    {nombre && <div className="text-lg font-bold text-white text-center leading-tight">{nombre}</div>}
+                    <div className="text-lg font-bold text-white text-center leading-tight">{displayName}</div>
                     <div className="text-xs text-gray-400 text-center break-all">{user.email}</div>
                     <button
                       type="button"
                       onClick={() => {
-                        setDraftNombre(nombre);
+                        setDraftNombre(displayName === 'tú' ? '' : displayName);
                         setEditing(true);
                       }}
                       className="mt-2 w-full flex items-center justify-center gap-2 px-4 py-2 text-blue-300 font-bold bg-neutral-800 hover:bg-neutral-700 rounded-lg transition text-sm"

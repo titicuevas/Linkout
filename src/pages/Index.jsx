@@ -14,6 +14,7 @@ import {
   formatInactivityLabel,
 } from './candidaturas/shared';
 import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
+import { getDisplayName } from '../utils/displayName';
 
 export default function Index() {
   const { user, authLoading, logout } = useAuth();
@@ -126,7 +127,7 @@ export default function Index() {
     <Layout user={user} onLogout={logout}>
       <div className="min-h-screen w-full overflow-x-hidden flex flex-col items-center justify-center px-4 sm:px-6 py-8" style={{ background: 'linear-gradient(135deg, #18181b 60%, #312e81 100%)' }}>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-center mb-2 tracking-tight drop-shadow-lg bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent animate-fade-in">
-          ¡Hola, <span className="text-blue-400">{profile?.nombre || user.email}</span>!
+          ¡Hola, <span className="text-blue-400">{getDisplayName(profile, user)}</span>!
         </h1>
         <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4 text-white animate-fade-in">Tu centro de control para la búsqueda de trabajo</h2>
         <div className="text-lg sm:text-xl text-gray-200 mb-6 max-w-2xl text-center font-medium animate-fade-in">

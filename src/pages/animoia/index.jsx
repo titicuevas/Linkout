@@ -8,6 +8,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 import { PROFILE_UPDATED_EVENT } from '../../utils/profileEvents';
 import { ANIMO_ROLES, generateLocalAnimo, getAnimoRole } from '../../utils/animoLocal';
+import { getDisplayName } from '../../utils/displayName';
 
 export default function AnimoIAIndex() {
   const { user, authLoading, logout } = useAuth();
@@ -75,7 +76,7 @@ export default function AnimoIAIndex() {
     setRespuestas((prev) => ({ ...prev, [id]: '' }));
 
     const rol = rolesSeleccionados[id] || 'motivador';
-    const nombre = profile?.nombre || user?.user_metadata?.nombre || 'tú';
+    const nombre = getDisplayName(profile, user);
     const respuesta = generateLocalAnimo({
       texto: mensaje.texto,
       rol,

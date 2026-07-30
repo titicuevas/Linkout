@@ -106,4 +106,42 @@ test.describe('Smoke LinkOut', () => {
 
     await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
   });
+
+  test('crear reflexión, Motivación y limpiar', async ({ page }) => {
+    test.setTimeout(90_000);
+    await login(page);
+
+    const stamp = Date.now();
+    const texto = `E2E reflexión ${stamp} — se borrará al finalizar.`;
+
+    await page.goto('/desahogate/create');
+    await expect(page.getByRole('heading', { name: /nueva entrada en mi diario/i })).toBeVisible();
+    await page.locator('#desahogo-mensaje, textarea').first().fill(texto);
+    await page.getByRole('button', { name: /guardar entrada/i }).click();
+
+    await expect(page.getByRole('button', { name: /sí, motivarme/i })).toBeVisible({ timeout: 12_000 });
+    await page.getByRole('button', { name: /sí, motivarme/i }).click();
+
+    await expect(page.getByRole('heading', { name: /^motivación$/i })).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByText(texto)).toBeVisible();
+
+    const card = page.locator('[id^="animo-"]').filter({ hasText: texto });
+    await card.getByRole('button', { name: /recibir motivación/i }).click();
+    await expect(card.getByText(/¡tú puedes!/i)).toBeVisible({ timeout: 15_000 });
+
+    await page.goto('/desahogate');
+    await expect(page.getByRole('heading', { name: /diario de reflexiones/i })).toBeVisible();
+    const entry = page.locator('div').filter({ hasText: texto }).filter({ has: page.getByRole('button', { name: /eliminar reflexión/i }) }).first();
+    await entry.getByRole('button', { name: /eliminar reflexión/i }).click();
+    await page.getByRole('button', { name: /sí, eliminar/i }).click();
+    await dismissOptionalOk(page);
+    await expect(page.getByText(texto)).toHaveCount(0, { timeout: 15_000 });
+  });
+
+  test('saludo del panel no muestra el email completo', async ({ page }) => {
+    await login(page);
+    const greeting = page.getByText(/¡hola,/i);
+    await expect(greeting).toBeVisible();
+    await expect(greeting).not.toContainText(email);
+  });
 });
