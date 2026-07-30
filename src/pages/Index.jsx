@@ -6,21 +6,26 @@ import Layout from '../components/Layout';
 import PageLoader from '../components/PageLoader';
 import { useAuth } from '../hooks/useAuth';
 import { useTitle } from '../hooks/useTitle';
+import Swal from 'sweetalert2';
 import {
   isActiveProcess,
   getFollowUpsPendientes,
   getReferenceDate,
   formatEstado,
   formatInactivityLabel,
+  buildFollowUpUpdate,
 } from './candidaturas/shared';
 import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
 import { getDisplayName } from '../utils/displayName';
+import { swalSuccess, swalError } from '../utils/swalTheme';
 
 export default function Index() {
   const { user, authLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [candidaturas, setCandidaturas] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [updatingFollowUpId, setUpdatingFollowUpId] = useState(null);
   const [followUpError, setFollowUpError] = useState('');
 
@@ -44,15 +49,21 @@ export default function Index() {
     let cancelled = false;
     async function fetchCandidaturas() {
       if (!user) return;
+      setDataLoading(true);
+      setLoadError('');
       const { data, error } = await supabase
         .from('candidaturas')
-        .select('id, empresa, puesto, estado, fecha, fecha_actualizacion, created_at')
+        .select('id, empresa, puesto, estado, fecha, fecha_actualizacion, created_at, historial_cambios')
         .eq('user_id', user.id);
 
       if (cancelled) return;
-      if (!error) {
+      if (error) {
+        setLoadError('No se pudieron cargar tus candidaturas. Inténtalo de nuevo.');
+        setCandidaturas([]);
+      } else {
         setCandidaturas(data || []);
       }
+      setDataLoading(false);
     }
 
     fetchCandidaturas();
@@ -95,29 +106,53 @@ export default function Index() {
       ? { label: 'Ver procesos activos', path: '/candidaturas?estado=en_proceso' }
       : { label: 'Crear candidatura', path: '/candidaturas/create' };
 
-  const handleMarkFollowUp = async (candidaturaId) => {
-    if (!user || updatingFollowUpId) return;
-    setUpdatingFollowUpId(candidaturaId);
+  const retryLoad = () => {
+    if (!user) return;
+    setDataLoading(true);
+    setLoadError('');
+    supabase
+      .from('candidaturas')
+      .select('id, empresa, puesto, estado, fecha, fecha_actualizacion, created_at, historial_cambios')
+      .eq('user_id', user.id)
+      .then(({ data, error }) => {
+        if (error) {
+          setLoadError('No se pudieron cargar tus candidaturas. Inténtalo de nuevo.');
+          setCandidaturas([]);
+        } else {
+          setCandidaturas(data || []);
+        }
+        setDataLoading(false);
+      });
+  };
+
+  const handleMarkFollowUp = async (candidatura) => {
+    if (!user || updatingFollowUpId || !candidatura?.id) return;
+    setUpdatingFollowUpId(candidatura.id);
     setFollowUpError('');
-    const today = new Date().toISOString().slice(0, 10);
+    const payload = buildFollowUpUpdate(candidatura);
     const { error } = await supabase
       .from('candidaturas')
-      .update({ fecha_actualizacion: today })
-      .eq('id', candidaturaId)
+      .update(payload)
+      .eq('id', candidatura.id)
       .eq('user_id', user.id);
 
     if (error) {
       setFollowUpError('No se pudo marcar el seguimiento. Inténtalo de nuevo.');
       setUpdatingFollowUpId(null);
+      await Swal.fire(swalError('Error', 'No se pudo marcar el seguimiento.'));
       return;
     }
 
     setCandidaturas((current) =>
       current.map((item) =>
-        item.id === candidaturaId ? { ...item, fecha_actualizacion: today } : item,
+        item.id === candidatura.id ? { ...item, ...payload } : item,
       ),
     );
     setUpdatingFollowUpId(null);
+    await Swal.fire(swalSuccess('Seguimiento marcado', 'La fecha de actualización se ha renovado.', {
+      timer: 1200,
+      showConfirmButton: false,
+    }));
   };
 
   if (authLoading) return <PageLoader message="Preparando tu panel..." />;
@@ -136,114 +171,159 @@ export default function Index() {
         <div className="text-pink-300 text-center font-semibold mb-10 animate-fade-in-slow text-lg flex items-center justify-center gap-2">
           <span>💡 Recuerda: ¡Cada candidatura es un paso hacia tu próximo trabajo! 🚀</span>
         </div>
-        <div className="w-full max-w-5xl mx-auto mb-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+        {dataLoading ? (
+          <div className="w-full max-w-5xl mx-auto mb-10 flex flex-col items-center py-12 rounded-3xl border border-neutral-700 bg-neutral-900/70">
+            <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-neutral-700 border-t-pink-500" />
+            <div className="text-lg text-gray-300 font-bold">Cargando tu resumen...</div>
+          </div>
+        ) : loadError ? (
+          <div className="w-full max-w-5xl mx-auto mb-10 flex flex-col items-center py-12 rounded-3xl border border-red-800/50 bg-red-950/30 text-center px-4">
+            <p className="text-lg text-red-300 font-bold mb-4" role="alert">{loadError}</p>
             <button
               type="button"
-              onClick={() => navigate('/candidaturas')}
-              className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl text-left transition hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              onClick={retryLoad}
+              className="rounded-full bg-blue-600 px-5 py-2 font-bold text-white hover:bg-blue-500"
             >
-              <div className="text-sm font-semibold text-blue-200">Candidaturas totales</div>
-              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.total}</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/candidaturas?estado=en_proceso')}
-              className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl text-left transition hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
-            >
-              <div className="text-sm font-semibold text-purple-200">Procesos activos</div>
-              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.activeProcesses}</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/candidaturas?recientes=1')}
-              className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl text-left transition hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-300"
-            >
-              <div className="text-sm font-semibold text-green-200">Últimos 7 días</div>
-              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.recentApplications}</div>
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate('/candidaturas?seguimiento=1')}
-              className="rounded-2xl border border-pink-800 bg-pink-950/60 p-5 shadow-xl text-left transition hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-300"
-            >
-              <div className="text-sm font-semibold text-pink-200">Seguimientos pendientes</div>
-              <div className="mt-2 text-3xl font-extrabold text-white">{resumen.followUpsPending}</div>
+              Reintentar
             </button>
           </div>
-        </div>
-        <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-neutral-700 bg-neutral-900/70 p-5 sm:p-6 shadow-2xl">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Siguiente foco recomendado</div>
-              <p className="mt-2 text-base sm:text-lg font-medium text-white">{insightMessage}</p>
-              <p className="mt-2 text-sm text-gray-400">
-                {resumen.latestUpdate ? `Última actividad registrada: ${resumen.latestUpdate}.` : 'Todavía no hay actividad registrada en candidaturas.'}
-              </p>
-            </div>
-            <button
-              onClick={() => navigate(insightCta.path)}
-              className="rounded-full bg-pink-600 px-5 py-3 text-sm sm:text-base font-bold text-white shadow-lg transition hover:bg-pink-500"
-            >
-              {insightCta.label}
-            </button>
-          </div>
-        </div>
-        {followUps.length > 0 && (
-          <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-pink-800/60 bg-pink-950/30 p-5 sm:p-6 shadow-2xl">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
-              <div>
-                <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Seguimientos a mano</div>
-                <p className="mt-1 text-sm text-pink-100/80">Procesos sin movimiento en 10+ días. Márcalos cuando hayas contactado.</p>
-              </div>
-              {followUps.length > 5 && (
+        ) : (
+          <>
+            <div className="w-full max-w-5xl mx-auto mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 <button
                   type="button"
-                  onClick={() => navigate('/candidaturas?seguimiento=1')}
-                  className="text-sm font-semibold text-pink-300 hover:text-pink-200"
+                  aria-label={`${resumen.total} candidaturas totales. Abrir diario`}
+                  onClick={() => navigate('/candidaturas')}
+                  className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl text-left transition hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
                 >
-                  Ver todos ({followUps.length})
+                  <div className="text-sm font-semibold text-blue-200">Candidaturas totales</div>
+                  <div className="mt-2 text-3xl font-extrabold text-white">{resumen.total}</div>
                 </button>
-              )}
-            </div>
-            {followUpError && (
-              <p className="mb-3 text-sm font-semibold text-red-300">{followUpError}</p>
-            )}
-            <ul className="space-y-3">
-              {followUps.slice(0, 5).map((item) => (
-                <li
-                  key={item.id}
-                  className="flex flex-col gap-3 rounded-2xl border border-neutral-700 bg-neutral-900/70 p-4 sm:flex-row sm:items-center sm:justify-between"
+                <button
+                  type="button"
+                  aria-label={`${resumen.activeProcesses} procesos activos. Ver filtrados`}
+                  onClick={() => navigate('/candidaturas?estado=en_proceso')}
+                  className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl text-left transition hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
                 >
-                  <div className="min-w-0">
-                    <div className="truncate font-bold text-white">{item.empresa || 'Sin empresa'}</div>
-                    <div className="truncate text-sm text-gray-300">{item.puesto || 'Sin puesto'}</div>
-                    <div className="mt-1 text-xs text-gray-400">
-                      {formatEstado(item.estado)} · {formatInactivityLabel(item) || 'Sin fecha'}
-                    </div>
+                  <div className="text-sm font-semibold text-purple-200">Procesos activos</div>
+                  <div className="mt-2 text-3xl font-extrabold text-white">{resumen.activeProcesses}</div>
+                </button>
+                <button
+                  type="button"
+                  aria-label={`${resumen.recentApplications} candidaturas en los últimos 7 días`}
+                  onClick={() => navigate('/candidaturas?recientes=1')}
+                  className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl text-left transition hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-300"
+                >
+                  <div className="text-sm font-semibold text-green-200">Últimos 7 días</div>
+                  <div className="mt-2 text-3xl font-extrabold text-white">{resumen.recentApplications}</div>
+                </button>
+                <button
+                  type="button"
+                  aria-label={`${resumen.followUpsPending} seguimientos pendientes`}
+                  onClick={() => navigate('/candidaturas?seguimiento=1')}
+                  className="rounded-2xl border border-pink-800 bg-pink-950/60 p-5 shadow-xl text-left transition hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                >
+                  <div className="text-sm font-semibold text-pink-200">Seguimientos pendientes</div>
+                  <div className="mt-2 text-3xl font-extrabold text-white">{resumen.followUpsPending}</div>
+                </button>
+              </div>
+            </div>
+
+            {resumen.total === 0 ? (
+              <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-neutral-700 bg-neutral-900/70 p-6 sm:p-8 shadow-2xl text-center">
+                <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Empieza aquí</div>
+                <p className="mt-2 text-lg font-medium text-white">Todavía no tienes candidaturas registradas.</p>
+                <p className="mt-2 text-sm text-gray-400">Crea la primera para activar KPIs, seguimientos y estadísticas.</p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/candidaturas/create')}
+                  className="mt-5 rounded-full bg-pink-600 px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-pink-500"
+                >
+                  Crear candidatura
+                </button>
+              </div>
+            ) : (
+              <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-neutral-700 bg-neutral-900/70 p-5 sm:p-6 shadow-2xl">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Siguiente foco recomendado</div>
+                    <p className="mt-2 text-base sm:text-lg font-medium text-white">{insightMessage}</p>
+                    <p className="mt-2 text-sm text-gray-400">
+                      {resumen.latestUpdate ? `Última actividad registrada: ${resumen.latestUpdate}.` : 'Todavía no hay actividad registrada en candidaturas.'}
+                    </p>
                   </div>
-                  <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
+                  <button
+                    type="button"
+                    aria-label={insightCta.label}
+                    onClick={() => navigate(insightCta.path)}
+                    className="rounded-full bg-pink-600 px-5 py-3 text-sm sm:text-base font-bold text-white shadow-lg transition hover:bg-pink-500"
+                  >
+                    {insightCta.label}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {followUps.length > 0 && (
+              <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-pink-800/60 bg-pink-950/30 p-5 sm:p-6 shadow-2xl">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
+                  <div>
+                    <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Seguimientos a mano</div>
+                    <p className="mt-1 text-sm text-pink-100/80">Procesos sin movimiento en 10+ días. Márcalos cuando hayas contactado.</p>
+                  </div>
+                  {followUps.length > 5 && (
                     <button
                       type="button"
-                      onClick={() => navigate(`/candidaturas?id=${item.id}`)}
-                      className="rounded-full border border-neutral-600 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:border-blue-400 hover:text-white"
+                      onClick={() => navigate('/candidaturas?seguimiento=1')}
+                      className="text-sm font-semibold text-pink-300 hover:text-pink-200"
                     >
-                      Abrir
+                      Ver todos ({followUps.length})
                     </button>
-                    <button
-                      type="button"
-                      disabled={updatingFollowUpId === item.id}
-                      onClick={() => handleMarkFollowUp(item.id)}
-                      className="rounded-full bg-pink-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-pink-500 disabled:opacity-60"
+                  )}
+                </div>
+                {followUpError && (
+                  <p className="mb-3 text-sm font-semibold text-red-300" role="alert">{followUpError}</p>
+                )}
+                <ul className="space-y-3">
+                  {followUps.slice(0, 5).map((item) => (
+                    <li
+                      key={item.id}
+                      className="flex flex-col gap-3 rounded-2xl border border-neutral-700 bg-neutral-900/70 p-4 sm:flex-row sm:items-center sm:justify-between"
                     >
-                      {updatingFollowUpId === item.id ? 'Guardando…' : 'He hecho seguimiento'}
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+                      <div className="min-w-0">
+                        <div className="truncate font-bold text-white">{item.empresa || 'Sin empresa'}</div>
+                        <div className="truncate text-sm text-gray-300">{item.puesto || 'Sin puesto'}</div>
+                        <div className="mt-1 text-xs text-gray-400">
+                          {formatEstado(item.estado)} · {formatInactivityLabel(item) || 'Sin fecha'}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/candidaturas?id=${item.id}`)}
+                          className="rounded-full border border-neutral-600 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:border-blue-400 hover:text-white"
+                        >
+                          Abrir
+                        </button>
+                        <button
+                          type="button"
+                          disabled={updatingFollowUpId === item.id}
+                          onClick={() => handleMarkFollowUp(item)}
+                          className="rounded-full bg-pink-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-pink-500 disabled:opacity-60"
+                        >
+                          {updatingFollowUpId === item.id ? 'Guardando…' : 'He hecho seguimiento'}
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
         )}
+
         <div className="w-full max-w-5xl mx-auto mb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             <Link to="/candidaturas" className="flex flex-col items-center w-full bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-blue-400/40 hover:border-blue-400 cursor-pointer group shadow-2xl border-2 border-blue-900 hover:bg-blue-900/80 focus:outline-none focus:ring-2 focus:ring-blue-400 animate-fade-in-card">
@@ -271,4 +351,4 @@ export default function Index() {
       </div>
     </Layout>
   );
-} 
+}

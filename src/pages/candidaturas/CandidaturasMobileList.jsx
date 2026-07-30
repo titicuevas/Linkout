@@ -12,6 +12,7 @@ export default function CandidaturasMobileList({
   onDuplicate,
   onGoToRetos,
   onStatusChange,
+  onMarkFollowUp,
   statusUpdatingId,
   hasActiveFilters = false,
   onClearFilters,
@@ -110,6 +111,17 @@ export default function CandidaturasMobileList({
             )}
 
             <div className="mt-4 flex flex-wrap gap-2">
+              {urgent && (
+                <button
+                  type="button"
+                  disabled={statusUpdatingId === candidatura.id}
+                  onClick={() => onMarkFollowUp?.(candidatura)}
+                  className="w-full rounded-xl bg-pink-600 px-4 py-2 text-sm font-bold text-white shadow-lg disabled:opacity-60"
+                  title="Marcar seguimiento"
+                >
+                  {statusUpdatingId === candidatura.id ? 'Guardando…' : 'He hecho seguimiento'}
+                </button>
+              )}
               <button onClick={() => onEdit(candidatura)} className="flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-bold text-white shadow-lg" title="Editar candidatura">
                 Editar
               </button>

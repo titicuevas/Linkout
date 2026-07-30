@@ -10,6 +10,7 @@ import {
   getFollowUpsPendientes,
   matchesCandidaturaSearch,
   buildStatusUpdate,
+  buildFollowUpUpdate,
   formatInactivityLabel,
   buildDuplicatePayload,
   createSavedView,
@@ -219,6 +220,25 @@ describe('buildStatusUpdate', () => {
     expect(payload.fecha_actualizacion).toBeTruthy();
     expect(payload.historial_cambios.length).toBe(2);
     expect(payload.historial_cambios[1]).toContain('Estado:');
+  });
+});
+
+describe('buildFollowUpUpdate', () => {
+  it('actualiza fecha y añade entrada de seguimiento al historial', () => {
+    const candidatura = {
+      historial_cambios: ['[antes] creado'],
+    };
+    const now = new Date('2026-07-30T12:00:00');
+    const payload = buildFollowUpUpdate(candidatura, now);
+    expect(payload.fecha_actualizacion).toBe('2026-07-30');
+    expect(payload.historial_cambios).toHaveLength(2);
+    expect(payload.historial_cambios[1]).toContain('Seguimiento registrado');
+  });
+
+  it('crea historial si no existía', () => {
+    const payload = buildFollowUpUpdate({}, new Date('2026-07-30T12:00:00'));
+    expect(payload.historial_cambios).toHaveLength(1);
+    expect(payload.historial_cambios[0]).toContain('Seguimiento registrado');
   });
 });
 

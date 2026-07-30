@@ -19,6 +19,7 @@ import {
   normalizeOrigen,
   matchesCandidaturaSearch,
   buildStatusUpdate,
+  buildFollowUpUpdate,
   needsFollowUp,
   buildDuplicatePayload,
   loadSavedViews,
@@ -256,6 +257,25 @@ export default function CandidaturasIndex() {
     }
 
     setCandidaturas((prev) => prev.map((c) => (c.id === candidatura.id ? { ...c, ...payload } : c)));
+  };
+
+  const handleMarkFollowUp = async (candidatura) => {
+    if (!candidatura?.id || statusUpdatingId) return;
+    setStatusUpdatingId(candidatura.id);
+    const payload = buildFollowUpUpdate(candidatura);
+    const { error } = await supabase.from('candidaturas').update(payload).eq('id', candidatura.id);
+    setStatusUpdatingId(null);
+
+    if (error) {
+      await Swal.fire(swalError('Error', 'No se pudo marcar el seguimiento.'));
+      return;
+    }
+
+    setCandidaturas((prev) => prev.map((c) => (c.id === candidatura.id ? { ...c, ...payload } : c)));
+    await Swal.fire(swalSuccess('Seguimiento marcado', 'La fecha de actualización se ha renovado.', {
+      timer: 1200,
+      showConfirmButton: false,
+    }));
   };
 
   const handleDeleteClick = (id) => {
@@ -579,6 +599,7 @@ export default function CandidaturasIndex() {
                   onDuplicate={handleDuplicateClick}
                   onGoToRetos={goToRetos}
                   onStatusChange={handleStatusChange}
+                  onMarkFollowUp={handleMarkFollowUp}
                   statusUpdatingId={statusUpdatingId}
                   hasActiveFilters={filtersActive}
                   onClearFilters={handleClearFilters}
@@ -599,6 +620,7 @@ export default function CandidaturasIndex() {
                   onOpenNotas={(text) => openDetail('Notas personales', text)}
                   onGoToRetos={goToRetos}
                   onStatusChange={handleStatusChange}
+                  onMarkFollowUp={handleMarkFollowUp}
                   statusUpdatingId={statusUpdatingId}
                   hasActiveFilters={filtersActive}
                   onClearFilters={handleClearFilters}

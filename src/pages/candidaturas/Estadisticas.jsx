@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
-import { formatOrigen, isActiveProcess, getFollowUpsPendientes } from './shared';
+import { formatOrigen, formatEstado, isActiveProcess, getFollowUpsPendientes } from './shared';
 
 const COLORS = ['#6366f1', '#e11d48', '#f59e42', '#10b981', '#fbbf24', '#3b82f6', '#ef4444', '#a21caf', '#f472b6'];
 
@@ -53,6 +53,8 @@ export default function EstadisticasCandidaturas() {
       if (field === 'origen') {
         const formatted = formatOrigen(c[field]);
         val = formatted === '-' ? 'Sin especificar' : formatted;
+      } else if (field === 'estado') {
+        val = c[field] ? formatEstado(c[field]) : 'Sin especificar';
       }
       counts[val] = (counts[val] || 0) + 1;
     });

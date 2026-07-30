@@ -15,6 +15,7 @@ export default function CandidaturasDesktopTable({
   onOpenNotas,
   onGoToRetos,
   onStatusChange,
+  onMarkFollowUp,
   statusUpdatingId,
   hasActiveFilters = false,
   onClearFilters,
@@ -115,7 +116,18 @@ export default function CandidaturasDesktopTable({
                 <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{candidatura.franja_salarial || '-'}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{candidatura.tipo_trabajo || '-'}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-pink-200 font-bold text-base">{candidatura.ubicacion || '-'}</td>
-                <td className="px-4 py-3 whitespace-nowrap flex gap-2 items-center h-full justify-center">
+                <td className="px-4 py-3 whitespace-nowrap flex gap-2 items-center h-full justify-center flex-wrap">
+                  {urgent && (
+                    <button
+                      type="button"
+                      disabled={statusUpdatingId === candidatura.id}
+                      onClick={() => onMarkFollowUp?.(candidatura)}
+                      className="bg-pink-600 text-white px-3 py-1 rounded font-bold text-xs disabled:opacity-60"
+                      title="Marcar seguimiento"
+                    >
+                      {statusUpdatingId === candidatura.id ? '…' : 'Seguimiento'}
+                    </button>
+                  )}
                   {candidatura.feedback && (
                     <button onClick={() => onOpenFeedback(candidatura.feedback)} className="bg-purple-600 text-white px-3 py-1 rounded font-bold text-xs" title="Ver feedback">Ver feedback</button>
                   )}

@@ -294,6 +294,17 @@ export function buildStatusUpdate(candidatura, newEstado) {
   };
 }
 
+/** Payload al marcar un seguimiento manual (fecha + historial). */
+export function buildFollowUpUpdate(candidatura, now = new Date()) {
+  const today = now.toISOString().slice(0, 10);
+  const stamp = now.toLocaleString();
+  const entry = `[${stamp}] Seguimiento registrado`;
+  return {
+    fecha_actualizacion: today,
+    historial_cambios: [...(candidatura?.historial_cambios || []), entry],
+  };
+}
+
 /**
  * Crea el payload de una copia nueva a partir de una candidatura existente.
  * No incluye id ni created_at (los genera la BD).
