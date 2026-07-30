@@ -46,10 +46,9 @@ export default function EstadisticasCandidaturas() {
     return () => { cancelled = true; };
   }, [user]);
 
-  // Agrupa y cuenta por campo
   const getDataByField = (field) => {
     const counts = {};
-    candidaturas.forEach(c => {
+    candidaturas.forEach((c) => {
       let val = c[field] || 'Sin especificar';
       if (field === 'origen') {
         const formatted = formatOrigen(c[field]);
@@ -71,6 +70,12 @@ export default function EstadisticasCandidaturas() {
       ? 'Tus procesos activos están en movimiento. Buen momento para preparar entrevistas o reforzar candidaturas.'
       : 'No hay procesos activos ahora mismo. Tal vez conviene reactivar la búsqueda esta semana.';
 
+  const insightCta = followUpsPendientes > 0
+    ? { label: 'Ver seguimientos', path: '/candidaturas?seguimiento=1' }
+    : procesosActivos.length > 0
+      ? { label: 'Ver procesos activos', path: '/candidaturas?estado=en_proceso' }
+      : { label: 'Crear candidatura', path: '/candidaturas/create' };
+
   if (authLoading) return <PageLoader message="Preparando estadísticas..." />;
   if (!user) return null;
 
@@ -79,6 +84,7 @@ export default function EstadisticasCandidaturas() {
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-4 sm:px-6 py-8 relative">
         <div className="w-full flex justify-start mb-8">
           <button
+            type="button"
             onClick={() => navigate('/candidaturas')}
             className="flex items-center gap-2 px-6 py-3 bg-neutral-800 hover:bg-pink-600 text-white rounded-full shadow-lg font-extrabold text-lg border-2 border-pink-400 outline-none focus:ring-4 focus:ring-pink-200 transition-all drop-shadow-lg tracking-wide"
           >
@@ -92,39 +98,80 @@ export default function EstadisticasCandidaturas() {
           <div className="text-center py-10">
             <p className="text-lg text-red-300 font-bold mb-4">{loadError}</p>
             <button
+              type="button"
               onClick={() => window.location.reload()}
               className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-bold"
             >
               Reintentar
             </button>
           </div>
+        ) : candidaturas.length === 0 ? (
+          <div className="w-full max-w-xl text-center rounded-3xl border border-neutral-700 bg-neutral-800/80 p-8 shadow-2xl">
+            <p className="text-xl font-bold text-white mb-2">Aún no hay datos que mostrar</p>
+            <p className="text-gray-400 mb-6">Crea tu primera candidatura para ver ratios, orígenes y seguimientos aquí.</p>
+            <button
+              type="button"
+              onClick={() => navigate('/candidaturas/create')}
+              className="rounded-full bg-pink-600 px-6 py-3 font-bold text-white hover:bg-pink-500"
+            >
+              Crear candidatura
+            </button>
+          </div>
         ) : (
           <>
             <div className="w-full max-w-6xl mb-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-              <div className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl">
+              <button
+                type="button"
+                onClick={() => navigate('/candidaturas')}
+                className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl text-left transition hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+              >
                 <div className="text-sm font-semibold text-blue-200">Total registradas</div>
                 <div className="mt-2 text-3xl font-extrabold text-white">{candidaturas.length}</div>
-              </div>
-              <div className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl">
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/candidaturas?estado=en_proceso')}
+                className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl text-left transition hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+              >
                 <div className="text-sm font-semibold text-purple-200">Procesos activos</div>
                 <div className="mt-2 text-3xl font-extrabold text-white">{procesosActivos.length}</div>
-              </div>
-              <div className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl">
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/candidaturas?estado=contratacion')}
+                className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl text-left transition hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-300"
+                title="Ver contrataciones"
+              >
                 <div className="text-sm font-semibold text-green-200">Ratio de contratación</div>
                 <div className="mt-2 text-3xl font-extrabold text-white">{ratioExito}%</div>
-              </div>
-              <div className="rounded-2xl border border-yellow-700 bg-yellow-950/50 p-5 shadow-xl">
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate('/candidaturas?seguimiento=1')}
+                className="rounded-2xl border border-yellow-700 bg-yellow-950/50 p-5 shadow-xl text-left transition hover:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-300"
+              >
                 <div className="text-sm font-semibold text-yellow-200">Seguimientos pendientes</div>
                 <div className="mt-2 text-3xl font-extrabold text-white">{followUpsPendientes}</div>
-              </div>
+              </button>
             </div>
 
             <div className="w-full max-w-6xl mb-8 rounded-3xl border border-neutral-700 bg-neutral-800/80 p-5 sm:p-6 shadow-2xl">
-              <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Lectura rápida</div>
-              <p className="mt-2 text-base sm:text-lg font-medium text-white">{insightPrincipal}</p>
-              <p className="mt-2 text-sm text-gray-400">
-                No seleccionadas: {rechazo}. Contrataciones: {contrataciones}. Usa esta lectura para decidir si te conviene hacer seguimiento o abrir más procesos nuevos.
-              </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Lectura rápida</div>
+                  <p className="mt-2 text-base sm:text-lg font-medium text-white">{insightPrincipal}</p>
+                  <p className="mt-2 text-sm text-gray-400">
+                    No seleccionadas: {rechazo}. Contrataciones: {contrataciones}. Usa esta lectura para decidir si te conviene hacer seguimiento o abrir más procesos nuevos.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => navigate(insightCta.path)}
+                  className="rounded-full bg-pink-600 px-5 py-3 text-sm sm:text-base font-bold text-white shadow-lg transition hover:bg-pink-500 shrink-0"
+                >
+                  {insightCta.label}
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full max-w-6xl">
@@ -165,4 +212,4 @@ export default function EstadisticasCandidaturas() {
       </div>
     </Layout>
   );
-} 
+}

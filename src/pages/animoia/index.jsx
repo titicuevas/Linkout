@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
 import { CalendarDaysIcon, UserCircleIcon } from '@heroicons/react/24/solid';
@@ -16,7 +16,10 @@ export default function AnimoIAIndex() {
   const [rolesSeleccionados, setRolesSeleccionados] = useState({});
   const [loading, setLoading] = useState({});
   const [profile, setProfile] = useState(null);
+  const [focusId, setFocusId] = useState(null);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const focusHandled = useRef(false);
 
   useTitle('Motivación');
 
@@ -34,6 +37,22 @@ export default function AnimoIAIndex() {
     window.addEventListener(PROFILE_UPDATED_EVENT, handleProfileUpdated);
     return () => window.removeEventListener(PROFILE_UPDATED_EVENT, handleProfileUpdated);
   }, []);
+
+  useEffect(() => {
+    const focus = searchParams.get('focus');
+    if (!focus || focusHandled.current || mensajes.length === 0) return;
+    const exists = mensajes.some((m) => m.id === focus);
+    if (!exists) {
+      setSearchParams({}, { replace: true });
+      return;
+    }
+    focusHandled.current = true;
+    setFocusId(focus);
+    setSearchParams({}, { replace: true });
+    window.setTimeout(() => {
+      document.getElementById(`animo-${focus}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }, [mensajes, searchParams, setSearchParams]);
 
   const fetchMensajes = async (userId) => {
     const { data } = await supabase
@@ -109,7 +128,13 @@ export default function AnimoIAIndex() {
                 const personaje = getAnimoRole(rol);
 
                 return (
-                  <div key={m.id} className="backdrop-blur-md bg-gradient-to-br from-neutral-900/90 via-neutral-900/80 to-blue-900/60 rounded-2xl shadow-3xl border-2 border-pink-400 px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-4 items-center animate-fade-in-slow">
+                  <div
+                    id={`animo-${m.id}`}
+                    key={m.id}
+                    className={`backdrop-blur-md bg-gradient-to-br from-neutral-900/90 via-neutral-900/80 to-blue-900/60 rounded-2xl shadow-3xl border-2 px-4 sm:px-8 py-6 sm:py-8 flex flex-col gap-4 items-center animate-fade-in-slow ${
+                      focusId === m.id ? 'border-green-400 ring-2 ring-green-400/40' : 'border-pink-400'
+                    }`}
+                  >
                     <div className="w-full text-white font-semibold text-base sm:text-lg mb-1 bg-neutral-800/80 rounded-2xl p-3 sm:p-4 shadow-inner border border-neutral-700 flex flex-col gap-2">
                       <span className="block mb-2 text-pink-300 font-bold text-sm sm:text-base flex items-center gap-2">
                         <UserCircleIcon className="w-5 h-5 text-pink-200" />
