@@ -263,6 +263,7 @@ test.describe('Smoke LinkOut', () => {
     await expect(page.getByText(/seguimiento marcado/i)).toBeVisible({ timeout: 10_000 });
     await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
 
+    await page.evaluate(() => localStorage.removeItem('linkout_candidaturas_prefs'));
     await page.goto('/candidaturas');
     await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
     await page.getByPlaceholder(/buscar por puesto/i).fill(empresa);
