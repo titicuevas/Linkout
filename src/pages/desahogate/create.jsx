@@ -4,7 +4,7 @@ import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
-import { swalSuccess } from '../../utils/swalTheme';
+import { swalSuccess, swalInfo } from '../../utils/swalTheme';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
@@ -42,7 +42,19 @@ export default function CrearDesahogo() {
       return;
     }
     await MySwal.fire(swalSuccess('¡Entrada guardada!', 'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!', { confirmButtonColor: '#e11d48' }));
-    navigate('/desahogate');
+
+    const goMotivation = await MySwal.fire(swalInfo(
+      '¿Quieres recibir motivación?',
+      'Puedes generar un mensaje de ánimo a partir de esta reflexión.',
+      {
+        showCancelButton: true,
+        confirmButtonText: 'Sí, motivarme',
+        cancelButtonText: 'Volver al diario',
+        confirmButtonColor: '#db2777',
+      },
+    ));
+
+    navigate(goMotivation.isConfirmed ? '/animoia' : '/desahogate');
   };
 
   return (

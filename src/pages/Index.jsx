@@ -168,8 +168,8 @@ export default function Index() {
             </Link>
             <Link to="/animoia" className="flex flex-col items-center w-full bg-gradient-to-br from-green-900/80 via-green-800/70 to-green-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-green-400/40 hover:border-green-400 cursor-pointer group shadow-2xl border-2 border-green-900 hover:bg-green-900/80 focus:outline-none focus:ring-2 focus:ring-green-400 animate-fade-in-card">
               <ChatBubbleLeftRightIcon width={56} height={56} className="mb-3 text-green-400 group-hover:text-white transition-colors duration-200 drop-shadow-lg" />
-              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Motivación IA</div>
-              <div className="text-base text-green-100 text-center break-words whitespace-pre-line">Recibe mensajes motivacionales personalizados.</div>
+              <div className="font-extrabold text-white text-xl text-center mb-2 group-hover:text-white transition-colors duration-200">Motivación</div>
+              <div className="text-base text-green-100 text-center break-words whitespace-pre-line">Recibe mensajes de ánimo personalizados a partir de tus reflexiones.</div>
             </Link>
             <Link to="/retos/fisico" className="flex flex-col items-center w-full bg-gradient-to-br from-yellow-900/80 via-yellow-800/70 to-yellow-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-yellow-400/40 hover:border-yellow-400 cursor-pointer group shadow-2xl border-2 border-yellow-900 hover:bg-yellow-900/80 focus:outline-none focus:ring-2 focus:ring-yellow-400 animate-fade-in-card">
               <BoltIcon width={56} height={56} className="mb-3 text-yellow-300 group-hover:text-yellow-100 transition-colors duration-200 drop-shadow-lg" />

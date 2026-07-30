@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../../components/Layout';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { SparklesIcon, FireIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { FireIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { supabase } from '../../services/supabase';
 import Confetti from 'react-confetti';
 import Swal from 'sweetalert2';
@@ -10,9 +10,8 @@ import { swalSuccess } from '../../utils/swalTheme';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
+import { generateLocalRetos } from '../../utils/retosLocal';
 
-const ENDPOINT = import.meta.env.VITE_BACKEND_URL + '/api/retos'; // Cambia esto por tu endpoint real
-const NIVELES = ['Fácil', 'Medio', 'Difícil'];
 const PROGRESO_NIVEL = 100;
 
 export default function RetoFisico() {
@@ -38,37 +37,22 @@ export default function RetoFisico() {
     if (!candidatura) return;
     setLoading(true);
     setError('');
-    // Llamada a la IA para obtener retos personalizados
-    fetch(ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    try {
+      const generated = generateLocalRetos({
         puesto: candidatura.puesto,
         empresa: candidatura.empresa,
-        niveles: NIVELES
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        setRetos(data.retos || []);
-        if (!data.retos || data.retos.length === 0) {
-          setError(data.error || 'No se pudieron generar los retos. Intenta de nuevo.');
-        }
-        setLoading(false);
-      })
-      .catch(async (err) => {
-        let msg = 'No se pudieron generar los retos. Intenta de nuevo.';
-        if (err && err.response) {
-          try {
-            const data = await err.response.json();
-            msg = data.error || msg;
-          } catch {
-            // No hacer nada si falla el parseo del error
-          }
-        }
-        setError(msg);
-        setLoading(false);
+        salt: candidatura.id || Date.now(),
       });
+      setRetos(generated);
+      if (!generated.length) {
+        setError('No se pudieron generar los retos. Intenta de nuevo.');
+      }
+    } catch {
+      setError('No se pudieron generar los retos. Intenta de nuevo.');
+      setRetos([]);
+    } finally {
+      setLoading(false);
+    }
   }, [candidatura]);
 
   useEffect(() => {
@@ -291,7 +275,10 @@ export default function RetoFisico() {
             <div className="flex flex-col gap-8 w-full">
               {retos.map((reto, i) => (
                 <div key={reto.nivel} className="bg-neutral-900 rounded-3xl shadow-3xl border-2 border-pink-400 px-8 py-7 flex flex-col gap-4 items-center animate-fade-in-slow w-full">
-                  <div className="text-white text-xl font-bold flex items-center gap-2 mb-2"><SparklesIcon className="w-6 h-6 text-pink-300 animate-pulse" />Reto {reto.nivel}</div>
+                  <div className="text-white text-xl font-bold flex items-center gap-2 mb-2">
+                    <span className="text-2xl leading-none" aria-hidden="true">{reto.emoji || '💪'}</span>
+                    Reto {reto.nivel}
+                  </div>
                   <div className="text-pink-200 text-lg font-semibold mb-2">{reto.ejercicio}</div>
                   <button
                     onClick={() => handleAlternativa(i)}
