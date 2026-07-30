@@ -46,14 +46,28 @@ export default function Navbar({ user, onLogout }) {
   }, [user]);
 
   useEffect(() => {
+    if (!menuOpen) return undefined;
+
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setMenuOpen(false);
         setEditing(false);
       }
     }
-    if (menuOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setMenuOpen(false);
+        setEditing(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, [menuOpen]);
 
   const handleSaveNombre = async (e) => {
@@ -108,13 +122,19 @@ export default function Navbar({ user, onLogout }) {
           <button type="button"
             onClick={() => setMenuOpen((v) => !v)}
             className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition hover:scale-105"
-            aria-label="Abrir menú de usuario"
+            aria-label={menuOpen ? 'Cerrar menú de usuario' : 'Abrir menú de usuario'}
             aria-expanded={menuOpen}
+            aria-haspopup="true"
+            aria-controls={menuOpen ? 'user-menu' : undefined}
           >
             {initial}
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-[min(18rem,calc(100vw-1rem))] max-w-sm bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-700 z-50 animate-fade-slide-down flex flex-col items-center py-6 px-4 gap-2" style={{ top: '48px' }}>
+            <div
+              id="user-menu"
+              className="absolute right-0 mt-2 w-[min(18rem,calc(100vw-1rem))] max-w-sm bg-neutral-900 rounded-2xl shadow-2xl border border-neutral-700 z-50 animate-fade-slide-down flex flex-col items-center py-6 px-4 gap-2"
+              style={{ top: '48px' }}
+            >
               <div className="absolute -top-2 right-8 w-4 h-4 bg-neutral-900 border-t border-l border-neutral-700 rotate-45 z-10"></div>
               <div className="flex flex-col items-center mb-2 w-full">
                 <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center text-white font-extrabold text-3xl shadow-lg border-4 border-white mb-2">

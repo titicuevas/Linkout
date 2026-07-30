@@ -5,12 +5,12 @@ import {
   PlusIcon,
   PencilSquareIcon,
   TrashIcon,
-  XMarkIcon,
   ArrowLeftIcon,
   FaceFrownIcon,
   ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/solid';
 import Layout from '../../components/Layout';
+import Modal from '../../components/Modal';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { swalSuccess, swalError, swalWarning } from '../../utils/swalTheme';
@@ -263,25 +263,31 @@ export default function DesahogateIndex() {
           </div>
         </div>
         {showModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 px-4">
-            <div className="bg-neutral-900 rounded-2xl p-6 sm:p-8 shadow-2xl w-full max-w-md relative animate-fade-in">
-              <button type="button" className="absolute top-2 right-2 p-1 hover:bg-neutral-800 rounded" onClick={() => setShowModal(false)}>
-                <XMarkIcon className="w-6 h-6 text-gray-400" />
-              </button>
-              <form onSubmit={handleEditSave} className="flex flex-col gap-4">
-                <textarea
-                  value={editTexto}
-                  onChange={(e) => setEditTexto(e.target.value)}
-                  className="w-full h-32 p-3 rounded-lg bg-neutral-900 text-white border border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none transition-all"
-                  required
-                />
-                <div className="flex gap-2 mt-2">
-                  <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition">Cancelar</button>
-                  <button type="submit" className="flex-1 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded font-extrabold shadow-lg transition">Guardar</button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <Modal
+            isOpen={showModal}
+            onClose={() => setShowModal(false)}
+            labelledBy="edit-desahogo-title"
+          >
+            <h2 id="edit-desahogo-title" className="text-xl font-bold text-white text-center mb-4 pr-8">
+              Editar reflexión
+            </h2>
+            <form onSubmit={handleEditSave} className="flex flex-col gap-4 min-w-[min(100%,20rem)] sm:min-w-[28rem]">
+              <label htmlFor="edit-desahogo-texto" className="block text-sm font-bold text-gray-300">
+                Texto de la reflexión
+              </label>
+              <textarea
+                id="edit-desahogo-texto"
+                value={editTexto}
+                onChange={(e) => setEditTexto(e.target.value)}
+                className="w-full h-32 p-3 rounded-lg bg-neutral-900 text-white border border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none transition-all"
+                required
+              />
+              <div className="flex gap-2 mt-2">
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 px-4 py-2 bg-neutral-700 text-gray-300 rounded hover:bg-red-600 hover:text-white font-bold transition">Cancelar</button>
+                <button type="submit" className="flex-1 px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded font-extrabold shadow-lg transition">Guardar</button>
+              </div>
+            </form>
+          </Modal>
         )}
       </div>
     </Layout>

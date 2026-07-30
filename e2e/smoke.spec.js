@@ -1,7 +1,21 @@
 import { test, expect } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 
 const email = process.env.E2E_EMAIL || 'demo@demo.es';
 const password = process.env.E2E_PASSWORD || '12345678';
+
+/** Reglas ruidosas en tema oscuro / gráficos; el resto sí se audita. */
+const AXE_DISABLE = ['color-contrast'];
+
+async function expectNoSeriousA11yViolations(page, label = 'page') {
+  const results = await new AxeBuilder({ page })
+    .disableRules(AXE_DISABLE)
+    .analyze();
+  const bad = results.violations.filter(
+    (v) => v.impact === 'critical' || v.impact === 'serious',
+  );
+  expect(bad, `${label}: ${JSON.stringify(bad, null, 2)}`).toEqual([]);
+}
 
 async function dismissOptionalOk(page) {
   const ok = page.getByRole('button', { name: /^OK$/i });
@@ -39,12 +53,25 @@ test.describe('Smoke LinkOut', () => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: /gestiona tu búsqueda/i })).toBeVisible();
     await expect(page.getByRole('link', { name: /comienza/i })).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
+    await expect(page.getByRole('link', { name: /saltar al contenido/i })).toHaveCount(1);
+    await expectNoSeriousA11yViolations(page, 'home');
   });
 
   test('login demo y panel', async ({ page }) => {
     await login(page);
     await expect(page.getByText(/centro de control/i)).toBeVisible();
     await expect(page.getByRole('link', { name: /diario de candidaturas/i })).toBeVisible();
+    await expect(page.getByRole('main')).toBeVisible();
+    await expectNoSeriousA11yViolations(page, 'panel');
+  });
+
+  test('menú de usuario cierra con Escape', async ({ page }) => {
+    await login(page);
+    await page.getByRole('button', { name: /abrir menú de usuario/i }).click();
+    await expect(page.locator('#user-menu')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.locator('#user-menu')).toHaveCount(0);
   });
 
   test('navegación a módulos autenticados', async ({ page }) => {

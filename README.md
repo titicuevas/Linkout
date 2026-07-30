@@ -222,9 +222,17 @@ npm run test:e2e  # smoke E2E (Playwright; por defecto contra la demo en Railway
 # PLAYWRIGHT_BASE_URL=http://localhost:5173 E2E_EMAIL=... E2E_PASSWORD=... npm run test:e2e
 ```
 
-**Qué cubren:** lint/build, tests unitarios y smoke E2E (login demo, candidaturas, diario, retos, vistas/CSV, seguimientos, a11y básicos). En CI, Playwright usa `E2E_EMAIL` / `E2E_PASSWORD` (secrets) o, si no hay, la cuenta demo.
+**Qué cubren:** lint/build, tests unitarios y smoke E2E (login demo, candidaturas, diario, retos, vistas/CSV, seguimientos, a11y básicos + axe critical/serious). En CI, Playwright usa `E2E_EMAIL` / `E2E_PASSWORD` (secrets) o, si no hay, la cuenta demo.
 
 **Qué no garantizan solos:** ausencia de secretos en el historial de git, políticas RLS ante un atacante, ni toda la configuración de producción. Verde en CI = los flujos críticos funcionan en el entorno probado.
+
+---
+
+### Accesibilidad
+
+- Landmark `<main>`, enlace «Saltar al contenido» y menú de usuario con Escape / `aria-expanded`.
+- Modal compartido con focus trap; `prefers-reduced-motion` reduce animaciones.
+- Smoke E2E con `@axe-core/playwright` (impactos critical/serious; contraste desactivado a propósito en tema oscuro).
 
 ---
 
