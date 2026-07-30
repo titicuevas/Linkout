@@ -266,7 +266,10 @@ export default function CandidaturasIndex() {
         const { error } = await supabase.from('candidaturas').delete().eq('id', id);
         if (!error) {
           setCandidaturas((prev) => prev.filter((c) => c.id !== id));
-          Swal.fire(swalSuccess('¡Borrado!', 'La candidatura ha sido eliminada.'));
+          Swal.fire(swalSuccess('¡Borrado!', 'La candidatura ha sido eliminada.', {
+            timer: 1200,
+            showConfirmButton: false,
+          }));
         } else {
           Swal.fire(swalError('Error', 'No se pudo borrar la candidatura.'));
         }

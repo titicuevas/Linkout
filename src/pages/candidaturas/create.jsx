@@ -130,7 +130,10 @@ export default function CrearCandidatura() {
       setError('No se pudo crear la candidatura.');
       return;
     }
-    await MySwal.fire(swalSuccess('¡Candidatura creada!', 'Tu candidatura ha sido guardada.'));
+    await MySwal.fire(swalSuccess('¡Candidatura creada!', 'Tu candidatura ha sido guardada.', {
+      timer: 1200,
+      showConfirmButton: false,
+    }));
     localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
     navigate('/candidaturas');
   };
@@ -145,8 +148,9 @@ export default function CrearCandidatura() {
           {error && <div className="bg-red-500 text-white p-3 rounded mb-4 w-full text-center animate-shake">{error}</div>}
           <form onSubmit={handleCreate} className="space-y-5 w-full text-lg">
             <div>
-              <label className={labelBase}>Puesto</label>
+              <label htmlFor="cand-puesto" className={labelBase}>Puesto</label>
               <input
+                id="cand-puesto"
                 type="text"
                 value={puesto}
                 onChange={e => setPuesto(e.target.value)}
@@ -155,8 +159,9 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase}>Empresa</label>
+              <label htmlFor="cand-empresa" className={labelBase}>Empresa</label>
               <input
+                id="cand-empresa"
                 type="text"
                 value={empresa}
                 onChange={e => setEmpresa(e.target.value)}
@@ -165,8 +170,9 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase + ' text-sm text-gray-400'}>URL de la empresa (opcional)</label>
+              <label htmlFor="cand-empresa-url" className={labelBase + ' text-sm text-gray-400'}>URL de la empresa (opcional)</label>
               <input
+                id="cand-empresa-url"
                 type="text"
                 inputMode="url"
                 value={empresaUrl}
@@ -176,8 +182,9 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase}>Estado</label>
+              <label htmlFor="cand-estado" className={labelBase}>Estado</label>
               <select
+                id="cand-estado"
                 value={estado}
                 onChange={e => setEstado(e.target.value)}
                 className={inputBase + ' w-full'}
@@ -189,8 +196,9 @@ export default function CrearCandidatura() {
               </select>
             </div>
             <div>
-              <label className={labelBase}>Fecha</label>
+              <label htmlFor="cand-fecha" className={labelBase}>Fecha</label>
               <input
+                id="cand-fecha"
                 type="date"
                 value={fecha}
                 onChange={e => setFecha(e.target.value)}
@@ -200,8 +208,9 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase + ' text-lg'}>Sueldo anual (opcional)</label>
+              <label htmlFor="cand-sueldo" className={labelBase + ' text-lg'}>Sueldo anual (opcional)</label>
               <input
+                id="cand-sueldo"
                 type="number"
                 min="0"
                 step="100"
@@ -215,8 +224,9 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase + ' text-lg'}>Franja salarial (opcional)</label>
+              <label htmlFor="cand-franja" className={labelBase + ' text-lg'}>Franja salarial (opcional)</label>
               <select
+                id="cand-franja"
                 value={franjaSalarial}
                 onChange={e => setFranjaSalarial(e.target.value)}
                 className={inputBase + ' text-lg py-3 w-full'}
@@ -226,8 +236,9 @@ export default function CrearCandidatura() {
               </select>
             </div>
             <div>
-              <label className={labelBase + ' text-lg'}>Tipo de trabajo</label>
+              <label htmlFor="cand-tipo" className={labelBase + ' text-lg'}>Tipo de trabajo</label>
               <select
+                id="cand-tipo"
                 value={tipoTrabajo}
                 onChange={e => setTipoTrabajo(e.target.value)}
                 className={inputBase + ' text-lg py-3 w-full'}
@@ -238,8 +249,9 @@ export default function CrearCandidatura() {
               </select>
             </div>
             <div>
-              <label className={labelBase + ' text-lg'}>Ubicación</label>
+              <label htmlFor="cand-ubicacion" className={labelBase + ' text-lg'}>Ubicación</label>
               <input
+                id="cand-ubicacion"
                 type="text"
                 value={ubicacion}
                 onChange={e => setUbicacion(e.target.value)}
@@ -249,8 +261,9 @@ export default function CrearCandidatura() {
               />
             </div>
             <div>
-              <label className={labelBase + ' text-lg'}>Origen de la candidatura</label>
+              <label htmlFor="cand-origen" className={labelBase + ' text-lg'}>Origen de la candidatura</label>
               <select
+                id="cand-origen"
                 value={origen}
                 onChange={e => setOrigen(e.target.value)}
                 className={inputBase + ' text-lg py-3 w-full'}
@@ -261,8 +274,9 @@ export default function CrearCandidatura() {
               </select>
             </div>
             <div>
-              <label className={labelBase + ' text-lg'}>Notas (opcional)</label>
+              <label htmlFor="cand-notas" className={labelBase + ' text-lg'}>Notas (opcional)</label>
               <textarea
+                id="cand-notas"
                 value={notas}
                 onChange={e => setNotas(e.target.value)}
                 className={inputBase + ' text-lg py-3 w-full min-h-[120px]'}

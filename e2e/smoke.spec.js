@@ -3,21 +3,22 @@ import { test, expect } from '@playwright/test';
 const email = process.env.E2E_EMAIL || 'demo@demo.es';
 const password = process.env.E2E_PASSWORD || '12345678';
 
+async function dismissOptionalOk(page) {
+  const ok = page.getByRole('button', { name: /^OK$/i });
+  try {
+    await ok.click({ timeout: 2_500 });
+  } catch {
+    // toast automático o sin diálogo
+  }
+}
+
 async function login(page) {
   await page.goto('/login');
   await expect(page.getByRole('heading', { name: /iniciar sesión/i })).toBeVisible();
   await page.locator('input[type="email"]').fill(email);
   await page.locator('input[type="password"]').fill(password);
   await page.getByRole('button', { name: /iniciar sesión/i }).click();
-
-  // Compat: toast automático (nuevo) o botón OK (despliegue antiguo)
-  const ok = page.getByRole('button', { name: /^OK$/i });
-  try {
-    await ok.click({ timeout: 2_500 });
-  } catch {
-    // timer toast: no requiere click
-  }
-
+  await dismissOptionalOk(page);
   await expect(page.getByText(/centro de control/i)).toBeVisible({ timeout: 20_000 });
 }
 
@@ -59,5 +60,50 @@ test.describe('Smoke LinkOut', () => {
     await expect(page.getByRole('heading', { name: /registrar nueva candidatura/i })).toBeVisible();
     await expect(page.getByText(/^puesto$/i)).toBeVisible();
     await expect(page.getByText(/notas \(opcional\)/i)).toBeVisible();
+  });
+
+  test('crear, buscar y borrar candidatura', async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await login(page);
+
+    const stamp = Date.now();
+    const puesto = `E2E QA ${stamp}`;
+    const empresa = `Acme Test ${stamp}`;
+    const today = new Date().toISOString().slice(0, 10);
+
+    await page.goto('/candidaturas/create');
+    await expect(page.getByRole('heading', { name: /registrar nueva candidatura/i })).toBeVisible();
+
+    const control = async (id, labelRegex) => {
+      const byId = page.locator(`#${id}`);
+      if (await byId.count()) return byId;
+      return page.locator('label', { hasText: labelRegex }).locator('xpath=following-sibling::*[1]');
+    };
+
+    await (await control('cand-puesto', /^puesto$/i)).fill(puesto);
+    await (await control('cand-empresa', /^empresa$/i)).fill(empresa);
+    await (await control('cand-fecha', /^fecha$/i)).fill(today);
+    await (await control('cand-tipo', /^tipo de trabajo$/i)).selectOption({ label: 'Remoto' });
+    await (await control('cand-ubicacion', /^ubicaci[oó]n$/i)).fill('Madrid');
+    await (await control('cand-origen', /^origen de la candidatura$/i)).selectOption({ label: 'LinkedIn' });
+    await (await control('cand-notas', /^notas/i)).fill('Creada por smoke E2E; se borrará al finalizar.');
+
+    await page.getByRole('button', { name: /crear candidatura/i }).click();
+    await dismissOptionalOk(page);
+
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible({ timeout: 20_000 });
+
+    const search = page.getByPlaceholder(/buscar por puesto/i);
+    await search.fill(empresa);
+    await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator('table').getByText(puesto)).toBeVisible();
+
+    const row = page.locator('table tbody tr').filter({ hasText: empresa });
+    await row.getByRole('button', { name: /^borrar$/i }).click();
+    await page.getByRole('button', { name: /sí, borrar/i }).click();
+    await dismissOptionalOk(page);
+
+    await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
   });
 });
