@@ -1,3 +1,5 @@
+import { SORT_OPTIONS } from './shared';
+
 export default function CandidaturasFilters({
   estados,
   origenes,
@@ -7,11 +9,15 @@ export default function CandidaturasFilters({
   filtroRecientes = false,
   followUpCount = 0,
   searchQuery,
+  sortBy = 'fecha',
+  sortDir = 'desc',
   onSelectEstado,
   onSelectOrigen,
   onToggleSeguimiento,
   onToggleRecientes,
   onSearchChange,
+  onSortChange,
+  onSortDirChange,
   onClearFilters,
   hasActiveFilters = false,
   onOpenStats,
@@ -49,6 +55,38 @@ export default function CandidaturasFilters({
               Limpiar filtros
             </button>
           )}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3 sm:hidden">
+        <div className="flex-1 min-w-[10rem]">
+          <label htmlFor="candidaturas-sort-by" className="mb-1 block text-xs font-semibold text-gray-400">
+            Ordenar por
+          </label>
+          <select
+            id="candidaturas-sort-by"
+            value={sortBy}
+            onChange={(e) => onSortChange?.(e.target.value)}
+            className="w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </div>
+        <div className="min-w-[8rem]">
+          <label htmlFor="candidaturas-sort-dir" className="mb-1 block text-xs font-semibold text-gray-400">
+            Dirección
+          </label>
+          <select
+            id="candidaturas-sort-dir"
+            value={sortDir}
+            onChange={(e) => onSortDirChange?.(e.target.value)}
+            className="w-full rounded-xl border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
+          >
+            <option value="desc">Descendente</option>
+            <option value="asc">Ascendente</option>
+          </select>
         </div>
       </div>
 

@@ -86,10 +86,10 @@ export default function RetoFisico() {
       });
       setRetos(generated);
       if (!generated.length) {
-        setError('No se pudieron generar los retos. Intenta de nuevo.');
+        setError('No se pudieron generar los retos. Inténtalo de nuevo.');
       }
     } catch {
-      setError('No se pudieron generar los retos. Intenta de nuevo.');
+      setError('No se pudieron generar los retos. Inténtalo de nuevo.');
       setRetos([]);
     } finally {
       setLoading(false);

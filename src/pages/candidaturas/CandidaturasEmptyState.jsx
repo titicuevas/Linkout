@@ -1,7 +1,7 @@
 export default function CandidaturasEmptyState({ onCreate, hasActiveFilters = false, onClearFilters }) {
   if (hasActiveFilters) {
     return (
-      <div className="py-12 text-center text-gray-400 text-lg">
+      <div className="py-12 text-center text-gray-400 text-lg" role="status">
         <div className="flex flex-col items-center gap-2">
           <span className="text-5xl" aria-hidden="true">🔍</span>
           <span>No hay candidaturas con estos filtros.</span>
@@ -21,7 +21,7 @@ export default function CandidaturasEmptyState({ onCreate, hasActiveFilters = fa
   }
 
   return (
-    <div className="py-12 text-center text-gray-400 text-lg">
+    <div className="py-12 text-center text-gray-400 text-lg" role="status">
       <div className="flex flex-col items-center gap-2">
         <span className="text-5xl" aria-hidden="true">😕</span>
         <span>No tienes candidaturas registradas.</span>

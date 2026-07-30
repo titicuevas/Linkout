@@ -34,7 +34,7 @@ import {
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 import { swalSuccess, swalError, swalWarning, swalInfo } from '../../utils/swalTheme';
-import { STORAGE_KEYS, clearRetoCompletado } from '../../utils/storageKeys';
+import { STORAGE_KEYS, clearRetoCompletado, hasCandidaturaDraft } from '../../utils/storageKeys';
 import { markCandidaturaFollowUp } from '../../services/candidaturaActions';
 import InlineLoader from '../../components/InlineLoader';
 import LoadErrorState from '../../components/LoadErrorState';
@@ -60,6 +60,7 @@ export default function CandidaturasIndex() {
   const [filtroRecientes, setFiltroRecientes] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [savedViews, setSavedViews] = useState([]);
+  const [draftPending, setDraftPending] = useState(false);
   const [statusUpdatingId, setStatusUpdatingId] = useState(null);
   const [detailModal, setDetailModal] = useState({ show: false, title: '', text: '' });
   const [prefsReady, setPrefsReady] = useState(false);
@@ -190,6 +191,7 @@ export default function CandidaturasIndex() {
 
   useEffect(() => {
     setSavedViews(loadSavedViews());
+    setDraftPending(hasCandidaturaDraft());
   }, []);
 
   useEffect(() => {
@@ -521,6 +523,16 @@ export default function CandidaturasIndex() {
             </div>
           </div>
         )}
+        {draftPending && (
+          <button
+            type="button"
+            onClick={goToCreate}
+            className="w-full max-w-6xl mx-auto mb-4 rounded-2xl border border-blue-700/70 bg-blue-950/40 px-4 py-3 text-left transition hover:border-blue-400"
+          >
+            <div className="text-sm font-semibold text-blue-300">Borrador pendiente</div>
+            <div className="text-sm text-blue-100/80">Tienes una candidatura sin guardar. Continúa editándola.</div>
+          </button>
+        )}
         <CandidaturasFilters
           estados={[ESTADOS[0], FILTRO_EN_PROCESO, ...ESTADOS.slice(1)]}
           origenes={ORIGENES}
@@ -530,6 +542,8 @@ export default function CandidaturasIndex() {
           filtroRecientes={filtroRecientes}
           followUpCount={followUpsPendientes.length}
           searchQuery={searchQuery}
+          sortBy={sortBy}
+          sortDir={sortDir}
           resultCount={candidaturasOrdenadas.length}
           hasActiveFilters={filtersActive}
           savedViews={savedViews}
@@ -537,6 +551,14 @@ export default function CandidaturasIndex() {
           onApplyView={handleApplyView}
           onDeleteView={handleDeleteView}
           onClearFilters={handleClearFilters}
+          onSortChange={(value) => {
+            setSortBy(value);
+            setCurrentPage(0);
+          }}
+          onSortDirChange={(value) => {
+            setSortDir(value);
+            setCurrentPage(0);
+          }}
           onSelectEstado={(value) => {
             setFiltroEstado(value);
             setCurrentPage(0);

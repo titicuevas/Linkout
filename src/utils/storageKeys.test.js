@@ -8,6 +8,7 @@ import {
   isRetoLibreCompletado,
   setRetoLibreCompletado,
   clearAllRetoCompletadoKeys,
+  hasCandidaturaDraft,
 } from './storageKeys';
 
 function createMemoryStorage(seed = {}) {
@@ -60,7 +61,6 @@ describe('storageKeys', () => {
       reto_completado_b: '1',
       other: 'keep',
     });
-    // Object.keys(storage) en localStorage enumera las claves; aquí adaptamos:
     const enumerable = {
       ...store._data,
       getItem: store.getItem.bind(store),
@@ -74,5 +74,15 @@ describe('storageKeys', () => {
     expect(enumerable.linkout_reto_completado_a).toBeUndefined();
     expect(enumerable.reto_completado_b).toBeUndefined();
     expect(enumerable.other).toBe('keep');
+  });
+
+  it('detecta borrador de candidatura con contenido', () => {
+    const empty = createMemoryStorage();
+    expect(hasCandidaturaDraft(empty)).toBe(false);
+
+    const withDraft = createMemoryStorage({
+      [STORAGE_KEYS.candidaturaDraft]: JSON.stringify({ puesto: 'Dev', empresa: '', estado: 'entrevista_contacto' }),
+    });
+    expect(hasCandidaturaDraft(withDraft)).toBe(true);
   });
 });

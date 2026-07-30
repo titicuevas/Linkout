@@ -69,3 +69,27 @@ export function clearAllRetoCompletadoKeys(storage = localStorage) {
     .filter((key) => key.startsWith('linkout_reto_completado_') || key.startsWith('reto_completado_'))
     .forEach((key) => storage.removeItem(key));
 }
+
+/** True si hay un borrador de candidatura con contenido útil. */
+export function hasCandidaturaDraft(storage = localStorage) {
+  try {
+    const raw = storage.getItem(STORAGE_KEYS.candidaturaDraft);
+    if (!raw) return false;
+    const draft = JSON.parse(raw);
+    if (!draft || typeof draft !== 'object') return false;
+    return Boolean(
+      draft.puesto?.trim()
+      || draft.empresa?.trim()
+      || draft.empresaUrl?.trim()
+      || draft.fecha?.trim()
+      || draft.sueldoAnual
+      || draft.franjaSalarial
+      || draft.tipoTrabajo
+      || draft.ubicacion?.trim()
+      || draft.origen
+      || draft.notas?.trim(),
+    );
+  } catch {
+    return false;
+  }
+}

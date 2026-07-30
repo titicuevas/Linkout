@@ -2,6 +2,33 @@ import CandidaturasEmptyState from './CandidaturasEmptyState';
 import EstadoQuickSelect from './EstadoQuickSelect';
 import { formatOrigen, formatInactivityLabel, needsFollowUp, isActiveProcess, toExternalUrl } from './shared';
 
+function SortableTh({ label, column, sortBy, sortDir, onSort }) {
+  const active = sortBy === column;
+  const ariaSort = active ? (sortDir === 'asc' ? 'ascending' : 'descending') : 'none';
+
+  return (
+    <th
+      className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider"
+      aria-sort={ariaSort}
+    >
+      <button
+        type="button"
+        onClick={() => onSort(column)}
+        className="inline-flex items-center gap-1 rounded px-1 py-0.5 text-left uppercase tracking-wider hover:text-pink-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
+        title={`Ordenar por ${label}`}
+      >
+        {label}
+        <span aria-hidden="true">{active ? (sortDir === 'asc' ? '▲' : '▼') : ''}</span>
+        <span className="sr-only">
+          {active
+            ? `, ordenado ${sortDir === 'asc' ? 'ascendente' : 'descendente'}. Activar para cambiar.`
+            : '. Activar para ordenar.'}
+        </span>
+      </button>
+    </th>
+  );
+}
+
 export default function CandidaturasDesktopTable({
   candidaturas,
   sortBy,
@@ -25,22 +52,16 @@ export default function CandidaturasDesktopTable({
       <thead className="sticky top-0 z-20 bg-neutral-900/95 backdrop-blur border-b border-neutral-700 shadow-lg">
         <tr>
           <th className="px-2 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">⚡</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('puesto')} title="Ordenar por puesto">Puesto {sortBy === 'puesto' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('empresa')} title="Ordenar por empresa">Empresa {sortBy === 'empresa' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('estado')} title="Ordenar por estado">Estado {sortBy === 'estado' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('origen')} title="Ordenar por origen">Origen {sortBy === 'origen' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('fecha')} title="Ordenar por fecha">Fecha {sortBy === 'fecha' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th
-            className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer"
-            onClick={() => onSort('fecha_actualizacion')}
-            title="Ordenar por fecha de actualización"
-          >
-            Actualizada {sortBy === 'fecha_actualizacion' && (sortDir === 'asc' ? '▲' : '▼')}
-          </th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('salario_anual')} title="Ordenar por salario anual">Salario {sortBy === 'salario_anual' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('franja_salarial')} title="Ordenar por franja salarial">Franja {sortBy === 'franja_salarial' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('tipo_trabajo')} title="Ordenar por tipo de trabajo">Tipo {sortBy === 'tipo_trabajo' && (sortDir === 'asc' ? '▲' : '▼')}</th>
-          <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider cursor-pointer" onClick={() => onSort('ubicacion')} title="Ordenar por ubicación">Ubicación {sortBy === 'ubicacion' && (sortDir === 'asc' ? '▲' : '▼')}</th>
+          <SortableTh label="Puesto" column="puesto" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Empresa" column="empresa" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Estado" column="estado" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Origen" column="origen" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Fecha" column="fecha" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Actualizada" column="fecha_actualizacion" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Salario" column="salario_anual" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Franja" column="franja_salarial" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Tipo" column="tipo_trabajo" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
+          <SortableTh label="Ubicación" column="ubicacion" sortBy={sortBy} sortDir={sortDir} onSort={onSort} />
           <th className="px-4 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Acciones</th>
         </tr>
       </thead>

@@ -25,6 +25,17 @@ export const FORM_ORIGENES = ORIGENES.filter((o) => o.value !== '');
 /** Chip de filtro (no es un estado real de BD) */
 export const FILTRO_EN_PROCESO = { value: 'en_proceso', label: 'En proceso' };
 
+export const SORT_OPTIONS = [
+  { value: 'fecha', label: 'Fecha' },
+  { value: 'fecha_actualizacion', label: 'Actualizada' },
+  { value: 'puesto', label: 'Puesto' },
+  { value: 'empresa', label: 'Empresa' },
+  { value: 'estado', label: 'Estado' },
+  { value: 'origen', label: 'Origen' },
+  { value: 'salario_anual', label: 'Salario' },
+  { value: 'ubicacion', label: 'Ubicación' },
+];
+
 export const FRANJAS_SALARIAL = [
   '< 15.000 €',
   '15.000 - 20.000 €',
