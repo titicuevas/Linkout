@@ -14,6 +14,7 @@ import {
   escapeCsvValue,
   buildCandidaturasCsv,
   formatInactivityLabel,
+  sortByInactivityDesc,
   buildDuplicatePayload,
   createSavedView,
   removeSavedView,
@@ -189,6 +190,24 @@ describe('needsFollowUp / getFollowUpsPendientes', () => {
     expect(needsFollowUp(fresh)).toBe(false);
     expect(needsFollowUp(closed)).toBe(false);
     expect(getFollowUpsPendientes([stale, fresh, closed])).toHaveLength(1);
+  });
+});
+
+describe('sortByInactivityDesc', () => {
+  it('pone primero los procesos con más días sin movimiento', () => {
+    const older = {
+      id: '1',
+      empresa: 'Vieja',
+      estado: 'prueba_tecnica',
+      fecha_actualizacion: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+    const newer = {
+      id: '2',
+      empresa: 'Reciente',
+      estado: 'prueba_tecnica',
+      fecha_actualizacion: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+    };
+    expect(sortByInactivityDesc([newer, older]).map((c) => c.id)).toEqual(['1', '2']);
   });
 });
 

@@ -32,7 +32,7 @@ export default function ForgotPassword() {
       await Swal.fire(swalSuccess('Correo enviado', 'Si el correo existe, recibirás un email para restablecer tu contraseña.'));
       navigate('/login');
     } catch (error) {
-      await Swal.fire(swalError('No se pudo enviar el correo', mapAuthErrorMessage(error, 'Error al enviar el correo. Intenta de nuevo.')));
+      await Swal.fire(swalError('No se pudo enviar el correo', mapAuthErrorMessage(error, 'Error al enviar el correo. Inténtalo de nuevo.')));
     } finally {
       setLoading(false);
     }

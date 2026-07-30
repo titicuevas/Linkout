@@ -15,6 +15,8 @@ import {
   getReferenceDate,
   formatEstado,
   formatInactivityLabel,
+  sortByInactivityDesc,
+  daysSince,
 } from './candidaturas/shared';
 import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
 import { getDisplayName } from '../utils/displayName';
@@ -71,7 +73,10 @@ export default function Index() {
     return () => { cancelled = true; };
   }, [user]);
 
-  const followUps = useMemo(() => getFollowUpsPendientes(candidaturas), [candidaturas]);
+  const followUps = useMemo(
+    () => sortByInactivityDesc(getFollowUpsPendientes(candidaturas)),
+    [candidaturas],
+  );
 
   const resumen = useMemo(() => {
     const now = new Date();
@@ -86,23 +91,30 @@ export default function Index() {
       .filter(Boolean)
       .sort((a, b) => new Date(b) - new Date(a))[0];
 
+    const mostUrgent = followUps[0] || null;
+    const mostUrgentDays = mostUrgent ? daysSince(getReferenceDate(mostUrgent)) : null;
+
     return {
       total: candidaturas.length,
       activeProcesses: activeStates.length,
       recentApplications,
       followUpsPending: followUps.length,
       latestUpdate: latestUpdate ? new Date(latestUpdate).toLocaleDateString() : null,
+      mostUrgent,
+      mostUrgentDays,
     };
   }, [candidaturas, followUps]);
 
   const insightMessage = resumen.followUpsPending > 0
-    ? `Tienes ${resumen.followUpsPending} proceso${resumen.followUpsPending === 1 ? '' : 's'} sin movimiento reciente. Quizá toca hacer seguimiento.`
+    ? resumen.mostUrgent
+      ? `Tienes ${resumen.followUpsPending} proceso${resumen.followUpsPending === 1 ? '' : 's'} sin movimiento. El más urgente: ${resumen.mostUrgent.empresa || resumen.mostUrgent.puesto || 'sin nombre'} (${formatInactivityLabel(resumen.mostUrgent) || 'sin fecha'}).`
+      : `Tienes ${resumen.followUpsPending} proceso${resumen.followUpsPending === 1 ? '' : 's'} sin movimiento reciente. Quizá toca hacer seguimiento.`
     : resumen.activeProcesses > 0
       ? 'Tus procesos activos están al día. Buen momento para seguir aplicando o preparar entrevistas.'
       : 'Aún no tienes procesos activos. Crear una nueva candidatura puede ser tu mejor siguiente paso.';
 
-  const insightCta = resumen.followUpsPending > 0
-    ? { label: 'Ver seguimientos', path: '/candidaturas?seguimiento=1' }
+  const insightCta = resumen.followUpsPending > 0 && resumen.mostUrgent
+    ? { label: 'Abrir el más urgente', path: `/candidaturas?id=${resumen.mostUrgent.id}` }
     : resumen.activeProcesses > 0
       ? { label: 'Ver procesos activos', path: '/candidaturas?estado=en_proceso' }
       : { label: 'Crear candidatura', path: '/candidaturas/create' };
@@ -257,20 +269,22 @@ export default function Index() {
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
                   <div>
                     <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Seguimientos a mano</div>
-                    <p className="mt-1 text-sm text-pink-100/80">Procesos sin movimiento en 10+ días. Márcalos cuando hayas contactado.</p>
+                    <p className="mt-1 text-sm text-pink-100/80">
+                      Ordenados por urgencia (10+ días sin movimiento). Marca cuando hayas contactado.
+                    </p>
                   </div>
-                  {followUps.length > 5 && (
-                    <button
-                      type="button"
-                      onClick={() => navigate('/candidaturas?seguimiento=1')}
-                      className="text-sm font-semibold text-pink-300 hover:text-pink-200"
-                    >
-                      Ver todos ({followUps.length})
-                    </button>
-                  )}
+                  <button
+                    type="button"
+                    onClick={() => navigate('/candidaturas?seguimiento=1')}
+                    className="text-sm font-semibold text-pink-300 hover:text-pink-200"
+                  >
+                    Ver todos ({followUps.length})
+                  </button>
                 </div>
                 <ul className="space-y-3">
-                  {followUps.slice(0, 5).map((item) => (
+                  {followUps.slice(0, 5).map((item) => {
+                    const inactivity = formatInactivityLabel(item);
+                    return (
                     <li
                       key={item.id}
                       className="flex flex-col gap-3 rounded-2xl border border-neutral-700 bg-neutral-900/70 p-4 sm:flex-row sm:items-center sm:justify-between"
@@ -279,7 +293,10 @@ export default function Index() {
                         <div className="truncate font-bold text-white">{item.empresa || 'Sin empresa'}</div>
                         <div className="truncate text-sm text-gray-300">{item.puesto || 'Sin puesto'}</div>
                         <div className="mt-1 text-xs text-gray-400">
-                          {formatEstado(item.estado)} · {formatInactivityLabel(item) || 'Sin fecha'}
+                          {formatEstado(item.estado)}
+                          {inactivity && (
+                            <span className="ml-2 font-semibold text-yellow-300">· {inactivity} sin movimiento</span>
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
@@ -300,7 +317,8 @@ export default function Index() {
                         </button>
                       </div>
                     </li>
-                  ))}
+                    );
+                  })}
                 </ul>
               </div>
             )}

@@ -126,6 +126,15 @@ export function getFollowUpsPendientes(candidaturas, days = FOLLOW_UP_DAYS) {
   return candidaturas.filter((candidatura) => needsFollowUp(candidatura, days));
 }
 
+/** Ordena por inactividad (más días sin movimiento primero). */
+export function sortByInactivityDesc(candidaturas = []) {
+  return [...candidaturas].sort((a, b) => {
+    const daysA = daysSince(getReferenceDate(a));
+    const daysB = daysSince(getReferenceDate(b));
+    return (daysB ?? -1) - (daysA ?? -1);
+  });
+}
+
 export function formatHistoryValue(field, value) {
   if (value === null || value === undefined || value === '') return 'Sin especificar';
   if (field === 'estado') return formatEstado(value);

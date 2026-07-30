@@ -64,7 +64,7 @@ export default function Register() {
       await Swal.fire(swalSuccess('Registro exitoso', 'Por favor, verifica tu correo electrónico.'));
       navigate('/');
     } catch {
-      setError('Error inesperado. Intenta de nuevo.');
+      setError('Error inesperado. Inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }

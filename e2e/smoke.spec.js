@@ -253,7 +253,14 @@ test.describe('Smoke LinkOut', () => {
     await dismissOptionalOk(page);
     await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible({ timeout: 20_000 });
 
-    await followUpFilterButton(page).click();
+    await page.goto('/index');
+    await expect(page.getByText(/seguimientos a mano/i)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText(empresa)).toBeVisible();
+    await expect(page.getByText(/el más urgente/i)).toBeVisible();
+    await expect(page.getByRole('button', { name: /abrir el más urgente/i })).toBeVisible();
+
+    await page.goto('/candidaturas?seguimiento=1');
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
     const search = page.getByPlaceholder(/buscar por puesto/i);
     await search.fill(empresa);
     await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
@@ -268,6 +275,92 @@ test.describe('Smoke LinkOut', () => {
     await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
     await page.getByPlaceholder(/buscar por puesto/i).fill(empresa);
     await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
+    await page.locator('table tbody tr').filter({ hasText: empresa }).getByRole('button', { name: /^borrar$/i }).click();
+    await page.getByRole('button', { name: /sí, borrar/i }).click();
+    await dismissOptionalOk(page);
+    await expect(page.locator('table').getByText(empresa)).toHaveCount(0, { timeout: 15_000 });
+  });
+
+  test('banner de borrador de candidatura', async ({ page }) => {
+    test.setTimeout(60_000);
+    await login(page);
+
+    await page.evaluate(() => localStorage.removeItem('linkout_candidatura_draft'));
+    await page.goto('/candidaturas/create');
+    await expect(page.getByRole('heading', { name: /registrar nueva candidatura/i })).toBeVisible();
+    await page.locator('#cand-puesto').fill('E2E Borrador QA');
+    await page.locator('#cand-empresa').fill('Draft Co');
+    await page.waitForFunction(() => {
+      try {
+        const raw = localStorage.getItem('linkout_candidatura_draft');
+        if (!raw) return false;
+        const draft = JSON.parse(raw);
+        return draft.puesto === 'E2E Borrador QA' && draft.empresa === 'Draft Co';
+      } catch {
+        return false;
+      }
+    });
+
+    await page.goto('/candidaturas');
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
+    await expect(page.getByText(/borrador pendiente/i)).toBeVisible();
+    await page.getByRole('button', { name: /borrador pendiente/i }).click();
+    await expect(page.getByRole('heading', { name: /registrar nueva candidatura/i })).toBeVisible();
+    await expect(page.locator('#cand-puesto')).toHaveValue('E2E Borrador QA');
+    await expect(page.locator('#cand-empresa')).toHaveValue('Draft Co');
+
+    await page.evaluate(() => localStorage.removeItem('linkout_candidatura_draft'));
+  });
+
+  test('ordenación móvil persiste en prefs', async ({ page }) => {
+    test.setTimeout(60_000);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await login(page);
+
+    await page.evaluate(() => localStorage.removeItem('linkout_candidaturas_prefs'));
+    await page.goto('/candidaturas');
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible();
+    await expect(page.locator('#candidaturas-sort-by')).toBeVisible();
+
+    await page.locator('#candidaturas-sort-by').selectOption('empresa');
+    await page.locator('#candidaturas-sort-dir').selectOption('asc');
+    await page.reload();
+    await expect(page.locator('#candidaturas-sort-by')).toHaveValue('empresa');
+    await expect(page.locator('#candidaturas-sort-dir')).toHaveValue('asc');
+  });
+
+  test('modal de edición se cierra con Escape', async ({ page }) => {
+    test.setTimeout(90_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await login(page);
+
+    const stamp = Date.now();
+    const empresa = `Modal Esc ${stamp}`;
+    const today = new Date().toISOString().slice(0, 10);
+
+    await page.goto('/candidaturas/create');
+    const control = async (id, labelRegex) => {
+      const byId = page.locator(`#${id}`);
+      if (await byId.count()) return byId;
+      return page.locator('label', { hasText: labelRegex }).locator('xpath=following-sibling::*[1]');
+    };
+    await (await control('cand-puesto', /^puesto$/i)).fill(`E2E Modal ${stamp}`);
+    await (await control('cand-empresa', /^empresa$/i)).fill(empresa);
+    await (await control('cand-fecha', /^fecha$/i)).fill(today);
+    await (await control('cand-tipo', /^tipo de trabajo$/i)).selectOption({ label: 'Remoto' });
+    await (await control('cand-ubicacion', /^ubicaci[oó]n$/i)).fill('Sevilla');
+    await (await control('cand-origen', /^origen de la candidatura$/i)).selectOption({ label: 'LinkedIn' });
+    await page.getByRole('button', { name: /crear candidatura/i }).click();
+    await dismissOptionalOk(page);
+    await expect(page.getByRole('heading', { name: /diario de candidaturas/i })).toBeVisible({ timeout: 20_000 });
+
+    await page.getByPlaceholder(/buscar por puesto/i).fill(empresa);
+    await expect(page.locator('table').getByText(empresa)).toBeVisible({ timeout: 15_000 });
+    await page.locator('table tbody tr').filter({ hasText: empresa }).getByRole('button', { name: /^editar$/i }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+
     await page.locator('table tbody tr').filter({ hasText: empresa }).getByRole('button', { name: /^borrar$/i }).click();
     await page.getByRole('button', { name: /sí, borrar/i }).click();
     await dismissOptionalOk(page);
