@@ -6,6 +6,7 @@ const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const Index = lazy(() => import('./pages/Index'));
 const Welcome = lazy(() => import('./pages/Welcome'));
 const CandidaturasIndex = lazy(() => import('./pages/candidaturas/index'));
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/index" element={<Index />} />
           <Route path="/candidaturas" element={<CandidaturasIndex />} />
           <Route path="/candidaturas/create" element={<CrearCandidatura />} />

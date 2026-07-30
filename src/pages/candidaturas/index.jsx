@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import Layout from '../../components/Layout';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Modal from '../../components/Modal';
 import Swal from 'sweetalert2';
 import ReactPaginate from 'react-paginate';
@@ -27,6 +27,7 @@ import {
   removeSavedView,
   hasActiveCandidaturaFilters,
   isActiveProcess,
+  isRecentApplication,
 } from './shared';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
@@ -40,6 +41,7 @@ export default function CandidaturasIndex() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCandidatura, setSelectedCandidatura] = useState(null);
   const [sortBy, setSortBy] = useState('fecha');
@@ -49,12 +51,14 @@ export default function CandidaturasIndex() {
   const [filtroEstado, setFiltroEstado] = useState('');
   const [filtroOrigen, setFiltroOrigen] = useState('');
   const [filtroSeguimiento, setFiltroSeguimiento] = useState(false);
+  const [filtroRecientes, setFiltroRecientes] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [savedViews, setSavedViews] = useState([]);
   const [statusUpdatingId, setStatusUpdatingId] = useState(null);
   const [detailModal, setDetailModal] = useState({ show: false, title: '', text: '' });
+  const [prefsReady, setPrefsReady] = useState(false);
 
-  // Filtrado: estado, origen, búsqueda, seguimiento
+  // Filtrado: estado, origen, búsqueda, seguimiento, recientes
   const candidaturasFiltradas = candidaturas.filter((c) => {
     const matchesEstado = filtroEstado === ''
       ? true
@@ -65,7 +69,8 @@ export default function CandidaturasIndex() {
     return matchesEstado
       && (filtroOrigen === '' || normalizeOrigen(c.origen) === filtroOrigen)
       && matchesCandidaturaSearch(c, searchQuery)
-      && (!filtroSeguimiento || needsFollowUp(c));
+      && (!filtroSeguimiento || needsFollowUp(c))
+      && (!filtroRecientes || isRecentApplication(c));
   });
 
   // Ordenar el array filtrado
@@ -89,6 +94,7 @@ export default function CandidaturasIndex() {
     filtroEstado,
     filtroOrigen,
     filtroSeguimiento,
+    filtroRecientes,
     searchQuery,
   });
 
@@ -96,7 +102,10 @@ export default function CandidaturasIndex() {
 
   useEffect(() => {
     const savedPrefs = localStorage.getItem(CANDIDATURAS_PREFS_KEY);
-    if (!savedPrefs) return;
+    if (!savedPrefs) {
+      setPrefsReady(true);
+      return;
+    }
 
     try {
       const prefs = JSON.parse(savedPrefs);
@@ -107,11 +116,37 @@ export default function CandidaturasIndex() {
       setFiltroEstado(prefs.filtroEstado || '');
       setFiltroOrigen(prefs.filtroOrigen || '');
       setFiltroSeguimiento(Boolean(prefs.filtroSeguimiento));
+      setFiltroRecientes(Boolean(prefs.filtroRecientes));
       setSearchQuery(prefs.searchQuery || '');
     } catch {
       localStorage.removeItem(CANDIDATURAS_PREFS_KEY);
+    } finally {
+      setPrefsReady(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!prefsReady) return;
+
+    const estado = searchParams.get('estado');
+    const seguimiento = searchParams.get('seguimiento');
+    const recientes = searchParams.get('recientes');
+    if (estado === null && seguimiento === null && recientes === null) return;
+
+    if (estado !== null) setFiltroEstado(estado);
+    if (seguimiento !== null) {
+      setFiltroSeguimiento(seguimiento === '1' || seguimiento === 'true');
+      if (seguimiento === '1' || seguimiento === 'true') setFiltroEstado('');
+    }
+    if (recientes !== null) {
+      setFiltroRecientes(recientes === '1' || recientes === 'true');
+      if (recientes === '1' || recientes === 'true') {
+        setFiltroSeguimiento(false);
+      }
+    }
+    setCurrentPage(0);
+    setSearchParams({}, { replace: true });
+  }, [prefsReady, searchParams, setSearchParams]);
 
   useEffect(() => {
     setSavedViews(loadSavedViews());
@@ -148,10 +183,11 @@ export default function CandidaturasIndex() {
         filtroEstado,
         filtroOrigen,
         filtroSeguimiento,
+        filtroRecientes,
         searchQuery,
       }),
     );
-  }, [sortBy, sortDir, currentPage, pageSize, filtroEstado, filtroOrigen, filtroSeguimiento, searchQuery]);
+  }, [sortBy, sortDir, currentPage, pageSize, filtroEstado, filtroOrigen, filtroSeguimiento, filtroRecientes, searchQuery]);
 
   useEffect(() => {
     const maxPage = Math.max(0, Math.ceil(candidaturasFiltradas.length / pageSize) - 1);
@@ -313,6 +349,7 @@ export default function CandidaturasIndex() {
       filtroEstado,
       filtroOrigen,
       filtroSeguimiento,
+      filtroRecientes,
       searchQuery,
     }, savedViews);
 
@@ -338,6 +375,7 @@ export default function CandidaturasIndex() {
     setFiltroEstado(view.filtroEstado || '');
     setFiltroOrigen(view.filtroOrigen || '');
     setFiltroSeguimiento(Boolean(view.filtroSeguimiento));
+    setFiltroRecientes(Boolean(view.filtroRecientes));
     setSearchQuery(view.searchQuery || '');
     setCurrentPage(0);
   };
@@ -346,6 +384,7 @@ export default function CandidaturasIndex() {
     setFiltroEstado('');
     setFiltroOrigen('');
     setFiltroSeguimiento(false);
+    setFiltroRecientes(false);
     setSearchQuery('');
     setCurrentPage(0);
   };
@@ -434,6 +473,7 @@ export default function CandidaturasIndex() {
           filtroEstado={filtroEstado}
           filtroOrigen={filtroOrigen}
           filtroSeguimiento={filtroSeguimiento}
+          filtroRecientes={filtroRecientes}
           followUpCount={followUpsPendientes.length}
           searchQuery={searchQuery}
           resultCount={candidaturasOrdenadas.length}
@@ -453,6 +493,10 @@ export default function CandidaturasIndex() {
           }}
           onToggleSeguimiento={() => {
             setFiltroSeguimiento((v) => !v);
+            setCurrentPage(0);
+          }}
+          onToggleRecientes={() => {
+            setFiltroRecientes((v) => !v);
             setCurrentPage(0);
           }}
           onSearchChange={(value) => {

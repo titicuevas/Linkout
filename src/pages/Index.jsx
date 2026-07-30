@@ -79,6 +79,12 @@ export default function Index() {
       ? 'Tus procesos activos están al día. Buen momento para seguir aplicando o preparar entrevistas.'
       : 'Aún no tienes procesos activos. Crear una nueva candidatura puede ser tu mejor siguiente paso.';
 
+  const insightCta = resumen.followUpsPending > 0
+    ? { label: 'Ver seguimientos', path: '/candidaturas?seguimiento=1' }
+    : resumen.activeProcesses > 0
+      ? { label: 'Ver procesos activos', path: '/candidaturas?estado=en_proceso' }
+      : { label: 'Crear candidatura', path: '/candidaturas/create' };
+
   if (authLoading) return <PageLoader message="Preparando tu panel..." />;
   if (!user) return null;
 
@@ -97,22 +103,38 @@ export default function Index() {
         </div>
         <div className="w-full max-w-5xl mx-auto mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-            <div className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl">
+            <button
+              type="button"
+              onClick={() => navigate('/candidaturas')}
+              className="rounded-2xl border border-blue-800 bg-blue-950/60 p-5 shadow-xl text-left transition hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
               <div className="text-sm font-semibold text-blue-200">Candidaturas totales</div>
               <div className="mt-2 text-3xl font-extrabold text-white">{resumen.total}</div>
-            </div>
-            <div className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl">
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/candidaturas?estado=en_proceso')}
+              className="rounded-2xl border border-purple-800 bg-purple-950/60 p-5 shadow-xl text-left transition hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-300"
+            >
               <div className="text-sm font-semibold text-purple-200">Procesos activos</div>
               <div className="mt-2 text-3xl font-extrabold text-white">{resumen.activeProcesses}</div>
-            </div>
-            <div className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl">
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/candidaturas?recientes=1')}
+              className="rounded-2xl border border-green-800 bg-green-950/60 p-5 shadow-xl text-left transition hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-300"
+            >
               <div className="text-sm font-semibold text-green-200">Últimos 7 días</div>
               <div className="mt-2 text-3xl font-extrabold text-white">{resumen.recentApplications}</div>
-            </div>
-            <div className="rounded-2xl border border-pink-800 bg-pink-950/60 p-5 shadow-xl">
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate('/candidaturas?seguimiento=1')}
+              className="rounded-2xl border border-pink-800 bg-pink-950/60 p-5 shadow-xl text-left transition hover:border-pink-400 focus:outline-none focus:ring-2 focus:ring-pink-300"
+            >
               <div className="text-sm font-semibold text-pink-200">Seguimientos pendientes</div>
               <div className="mt-2 text-3xl font-extrabold text-white">{resumen.followUpsPending}</div>
-            </div>
+            </button>
           </div>
         </div>
         <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-neutral-700 bg-neutral-900/70 p-5 sm:p-6 shadow-2xl">
@@ -125,10 +147,10 @@ export default function Index() {
               </p>
             </div>
             <button
-              onClick={() => navigate('/candidaturas')}
+              onClick={() => navigate(insightCta.path)}
               className="rounded-full bg-pink-600 px-5 py-3 text-sm sm:text-base font-bold text-white shadow-lg transition hover:bg-pink-500"
             >
-              Revisar candidaturas
+              {insightCta.label}
             </button>
           </div>
         </div>

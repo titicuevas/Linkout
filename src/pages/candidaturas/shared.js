@@ -182,11 +182,18 @@ export function matchesCandidaturaSearch(candidatura, query) {
 export const SAVED_VIEWS_KEY = 'linkout_candidaturas_saved_views';
 
 /** Snapshot de filtros actuales listo para guardar como vista. */
-export function buildSavedViewFilters({ filtroEstado, filtroOrigen, filtroSeguimiento, searchQuery }) {
+export function buildSavedViewFilters({
+  filtroEstado,
+  filtroOrigen,
+  filtroSeguimiento,
+  filtroRecientes,
+  searchQuery,
+}) {
   return {
     filtroEstado: filtroEstado || '',
     filtroOrigen: filtroOrigen || '',
     filtroSeguimiento: Boolean(filtroSeguimiento),
+    filtroRecientes: Boolean(filtroRecientes),
     searchQuery: searchQuery || '',
   };
 }
@@ -232,13 +239,28 @@ export function removeSavedView(viewId, existingViews = []) {
   return existingViews.filter((view) => view.id !== viewId);
 }
 
-export function hasActiveCandidaturaFilters({ filtroEstado, filtroOrigen, filtroSeguimiento, searchQuery }) {
+export function hasActiveCandidaturaFilters({
+  filtroEstado,
+  filtroOrigen,
+  filtroSeguimiento,
+  filtroRecientes,
+  searchQuery,
+}) {
   return Boolean(
     (filtroEstado || '').trim()
     || (filtroOrigen || '').trim()
     || filtroSeguimiento
+    || filtroRecientes
     || (searchQuery || '').trim(),
   );
+}
+
+/** True si la candidatura se registró en los últimos N días. */
+export function isRecentApplication(candidatura, days = 7) {
+  if (!candidatura?.fecha) return false;
+  const threshold = new Date();
+  threshold.setDate(threshold.getDate() - days);
+  return new Date(candidatura.fecha) >= threshold;
 }
 
 /** Devuelve una URL segura para abrir en nueva pestaña, o null si está vacía/inválida. */

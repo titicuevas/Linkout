@@ -4,11 +4,13 @@ export default function CandidaturasFilters({
   filtroEstado,
   filtroOrigen,
   filtroSeguimiento,
+  filtroRecientes = false,
   followUpCount = 0,
   searchQuery,
   onSelectEstado,
   onSelectOrigen,
   onToggleSeguimiento,
+  onToggleRecientes,
   onSearchChange,
   onClearFilters,
   hasActiveFilters = false,
@@ -115,6 +117,18 @@ export default function CandidaturasFilters({
               {followUpCount}
             </span>
           )}
+        </button>
+        <button
+          type="button"
+          aria-pressed={filtroRecientes}
+          onClick={onToggleRecientes}
+          className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full border-2 font-bold text-xs sm:text-sm shadow-lg focus:ring-2 focus:ring-green-300 ${
+            filtroRecientes
+              ? 'bg-green-500 text-neutral-900 border-green-300'
+              : 'bg-neutral-800 text-green-200 border-green-500/60'
+          }`}
+        >
+          Últimos 7 días
         </button>
       </div>
 

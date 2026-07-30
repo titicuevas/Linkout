@@ -23,7 +23,15 @@ export default function Home() {
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    if (params.get('type') === 'signup' && params.get('access_token')) {
+    const hashParams = new URLSearchParams(location.hash.replace(/^#/, ''));
+    const type = params.get('type') || hashParams.get('type');
+
+    if (type === 'recovery') {
+      navigate('/reset-password', { replace: true });
+      return;
+    }
+
+    if (type === 'signup' && (params.get('access_token') || hashParams.get('access_token'))) {
       navigate('/welcome');
     }
   }, [location, navigate]);

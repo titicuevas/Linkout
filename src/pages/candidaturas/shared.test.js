@@ -16,6 +16,7 @@ import {
   removeSavedView,
   hasActiveCandidaturaFilters,
   toExternalUrl,
+  isRecentApplication,
 } from './shared';
 
 // ─── formatEstado ───────────────────────────────────────────────────────────
@@ -304,6 +305,7 @@ describe('hasActiveCandidaturaFilters', () => {
       filtroEstado: '',
       filtroOrigen: '',
       filtroSeguimiento: false,
+      filtroRecientes: false,
       searchQuery: '',
     })).toBe(false);
 
@@ -325,8 +327,26 @@ describe('hasActiveCandidaturaFilters', () => {
       filtroEstado: '',
       filtroOrigen: '',
       filtroSeguimiento: false,
+      filtroRecientes: true,
+      searchQuery: '',
+    })).toBe(true);
+
+    expect(hasActiveCandidaturaFilters({
+      filtroEstado: '',
+      filtroOrigen: '',
+      filtroSeguimiento: false,
       searchQuery: 'remoto',
     })).toBe(true);
+  });
+});
+
+describe('isRecentApplication', () => {
+  it('detecta candidaturas de los últimos 7 días', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    const old = new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    expect(isRecentApplication({ fecha: today })).toBe(true);
+    expect(isRecentApplication({ fecha: old })).toBe(false);
+    expect(isRecentApplication({})).toBe(false);
   });
 });
 
