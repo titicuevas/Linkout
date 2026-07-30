@@ -1,188 +1,87 @@
-# 🚀 Guía de Despliegue en Railway
+# Guía de Despliegue en Railway
 
-Esta guía te ayudará a desplegar **Linkeout** en Railway, separando el frontend y backend en servicios independientes.
+Esta guía te ayuda a desplegar **Linkout** en Railway. El frontend es el servicio principal; el backend es **opcional** (solo health-check).
 
-## 📋 Prerrequisitos
+## Prerrequisitos
 
 1. **Cuenta en Railway**: [railway.app](https://railway.app)
 2. **Cuenta en Supabase**: [supabase.com](https://supabase.com)
-3. **API Key de Google Gemini**: [Google AI Studio](https://makersuite.google.com/app/apikey)
-4. **Repositorio en GitHub**: Tu código debe estar en un repositorio público o privado
+3. **Repositorio en GitHub**: el código debe estar en un repositorio accesible
 
-## 🏗️ Estructura del Despliegue
+> Motivación y Retos se generan **en el navegador**, sin API de IA ni clave de Gemini.
 
-Railway nos permitirá desplegar dos servicios independientes:
-- **Frontend**: Aplicación React con Vite
-- **Backend**: API Node.js con Express
+## Estructura del Despliegue
 
-## 📦 Paso 1: Preparar el Repositorio
+- **Frontend** (obligatorio): aplicación React con Vite
+- **Backend** (opcional): Express con `GET /` / health-check
 
-### 1.1 Verificar la estructura
-```
-linkeout/
-├── src/                    # Frontend React
-├── backend/               # Backend Node.js
-├── railway.json          # Configuración Railway Frontend
-├── backend/railway.json  # Configuración Railway Backend
-├── env.example           # Variables de entorno Frontend
-└── backend/env.example   # Variables de entorno Backend
-```
+## Paso 1: Variables de entorno
 
-### 1.2 Variables de entorno necesarias
+### Frontend (`.env`)
 
-#### Frontend (.env)
 ```env
 VITE_SUPABASE_URL=tu_url_de_supabase
 VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-VITE_BACKEND_URL=https://tu-backend-service.railway.app
+# Opcional: solo si despliegas el health-check
+# VITE_BACKEND_URL=https://tu-backend-service.railway.app
 ```
 
-#### Backend (.env)
+### Backend (opcional, `backend/.env`)
+
 ```env
-GEMINI_API_KEY=tu_clave_de_gemini
+CORS_ORIGIN=https://tu-frontend.up.railway.app
 PORT=4000
 ```
 
-## 🚀 Paso 2: Desplegar el Backend
+## Paso 2: Desplegar el Frontend
 
-### 2.1 Crear el servicio Backend
-1. Ve a [Railway Dashboard](https://railway.app/dashboard)
-2. Haz clic en **"New Project"**
-3. Selecciona **"Deploy from GitHub repo"**
-4. Conecta tu repositorio de GitHub
-5. Selecciona la carpeta `backend` como directorio raíz
+1. En [Railway Dashboard](https://railway.app/dashboard) crea un proyecto y conecta el repo de GitHub
+2. Usa la **carpeta raíz** como directorio del servicio
+3. Configura las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`
+4. Railway ejecutará `npm install` y `npm run build`, y servirá los estáticos
 
-### 2.2 Configurar variables de entorno
-En la configuración del servicio backend:
-1. Ve a la pestaña **"Variables"**
-2. Agrega las siguientes variables:
-   ```
-   GEMINI_API_KEY=tu_clave_de_gemini_aqui
-   PORT=4000
-   ```
+### Auth / reset de contraseña
 
-### 2.3 Verificar el despliegue
-1. Railway detectará automáticamente que es un proyecto Node.js
-2. Ejecutará `npm install` y `npm start`
-3. El servicio estará disponible en: `https://tu-backend-service.railway.app`
+En Supabase → Authentication → URL Configuration, añade la Redirect URL de producción:
 
-## 🌐 Paso 3: Desplegar el Frontend
-
-### 3.1 Crear el servicio Frontend
-1. En el mismo proyecto de Railway, haz clic en **"New Service"**
-2. Selecciona **"Deploy from GitHub repo"**
-3. Selecciona el mismo repositorio
-4. Esta vez selecciona la **carpeta raíz** (no la carpeta backend)
-
-### 3.2 Configurar variables de entorno
-En la configuración del servicio frontend:
-1. Ve a la pestaña **"Variables"**
-2. Agrega las siguientes variables:
-   ```
-   VITE_SUPABASE_URL=tu_url_de_supabase
-   VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-   VITE_BACKEND_URL=https://tu-backend-service.railway.app
-   ```
-
-### 3.3 Configurar el build
-Railway detectará automáticamente que es un proyecto Vite y:
-1. Ejecutará `npm install`
-2. Ejecutará `npm run build`
-3. Servirá los archivos estáticos
-
-## 🔧 Paso 4: Configuración Adicional
-
-### 4.1 Dominios personalizados (Opcional)
-1. En cada servicio, ve a la pestaña **"Settings"**
-2. En **"Domains"**, puedes agregar dominios personalizados
-3. Ejemplo:
-   - Frontend: `app.tudominio.com`
-   - Backend: `api.tudominio.com`
-
-### 4.2 Variables de entorno compartidas
-Si tienes variables que se usan en ambos servicios, puedes:
-1. Crear un **"Shared Variable"** en Railway
-2. Referenciarlo en ambos servicios
-
-## 🧪 Paso 5: Verificar el Despliegue
-
-### 5.1 Probar el Backend
-```bash
-curl -X POST https://tu-backend-service.railway.app/api/animo \
-  -H "Content-Type: application/json" \
-  -d '{"texto":"Estoy gestionando mi búsqueda de empleo","rol":"motivador","nombre":"Usuario"}'
+```
+https://tu-frontend.up.railway.app/reset-password
 ```
 
-### 5.2 Probar el Frontend
+## Paso 3: Backend opcional
+
+Si quieres mantener el health-check:
+
+1. Crea otro servicio apuntando a la carpeta `backend`
+2. Configura `PORT` y, si quieres, `CORS_ORIGIN`
+3. Verifica con:
+
+```bash
+curl https://tu-backend-service.railway.app/
+```
+
+Los endpoints antiguos de Motivación/Retos responden `410 Gone` a propósito: ya no se usan.
+
+## Paso 4: Verificar el Frontend
+
 1. Visita la URL del frontend
-2. Verifica que puedes:
-   - Registrarte/Iniciar sesión
-   - Crear desahogos
-   - Usar la funcionalidad de Ánimo IA
-   - Generar retos físicos
+2. Comprueba:
+   - Registro / inicio de sesión
+   - Candidaturas (incluidas notas personales)
+   - Diario personal
+   - Motivación y retos (locales, sin backend)
 
-## 🔍 Paso 6: Monitoreo y Logs
+## Solución de Problemas
 
-### 6.1 Ver logs en tiempo real
-1. En Railway Dashboard, selecciona tu servicio
-2. Ve a la pestaña **"Deployments"**
-3. Haz clic en el deployment activo
-4. Ve a la pestaña **"Logs"**
+### Build failed
+- Revisa dependencias en `package.json` y logs de build en Railway
 
-### 6.2 Health Checks
-Railway automáticamente verificará:
-- **Backend**: `GET /api/animo`
-- **Frontend**: `GET /`
+### Environment variables not found
+- Confirma que `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` existen en el servicio frontend
 
-## 🚨 Solución de Problemas
-
-### Error: "Build failed"
-- Verifica que todas las dependencias estén en `package.json`
-- Revisa los logs de build en Railway
-
-### Error: "Environment variables not found"
-- Verifica que todas las variables de entorno estén configuradas
-- Asegúrate de que los nombres coincidan exactamente
-
-### Error: "CORS error"
-- El backend ya tiene CORS configurado para aceptar todas las origenes
-- Si persiste, verifica que la URL del frontend esté correcta
-
-### Error: "API key invalid"
-- Verifica que la clave de Gemini sea válida
-- Asegúrate de que tenga los permisos necesarios
-
-## 📊 Paso 7: Optimización
-
-### 7.1 Configurar auto-scaling
-1. En Railway, ve a **"Settings"** del servicio
-2. Configura **"Auto-scaling"** según tus necesidades
-
-### 7.2 Configurar backups
-1. Railway ofrece backups automáticos
-2. Configura la frecuencia en **"Settings"**
-
-## 🔄 Actualizaciones
-
-Para actualizar tu aplicación:
-1. Haz push a tu repositorio de GitHub
-2. Railway detectará automáticamente los cambios
-3. Desplegará la nueva versión automáticamente
-
-## 💰 Costos
-
-Railway ofrece:
-- **Plan gratuito**: $5 de crédito mensual
-- **Plan Pro**: $20/mes con más recursos
-- **Plan Team**: Para equipos
-
-## 🆘 Soporte
-
-Si tienes problemas:
-1. Revisa los logs en Railway
-2. Verifica la documentación de Railway
-3. Consulta los issues del repositorio
+### Reset password no funciona
+- Añade `/reset-password` a las Redirect URLs de Supabase Auth
 
 ---
 
-¡Tu aplicación **Linkeout** estará lista para ayudar a desarrolladores a gestionar su búsqueda de empleo! 🚀 
+¡Con esto **Linkout** queda listo para gestionar la búsqueda de empleo!

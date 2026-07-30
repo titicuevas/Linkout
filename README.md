@@ -54,13 +54,13 @@
 - Historial organizado y fácil de consultar
 - **Sistema de fechas dual** para tracking temporal completo
 
-### 🎯 **Motivación IA**
-- Recibe consejos personalizados de diferentes roles (madre, hermano, mejor amigo, motivador, psicólogo, compañero, futuro yo)
-- Respuestas generadas por IA usando Google Gemini
+### 🎯 **Motivación**
+- Mensajes de ánimo por roles (madre, hermano, mejor amigo, motivador, psicólogo, compañero, futuro yo)
+- Generación **local** a partir de tus reflexiones (sin API de IA ni costes)
 - Interfaz intuitiva y empática con iconos y colores temáticos
 
 ### 💪 **Retos de Bienestar**
-- Generación automática de retos físicos personalizados según el puesto y empresa
+- Retos físicos generados en local según el puesto y empresa
 - Tres niveles de dificultad: Fácil, Medio, Difícil
 - Sistema de puntos y motivación
 - Ejercicios alternativos para cada reto
@@ -119,17 +119,18 @@ Linkout/
 ```
 VITE_SUPABASE_URL=tu_url_de_supabase
 VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-VITE_BACKEND_URL=https://linkoutbackend.up.railway.app
+# Opcional: solo si despliegas el health-check del backend
+# VITE_BACKEND_URL=https://tu-backend.up.railway.app
 ```
 
-### Backend (.env)
+### Backend (opcional)
 ```
-GEMINI_API_KEY=tu_clave_de_gemini
+CORS_ORIGIN=https://linkout.up.railway.app
 PORT=4000
 ```
 
-- **CORS**: Configurado en el backend para aceptar peticiones del frontend en Railway.
-- **Railway**: Despliegue independiente de frontend y backend, con variables de entorno separadas.
+- Motivación y Retos **no necesitan backend**.
+- **Railway**: basta con desplegar el frontend; el backend es solo un health-check opcional.
 
 ---
 
@@ -151,6 +152,7 @@ create table candidaturas (
   ubicacion text, -- ciudad, país
   origen text, -- linkedin, infojobs, joppy, tecnoempleo, correo_directo, otro
   feedback text, -- feedback del reclutador
+  notas text, -- notas personales del candidato
   created_at timestamp with time zone default now()
 );
 ```
@@ -182,27 +184,26 @@ create table candidaturas (
 - **Recharts** para gráficos y estadísticas visuales
 - **React Paginate** para paginación
 
-### Backend
-- **Node.js** con Express
-- **Google Gemini AI** para generación de contenido
-- **CORS** habilitado para comunicación frontend-backend
-- **Axios** para llamadas HTTP
+### Backend (opcional)
+- **Node.js** con Express (health-check)
+- **CORS** configurable
 
 ### Base de Datos
 - **Supabase** (PostgreSQL)
 - Autenticación integrada
 - Storage para archivos
-- Esquema completo para candidaturas
+- Esquema completo para candidaturas (incluye `notas`)
 
 ---
 
 ## 📦 Instalación Local
 
 1. Clona el repositorio
-2. Instala dependencias del frontend y backend
-3. Configura las variables de entorno
-4. Actualiza la base de datos con el esquema completo
-5. Ejecuta ambos servidores (`npm run dev` en frontend y backend)
+2. Instala dependencias del frontend (`npm install`)
+3. Configura `.env` con Supabase
+4. Aplica las migraciones de `supabase/migrations` si hace falta
+5. Ejecuta el frontend con `npm run dev`
+6. (Opcional) Arranca el backend en `backend/` solo para el health-check
 
 ---
 
@@ -227,8 +228,8 @@ create table candidaturas (
 1. **Diario de Candidaturas**: Organiza y sigue tus aplicaciones laborales con tracking temporal
 2. **Dashboard de Estadísticas**: Visualiza tu progreso con gráficos interactivos
 3. **Filtros Avanzados**: Filtra por estado, origen y más con interfaz visual
-4. **Motivación IA**: Recibe motivación de diferentes roles y perspectivas
-5. **Retos de Bienestar**: Genera retos personalizados según el puesto y empresa
+4. **Motivación**: Mensajes de ánimo locales por diferentes roles
+5. **Retos de Bienestar**: Retos personalizados según el puesto y empresa
 6. **Desahógate**: Comparte experiencias con otros desarrolladores
 
 ---

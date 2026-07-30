@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../../services/supabase';
 import Layout from '../../components/Layout';
 import { useNavigate } from 'react-router-dom';
@@ -9,20 +9,46 @@ import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
 
+const DESAHOGO_DRAFT_KEY = 'linkout_desahogo_draft';
+
 export default function CrearDesahogo() {
   const { user, authLoading, logout } = useAuth();
   useTitle('Nueva Reflexión');
   const [error, setError] = useState('');
   const [texto, setTexto] = useState('');
   const [tocado, setTocado] = useState(false);
+  const [draftReady, setDraftReady] = useState(false);
   const maxChars = 400;
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
+
+  useEffect(() => {
+    const savedDraft = localStorage.getItem(DESAHOGO_DRAFT_KEY);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setTexto(typeof draft.texto === 'string' ? draft.texto : '');
+      } catch {
+        localStorage.removeItem(DESAHOGO_DRAFT_KEY);
+      }
+    }
+    setDraftReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!draftReady) return;
+    if (!texto.trim()) {
+      localStorage.removeItem(DESAHOGO_DRAFT_KEY);
+      return;
+    }
+    localStorage.setItem(DESAHOGO_DRAFT_KEY, JSON.stringify({ texto }));
+  }, [texto, draftReady]);
 
   if (authLoading) return <PageLoader message="Preparando tu diario..." />;
   if (!user) return null;
 
   const handleCancel = () => {
+    localStorage.removeItem(DESAHOGO_DRAFT_KEY);
     setTexto('');
     navigate('/desahogate');
   };
@@ -41,6 +67,7 @@ export default function CrearDesahogo() {
       setError('No se pudo guardar el mensaje.');
       return;
     }
+    localStorage.removeItem(DESAHOGO_DRAFT_KEY);
     await MySwal.fire(swalSuccess('¡Entrada guardada!', 'Tu reflexión ha sido compartida. ¡Gracias por motivar a otros desarrolladores!', { confirmButtonColor: '#e11d48' }));
 
     const goMotivation = await MySwal.fire(swalInfo(
@@ -78,6 +105,9 @@ export default function CrearDesahogo() {
                 autoComplete="off"
               />
               <div className={`text-right text-xs ${texto.length > maxChars - 20 ? 'text-red-400 font-bold' : 'text-gray-400'}`}>{texto.length}/{maxChars} caracteres</div>
+              {texto.trim() && (
+                <div className="text-xs text-gray-500 mt-1">Borrador guardado en este dispositivo</div>
+              )}
               <div className="text-blue-300 text-sm italic mt-2 bg-blue-900/20 rounded-lg p-3 border border-blue-700">
                 💙 <strong>Recuerda:</strong> Este es un espacio para compartir experiencias constructivas y motivar a otros desarrolladores. Sé auténtico, comparte aprendizajes y mantén un tono positivo.
               </div>
@@ -101,4 +131,4 @@ export default function CrearDesahogo() {
       </div>
     </Layout>
   );
-} 
+}

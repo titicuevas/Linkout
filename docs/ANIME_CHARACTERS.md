@@ -69,10 +69,9 @@ LinkOut ahora incluye personajes de anime con historias inspiradoras de superaci
 
 ## 🔧 Implementación Técnica
 
-### Backend (Node.js)
-- Prompts personalizados para cada personaje
-- Frases características y estilos de comunicación únicos
-- Integración con Google Gemini AI
+### Generación local
+- Plantillas y eco del texto del diario por rol
+- Sin API externa ni Gemini
 
 ### Frontend (React)
 - Selector visual de personajes

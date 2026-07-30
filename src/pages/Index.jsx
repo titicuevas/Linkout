@@ -6,7 +6,13 @@ import Layout from '../components/Layout';
 import PageLoader from '../components/PageLoader';
 import { useAuth } from '../hooks/useAuth';
 import { useTitle } from '../hooks/useTitle';
-import { isActiveProcess, getFollowUpsPendientes, getReferenceDate } from './candidaturas/shared';
+import {
+  isActiveProcess,
+  getFollowUpsPendientes,
+  getReferenceDate,
+  formatEstado,
+  formatInactivityLabel,
+} from './candidaturas/shared';
 import { PROFILE_UPDATED_EVENT } from '../utils/profileEvents';
 
 export default function Index() {
@@ -14,6 +20,7 @@ export default function Index() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [candidaturas, setCandidaturas] = useState([]);
+  const [updatingFollowUpId, setUpdatingFollowUpId] = useState(null);
 
   useTitle('Panel');
 
@@ -37,7 +44,7 @@ export default function Index() {
       if (!user) return;
       const { data, error } = await supabase
         .from('candidaturas')
-        .select('id, estado, fecha, fecha_actualizacion, created_at')
+        .select('id, empresa, puesto, estado, fecha, fecha_actualizacion, created_at')
         .eq('user_id', user.id);
 
       if (cancelled) return;
@@ -50,6 +57,8 @@ export default function Index() {
     return () => { cancelled = true; };
   }, [user]);
 
+  const followUps = useMemo(() => getFollowUpsPendientes(candidaturas), [candidaturas]);
+
   const resumen = useMemo(() => {
     const now = new Date();
     const sevenDaysAgo = new Date(now);
@@ -57,7 +66,6 @@ export default function Index() {
 
     const activeStates = candidaturas.filter(isActiveProcess);
     const recentApplications = candidaturas.filter((candidatura) => candidatura.fecha && new Date(candidatura.fecha) >= sevenDaysAgo).length;
-    const followUpsPending = getFollowUpsPendientes(candidaturas).length;
 
     const latestUpdate = [...candidaturas]
       .map(getReferenceDate)
@@ -68,10 +76,10 @@ export default function Index() {
       total: candidaturas.length,
       activeProcesses: activeStates.length,
       recentApplications,
-      followUpsPending,
+      followUpsPending: followUps.length,
       latestUpdate: latestUpdate ? new Date(latestUpdate).toLocaleDateString() : null,
     };
-  }, [candidaturas]);
+  }, [candidaturas, followUps]);
 
   const insightMessage = resumen.followUpsPending > 0
     ? `Tienes ${resumen.followUpsPending} proceso${resumen.followUpsPending === 1 ? '' : 's'} sin movimiento reciente. Quizá toca hacer seguimiento.`
@@ -84,6 +92,26 @@ export default function Index() {
     : resumen.activeProcesses > 0
       ? { label: 'Ver procesos activos', path: '/candidaturas?estado=en_proceso' }
       : { label: 'Crear candidatura', path: '/candidaturas/create' };
+
+  const handleMarkFollowUp = async (candidaturaId) => {
+    if (!user || updatingFollowUpId) return;
+    setUpdatingFollowUpId(candidaturaId);
+    const today = new Date().toISOString().slice(0, 10);
+    const { error } = await supabase
+      .from('candidaturas')
+      .update({ fecha_actualizacion: today })
+      .eq('id', candidaturaId)
+      .eq('user_id', user.id);
+
+    if (!error) {
+      setCandidaturas((current) =>
+        current.map((item) =>
+          item.id === candidaturaId ? { ...item, fecha_actualizacion: today } : item,
+        ),
+      );
+    }
+    setUpdatingFollowUpId(null);
+  };
 
   if (authLoading) return <PageLoader message="Preparando tu panel..." />;
   if (!user) return null;
@@ -154,6 +182,58 @@ export default function Index() {
             </button>
           </div>
         </div>
+        {followUps.length > 0 && (
+          <div className="w-full max-w-5xl mx-auto mb-10 rounded-3xl border border-pink-800/60 bg-pink-950/30 p-5 sm:p-6 shadow-2xl">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-4">
+              <div>
+                <div className="text-sm font-semibold uppercase tracking-wide text-pink-300">Seguimientos a mano</div>
+                <p className="mt-1 text-sm text-pink-100/80">Procesos sin movimiento en 10+ días. Márcalos cuando hayas contactado.</p>
+              </div>
+              {followUps.length > 5 && (
+                <button
+                  type="button"
+                  onClick={() => navigate('/candidaturas?seguimiento=1')}
+                  className="text-sm font-semibold text-pink-300 hover:text-pink-200"
+                >
+                  Ver todos ({followUps.length})
+                </button>
+              )}
+            </div>
+            <ul className="space-y-3">
+              {followUps.slice(0, 5).map((item) => (
+                <li
+                  key={item.id}
+                  className="flex flex-col gap-3 rounded-2xl border border-neutral-700 bg-neutral-900/70 p-4 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <div className="truncate font-bold text-white">{item.empresa || 'Sin empresa'}</div>
+                    <div className="truncate text-sm text-gray-300">{item.puesto || 'Sin puesto'}</div>
+                    <div className="mt-1 text-xs text-gray-400">
+                      {formatEstado(item.estado)} · {formatInactivityLabel(item) || 'Sin fecha'}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 sm:flex-row sm:shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => navigate('/candidaturas?seguimiento=1')}
+                      className="rounded-full border border-neutral-600 px-4 py-2 text-sm font-semibold text-gray-200 transition hover:border-blue-400 hover:text-white"
+                    >
+                      Abrir
+                    </button>
+                    <button
+                      type="button"
+                      disabled={updatingFollowUpId === item.id}
+                      onClick={() => handleMarkFollowUp(item.id)}
+                      className="rounded-full bg-pink-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-pink-500 disabled:opacity-60"
+                    >
+                      {updatingFollowUpId === item.id ? 'Guardando…' : 'He hecho seguimiento'}
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
         <div className="w-full max-w-5xl mx-auto mb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12">
             <Link to="/candidaturas" className="flex flex-col items-center w-full bg-gradient-to-br from-blue-900/80 via-blue-800/70 to-blue-900/60 rounded-3xl p-8 sm:p-10 transition-transform hover:scale-105 hover:shadow-blue-400/40 hover:border-blue-400 cursor-pointer group shadow-2xl border-2 border-blue-900 hover:bg-blue-900/80 focus:outline-none focus:ring-2 focus:ring-blue-400 animate-fade-in-card">
