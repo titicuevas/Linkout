@@ -39,8 +39,14 @@ export default function ResetPassword() {
       if (!active) return;
       if (data?.session) {
         setCanReset(true);
+        setCheckingSession(false);
+        return;
       }
-      setCheckingSession(false);
+      // Espera a PASSWORD_RECOVERY desde el hash del enlace
+      window.setTimeout(() => {
+        if (!active) return;
+        setCheckingSession(false);
+      }, 1800);
     });
 
     return () => {

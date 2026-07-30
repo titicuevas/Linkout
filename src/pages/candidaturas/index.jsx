@@ -28,6 +28,7 @@ import {
   hasActiveCandidaturaFilters,
   isActiveProcess,
   isRecentApplication,
+  FILTRO_EN_PROCESO,
 } from './shared';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
@@ -135,20 +136,29 @@ export default function CandidaturasIndex() {
     const hasFilterParams = estado !== null || seguimiento !== null || recientes !== null;
     if (!hasFilterParams) return;
 
-    if (estado !== null) setFiltroEstado(estado);
-    if (seguimiento !== null) {
-      setFiltroSeguimiento(seguimiento === '1' || seguimiento === 'true');
-      if (seguimiento === '1' || seguimiento === 'true') setFiltroEstado('');
+    // Deep-links accionables: limpian filtros conflictivos de prefs
+    if (seguimiento === '1' || seguimiento === 'true') {
+      setFiltroSeguimiento(true);
+      setFiltroEstado('');
+      setFiltroRecientes(false);
+      setFiltroOrigen('');
+      setSearchQuery('');
+    } else if (recientes === '1' || recientes === 'true') {
+      setFiltroRecientes(true);
+      setFiltroSeguimiento(false);
+      setFiltroEstado('');
+      setFiltroOrigen('');
+      setSearchQuery('');
+    } else if (estado !== null) {
+      setFiltroEstado(estado);
+      setFiltroSeguimiento(false);
+      setFiltroRecientes(false);
+      setFiltroOrigen('');
+      setSearchQuery('');
     }
-    if (recientes !== null) {
-      setFiltroRecientes(recientes === '1' || recientes === 'true');
-      if (recientes === '1' || recientes === 'true') {
-        setFiltroSeguimiento(false);
-      }
-    }
+
     setCurrentPage(0);
 
-    // Conserva el deep-link `id` si venía junto a filtros
     if (candidaturaId) {
       setSearchParams({ id: candidaturaId }, { replace: true });
     } else {
@@ -165,7 +175,11 @@ export default function CandidaturasIndex() {
     if (target) {
       setSelectedCandidatura(target);
       setModalOpen(true);
+      setSearchParams({}, { replace: true });
+      return;
     }
+
+    // Tras cargar, si el id no existe, limpia el param
     setSearchParams({}, { replace: true });
   }, [loading, prefsReady, candidaturas, searchParams, setSearchParams]);
 
@@ -194,6 +208,7 @@ export default function CandidaturasIndex() {
   }, [user]);
 
   useEffect(() => {
+    if (!prefsReady) return;
     localStorage.setItem(
       CANDIDATURAS_PREFS_KEY,
       JSON.stringify({
@@ -208,7 +223,7 @@ export default function CandidaturasIndex() {
         searchQuery,
       }),
     );
-  }, [sortBy, sortDir, currentPage, pageSize, filtroEstado, filtroOrigen, filtroSeguimiento, filtroRecientes, searchQuery]);
+  }, [prefsReady, sortBy, sortDir, currentPage, pageSize, filtroEstado, filtroOrigen, filtroSeguimiento, filtroRecientes, searchQuery]);
 
   useEffect(() => {
     const maxPage = Math.max(0, Math.ceil(candidaturasFiltradas.length / pageSize) - 1);
@@ -413,6 +428,7 @@ export default function CandidaturasIndex() {
   const handleFilterEstadoFromStats = (estado) => {
     setFiltroEstado(estado || '');
     setFiltroSeguimiento(false);
+    setFiltroRecientes(false);
     setCurrentPage(0);
   };
 
@@ -471,6 +487,10 @@ export default function CandidaturasIndex() {
                   type="button"
                   onClick={() => {
                     setFiltroSeguimiento(true);
+                    setFiltroEstado('');
+                    setFiltroRecientes(false);
+                    setFiltroOrigen('');
+                    setSearchQuery('');
                     setCurrentPage(0);
                   }}
                   className="rounded-full bg-yellow-400 px-5 py-3 text-sm font-bold text-neutral-900 shadow-lg transition hover:bg-yellow-300"
@@ -489,7 +509,7 @@ export default function CandidaturasIndex() {
           </div>
         )}
         <CandidaturasFilters
-          estados={ESTADOS}
+          estados={[ESTADOS[0], FILTRO_EN_PROCESO, ...ESTADOS.slice(1)]}
           origenes={ORIGENES}
           filtroEstado={filtroEstado}
           filtroOrigen={filtroOrigen}

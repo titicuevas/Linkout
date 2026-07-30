@@ -51,8 +51,16 @@ create table candidaturas (
   ubicacion text, -- ciudad, país
   origen text, -- linkedin, infojobs, joppy, tecnoempleo, correo_directo, otro
   feedback text, -- feedback del reclutador
+  notas text, -- notas personales
+  historial_cambios text[] default '{}', -- log de cambios
   created_at timestamp with time zone default now()
 );
+```
+
+### Tabla: profiles (campos extra usados por Retos)
+```sql
+alter table profiles add column if not exists puntos integer default 0;
+alter table profiles add column if not exists nivel integer default 1;
 ```
 
 ### Tabla: retos

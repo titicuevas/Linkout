@@ -175,9 +175,19 @@ export default function RetoFisico() {
     const puntosGanados = retos[i]?.puntos || 10;
     const nuevosPuntos = puntos + puntosGanados;
     const nuevoNivel = Math.floor(nuevosPuntos / PROGRESO_NIVEL) + 1;
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ puntos: nuevosPuntos, nivel: nuevoNivel })
+      .eq('id', user.id);
+
+    if (profileError) {
+      setCompletado([false, false, false]);
+      setError('No se pudieron guardar los puntos. Inténtalo de nuevo.');
+      return;
+    }
+
     setPuntos(nuevosPuntos);
     setNivel(nuevoNivel);
-    await supabase.from('profiles').update({ puntos: nuevosPuntos, nivel: nuevoNivel }).eq('id', user.id);
     localStorage.setItem(candidaturaKey, '1');
     setShowConfetti(true);
     setTimeout(async () => {

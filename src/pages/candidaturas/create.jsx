@@ -7,7 +7,7 @@ import withReactContent from 'sweetalert2-react-content';
 import { swalSuccess, swalError, swalWarning } from '../../utils/swalTheme';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { formatEstado, FORM_ESTADOS, FORM_ORIGENES, FRANJAS_SALARIAL, TIPOS_TRABAJO, suggestFranjaFromSalary, normalizeOrigen } from './shared';
+import { formatEstado, FORM_ESTADOS, FORM_ORIGENES, FRANJAS_SALARIAL, TIPOS_TRABAJO, suggestFranjaFromSalary, normalizeOrigen, toExternalUrl } from './shared';
 import PageLoader from '../../components/PageLoader';
 import { useAuth } from '../../hooks/useAuth';
 import { useTitle } from '../../hooks/useTitle';
@@ -29,32 +29,42 @@ export default function CrearCandidatura() {
   const [ubicacion, setUbicacion] = useState('');
   const [origen, setOrigen] = useState('');
   const [notas, setNotas] = useState('');
+  const [draftReady, setDraftReady] = useState(false);
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
 
   useEffect(() => {
     const savedDraft = localStorage.getItem(CANDIDATURA_DRAFT_KEY);
-    if (!savedDraft) return;
-
-    try {
-      const draft = JSON.parse(savedDraft);
-      setPuesto(draft.puesto || '');
-      setEmpresa(draft.empresa || '');
-      setEmpresaUrl(draft.empresaUrl || '');
-      setEstado(draft.estado || 'entrevista_contacto');
-      setFecha(draft.fecha || '');
-      setSueldoAnual(draft.sueldoAnual || '');
-      setFranjaSalarial(draft.franjaSalarial || '');
-      setTipoTrabajo(draft.tipoTrabajo || '');
-      setUbicacion(draft.ubicacion || '');
-      setOrigen(draft.origen || '');
-      setNotas(draft.notas || '');
-    } catch {
-      localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        setPuesto(draft.puesto || '');
+        setEmpresa(draft.empresa || '');
+        setEmpresaUrl(draft.empresaUrl || '');
+        setEstado(draft.estado || 'entrevista_contacto');
+        setFecha(draft.fecha || '');
+        setSueldoAnual(draft.sueldoAnual || '');
+        setFranjaSalarial(draft.franjaSalarial || '');
+        setTipoTrabajo(draft.tipoTrabajo || '');
+        setUbicacion(draft.ubicacion || '');
+        setOrigen(draft.origen || '');
+        setNotas(draft.notas || '');
+      } catch {
+        localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
+      }
     }
+    setDraftReady(true);
   }, []);
 
   useEffect(() => {
+    if (!draftReady) return;
+    const isEmpty = !puesto && !empresa && !empresaUrl && !fecha && !sueldoAnual
+      && !franjaSalarial && !tipoTrabajo && !ubicacion && !origen && !notas
+      && estado === 'entrevista_contacto';
+    if (isEmpty) {
+      localStorage.removeItem(CANDIDATURA_DRAFT_KEY);
+      return;
+    }
     localStorage.setItem(
       CANDIDATURA_DRAFT_KEY,
       JSON.stringify({
@@ -71,7 +81,7 @@ export default function CrearCandidatura() {
         notas,
       }),
     );
-  }, [puesto, empresa, empresaUrl, estado, fecha, sueldoAnual, franjaSalarial, tipoTrabajo, ubicacion, origen, notas]);
+  }, [draftReady, puesto, empresa, empresaUrl, estado, fecha, sueldoAnual, franjaSalarial, tipoTrabajo, ubicacion, origen, notas]);
 
   if (authLoading) return <PageLoader message="Preparando formulario..." />;
   if (!user) return null;
@@ -102,7 +112,7 @@ export default function CrearCandidatura() {
         user_id: user.id,
         puesto,
         empresa,
-        empresa_url: empresaUrl,
+        empresa_url: toExternalUrl(empresaUrl) || empresaUrl.trim() || '',
         estado,
         fecha,
         salario_anual: sueldoAnual ? Number(sueldoAnual) : null,
@@ -112,7 +122,7 @@ export default function CrearCandidatura() {
         origen: normalizeOrigen(origen),
         notas: notas.trim(),
         historial_cambios: [`[${creationTimestamp}] Candidatura creada con estado inicial: ${formatEstado(estado)}`],
-        fecha_actualizacion: new Date().toISOString(),
+        fecha_actualizacion: new Date().toISOString().slice(0, 10),
       }
     ]);
     if (dbError) {
@@ -157,10 +167,11 @@ export default function CrearCandidatura() {
             <div>
               <label className={labelBase + ' text-sm text-gray-400'}>URL de la empresa (opcional)</label>
               <input
-                type="url"
+                type="text"
+                inputMode="url"
                 value={empresaUrl}
                 onChange={e => setEmpresaUrl(e.target.value)}
-                placeholder="https://www.empresa.com"
+                placeholder="empresa.com o https://www.empresa.com"
                 className={inputBase + ' w-full text-sm'}
               />
             </div>

@@ -22,6 +22,9 @@ export const ORIGENES = [
 export const FORM_ESTADOS = ESTADOS.filter((e) => e.value !== '');
 export const FORM_ORIGENES = ORIGENES.filter((o) => o.value !== '');
 
+/** Chip de filtro (no es un estado real de BD) */
+export const FILTRO_EN_PROCESO = { value: 'en_proceso', label: 'En proceso' };
+
 export const FRANJAS_SALARIAL = [
   '< 15.000 €',
   '15.000 - 20.000 €',
@@ -284,7 +287,7 @@ export function buildStatusUpdate(candidatura, newEstado) {
   const historyEntries = buildChangeHistory(candidatura, nextValues);
   return {
     estado: newEstado,
-    fecha_actualizacion: new Date().toISOString(),
+    fecha_actualizacion: new Date().toISOString().slice(0, 10),
     historial_cambios: historyEntries.length > 0
       ? [...(candidatura.historial_cambios || []), ...historyEntries]
       : candidatura.historial_cambios || [],

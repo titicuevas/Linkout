@@ -21,6 +21,7 @@ export default function Index() {
   const [profile, setProfile] = useState(null);
   const [candidaturas, setCandidaturas] = useState([]);
   const [updatingFollowUpId, setUpdatingFollowUpId] = useState(null);
+  const [followUpError, setFollowUpError] = useState('');
 
   useTitle('Panel');
 
@@ -96,6 +97,7 @@ export default function Index() {
   const handleMarkFollowUp = async (candidaturaId) => {
     if (!user || updatingFollowUpId) return;
     setUpdatingFollowUpId(candidaturaId);
+    setFollowUpError('');
     const today = new Date().toISOString().slice(0, 10);
     const { error } = await supabase
       .from('candidaturas')
@@ -103,13 +105,17 @@ export default function Index() {
       .eq('id', candidaturaId)
       .eq('user_id', user.id);
 
-    if (!error) {
-      setCandidaturas((current) =>
-        current.map((item) =>
-          item.id === candidaturaId ? { ...item, fecha_actualizacion: today } : item,
-        ),
-      );
+    if (error) {
+      setFollowUpError('No se pudo marcar el seguimiento. Inténtalo de nuevo.');
+      setUpdatingFollowUpId(null);
+      return;
     }
+
+    setCandidaturas((current) =>
+      current.map((item) =>
+        item.id === candidaturaId ? { ...item, fecha_actualizacion: today } : item,
+      ),
+    );
     setUpdatingFollowUpId(null);
   };
 
@@ -199,6 +205,9 @@ export default function Index() {
                 </button>
               )}
             </div>
+            {followUpError && (
+              <p className="mb-3 text-sm font-semibold text-red-300">{followUpError}</p>
+            )}
             <ul className="space-y-3">
               {followUps.slice(0, 5).map((item) => (
                 <li

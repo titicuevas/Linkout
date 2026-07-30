@@ -27,12 +27,18 @@ export default function Home() {
     const type = params.get('type') || hashParams.get('type');
 
     if (type === 'recovery') {
-      navigate('/reset-password', { replace: true });
+      navigate(
+        { pathname: '/reset-password', search: location.search, hash: location.hash },
+        { replace: true },
+      );
       return;
     }
 
     if (type === 'signup' && (params.get('access_token') || hashParams.get('access_token'))) {
-      navigate('/welcome');
+      navigate(
+        { pathname: '/welcome', search: location.search, hash: location.hash },
+        { replace: true },
+      );
     }
   }, [location, navigate]);
 

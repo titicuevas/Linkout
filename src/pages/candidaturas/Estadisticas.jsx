@@ -19,7 +19,7 @@ const campos = [
 ];
 
 export default function EstadisticasCandidaturas() {
-  const { user, authLoading } = useAuth();
+  const { user, authLoading, logout } = useAuth();
   useTitle('Estadísticas');
   const [candidaturas, setCandidaturas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -80,7 +80,7 @@ export default function EstadisticasCandidaturas() {
   if (!user) return null;
 
   return (
-    <Layout user={user}>
+    <Layout user={user} onLogout={logout}>
       <div className="w-full min-h-[80vh] flex flex-col items-center justify-center bg-neutral-900 px-4 sm:px-6 py-8 relative">
         <div className="w-full flex justify-start mb-8">
           <button

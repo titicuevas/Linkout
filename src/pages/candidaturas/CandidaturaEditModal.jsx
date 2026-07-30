@@ -10,6 +10,7 @@ import {
   FRANJAS_SALARIAL,
   TIPOS_TRABAJO,
   normalizeOrigen,
+  toExternalUrl,
 } from './shared';
 import { swalSuccess, swalError } from '../../utils/swalTheme';
 
@@ -42,10 +43,10 @@ export default function CandidaturaEditModal({ isOpen, candidatura, onClose, onS
       tipo_trabajo: form.tipo_trabajo.value,
       ubicacion: form.ubicacion.value,
       origen: normalizeOrigen(form.origen.value),
-      empresa_url: form.empresa_url.value.trim(),
+      empresa_url: toExternalUrl(form.empresa_url.value.trim()) || form.empresa_url.value.trim() || '',
       feedback: form.feedback.value,
       notas: form.notas.value,
-      fecha_actualizacion: new Date().toISOString(),
+      fecha_actualizacion: new Date().toISOString().slice(0, 10),
     };
 
     const historyEntries = buildChangeHistory(candidatura, updated);
@@ -107,10 +108,11 @@ export default function CandidaturaEditModal({ isOpen, candidatura, onClose, onS
           <span className={`${spanCls} text-gray-400`}>URL de la empresa (opcional)</span>
           <input
             name="empresa_url"
-            type="url"
+            type="text"
+            inputMode="url"
             defaultValue={candidatura.empresa_url || ''}
             className={`${inputCls} text-sm`}
-            placeholder="https://www.empresa.com"
+            placeholder="empresa.com o https://www.empresa.com"
           />
         </label>
 

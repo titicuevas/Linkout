@@ -4,7 +4,7 @@ import { supabase } from '../services/supabase';
 
 /**
  * Verifica la sesión activa del usuario. Si no hay sesión redirige a /login.
- * Devuelve { user, authLoading, logout } para que cada página lo consuma directamente.
+ * Escucha SIGNED_OUT para no quedar con sesión obsoleta.
  */
 export function useAuth() {
   const [user, setUser] = useState(null);
@@ -12,7 +12,10 @@ export function useAuth() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let active = true;
+
     supabase.auth.getUser().then(({ data }) => {
+      if (!active) return;
       if (!data?.user) {
         navigate('/login');
       } else {
@@ -20,6 +23,24 @@ export function useAuth() {
       }
       setAuthLoading(false);
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        navigate('/login');
+        return;
+      }
+      if (session?.user) {
+        setUser(session.user);
+        setAuthLoading(false);
+      }
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   const logout = useCallback(async () => {
