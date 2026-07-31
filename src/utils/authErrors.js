@@ -30,6 +30,10 @@ export function mapAuthErrorMessage(error, fallback = 'Ha ocurrido un error. Int
     return 'Demasiados intentos en poco tiempo. Espera un momento y vuelve a intentarlo.';
   }
 
+  if (message.includes('error sending confirmation') || message.includes('error sending magiclink') || message.includes('error sending recovery')) {
+    return 'No se pudo enviar el correo (SMTP). Revisa en Supabase el SMTP de Resend: sender con dominio verificado, host smtp.resend.com, usuario "resend" y API key válida.';
+  }
+
   if (message.includes('network') || message.includes('fetch')) {
     return 'No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.';
   }

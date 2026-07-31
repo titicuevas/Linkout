@@ -32,6 +32,11 @@ describe('mapAuthErrorMessage', () => {
     expect(result).toBe('Demasiados intentos en poco tiempo. Espera un momento y vuelve a intentarlo.');
   });
 
+  it('devuelve mensaje cuando falla el envío del correo de confirmación', () => {
+    const result = mapAuthErrorMessage({ message: 'Error sending confirmation email' });
+    expect(result).toMatch(/SMTP|Resend|dominio verificado/i);
+  });
+
   it('devuelve el fallback cuando el error es desconocido', () => {
     const result = mapAuthErrorMessage({ message: 'some unknown error' }, 'Error por defecto.');
     expect(result).toBe('some unknown error');
