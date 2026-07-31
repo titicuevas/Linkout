@@ -33,10 +33,19 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
         await Swal.fire(swalError('No se pudo iniciar sesión', mapAuthErrorMessage(error, 'No se pudo iniciar sesión. Inténtalo de nuevo.')));
         return;
+      }
+      const user = data?.user;
+      if (user) {
+        const metaNombre = typeof user.user_metadata?.nombre === 'string' ? user.user_metadata.nombre.trim() : '';
+        await supabase.from('profiles').upsert({
+          id: user.id,
+          email: user.email || email,
+          ...(metaNombre ? { nombre: metaNombre } : {}),
+        });
       }
       await Swal.fire(swalSuccess('¡Bienvenido!', 'Inicio de sesión exitoso.', {
         timer: 1200,

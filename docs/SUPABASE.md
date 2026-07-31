@@ -13,12 +13,32 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key
 
 ## 2. Configuración de URLs en Supabase
 
-- **Site URL:**
-  - `http://localhost:5173` (desarrollo)
-  - Tu dominio de producción
-- **Redirect URLs:**
-  - `http://localhost:5173/*`
-  - Tu dominio de producción con `/*`
+En **Authentication → URL Configuration**:
+
+- **Site URL (producción):** `https://linkout.up.railway.app` (o tu dominio)
+- **Redirect URLs** (añade todas las que uses):
+  - `https://linkout.up.railway.app/**`
+  - `https://linkout.up.railway.app/welcome`
+  - `https://linkout.up.railway.app/reset-password`
+  - `http://localhost:5173/**` (solo desarrollo)
+
+El registro usa `emailRedirectTo` → `/welcome`. Si la URL no está en la lista, el enlace del correo falla o Supabase puede no enviar bien el mail.
+
+---
+
+## 2b. Correo de verificación (si “no llega el email”)
+
+Checklist en el panel de Supabase:
+
+1. **Authentication → Providers → Email**
+   - **Confirm email** debe estar **activado** si quieres verificación. Si está desactivado, **no se envía** ningún correo y la cuenta queda usable al instante.
+2. **Authentication → Rate Limits**
+   - El SMTP gratuito de Supabase limita mucho (pocos emails/hora). Tras varios intentos, deja de enviar sin error claro en la app.
+3. Revisa **spam** / promociones.
+4. **Authentication → Emails**: plantilla *Confirm signup* con `{{ .ConfirmationURL }}`.
+5. Opcional pero recomendado en producción: **Project Settings → Authentication → SMTP** con un proveedor propio (Resend, Brevo, etc.).
+
+Para reenviar: el usuario puede registrarse de nuevo tras el límite, o usar *Resend* desde el dashboard (Users).
 
 ---
 
@@ -149,6 +169,7 @@ create policy "Usuarios pueden gestionar sus propios registros"
 
 - Edita las plantillas de confirmación y recuperación en el panel de Supabase.
 - Usa `{{ .ConfirmationURL }}` y `{{ .Email }}` en los mensajes.
+- Enlace de confirmación debe acabar llevando a `/welcome` (vía `emailRedirectTo` del cliente + Site URL / Redirect URLs).
 
 ---
 

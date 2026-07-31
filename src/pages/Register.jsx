@@ -45,24 +45,52 @@ export default function Register() {
     }
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      const nombreTrim = nombre.trim();
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/welcome`,
+          data: { nombre: nombreTrim },
+        },
+      });
       if (error) {
         setError(mapAuthErrorMessage(error, 'No se pudo completar el registro.'));
         return;
       }
-      // Insertar en profiles
-      const user = data.user;
-      if (user) {
-        const { error: profileError } = await supabase.from('profiles').insert([
-          { id: user.id, email, nombre }
-        ]);
+
+      const user = data?.user;
+      // Supabase no revela si el email ya existía: user sin identities = registro previo.
+      if (user && (!user.identities || user.identities.length === 0)) {
+        setError('Este correo ya está registrado. Inicia sesión o recupera tu contraseña.');
+        return;
+      }
+
+      // Solo hay sesión (y se puede escribir en profiles) si la confirmación por email está desactivada
+      // o el proyecto auto-confirma. Si no hay sesión, el correo de verificación debería haberse enviado.
+      if (user && data.session) {
+        const { error: profileError } = await supabase.from('profiles').upsert({
+          id: user.id,
+          email,
+          nombre: nombreTrim,
+        });
         if (profileError) {
           setError('Error al crear el perfil: ' + profileError.message);
           return;
         }
+        await Swal.fire(swalSuccess(
+          'Cuenta creada',
+          'Ya puedes iniciar sesión. Si pedimos verificación por correo, revisa también tu bandeja y spam.',
+        ));
+        navigate('/login');
+        return;
       }
-      await Swal.fire(swalSuccess('Registro exitoso', 'Por favor, verifica tu correo electrónico.'));
-      navigate('/');
+
+      await Swal.fire(swalSuccess(
+        'Revisa tu correo',
+        'Te hemos enviado un enlace de verificación. Si no llega en 1–2 minutos, revisa spam o promociones.',
+      ));
+      navigate('/login');
     } catch {
       setError('Error inesperado. Inténtalo de nuevo.');
     } finally {
