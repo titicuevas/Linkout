@@ -44,6 +44,7 @@ export default function Login() {
         await supabase.from('profiles').upsert({
           id: user.id,
           email: user.email || email,
+          last_seen_at: new Date().toISOString(),
           ...(metaNombre ? { nombre: metaNombre } : {}),
         });
       }

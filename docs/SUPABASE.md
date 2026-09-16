@@ -42,6 +42,20 @@ Para reenviar: el usuario puede registrarse de nuevo tras el límite, o usar *Re
 
 ---
 
+## 2c. Panel de administración (`/admin`)
+
+Solo accesible si el email de la sesión es admin (por defecto `enriquecuevas1989@gmail.com`).
+
+1. Aplica la migración `supabase/migrations/20260916100000_admin_dashboard.sql` en el SQL Editor de Supabase (o CLI).
+2. Inicia sesión con esa cuenta.
+3. Entra en **Admin** (navbar) o `/admin`.
+
+Métricas: usuarios totales, activos 7/30 días (`profiles.last_seen_at`), altas recientes, candidaturas y entradas del diario.
+
+La contraseña **nunca** va en el código: créala/cámbiala solo en Supabase Auth.
+
+---
+
 ## 3. Esquema de tablas recomendado
 
 ### Tabla: desahogos

@@ -7,6 +7,7 @@ import Swal from 'sweetalert2';
 import { swalSuccess, swalError } from '../utils/swalTheme';
 import { emitProfileUpdated } from '../utils/profileEvents';
 import { getDisplayName } from '../utils/displayName';
+import { isAdminUser } from '../utils/admin';
 
 const NAV_LINKS = [
   { to: '/candidaturas', label: 'Candidaturas' },
@@ -97,6 +98,10 @@ export default function Navbar({ user, onLogout }) {
 
   const displayName = nombre || getDisplayName(null, user);
   const initial = (displayName || '?').charAt(0).toUpperCase();
+  const showAdmin = isAdminUser(user);
+  const navLinks = showAdmin
+    ? [...NAV_LINKS, { to: '/admin', label: 'Admin' }]
+    : NAV_LINKS;
 
   return (
     <nav className="w-full flex items-center justify-between gap-3 px-4 py-2 bg-neutral-900 border-b border-neutral-800 shadow-sm">
@@ -108,7 +113,7 @@ export default function Navbar({ user, onLogout }) {
 
         {user && (
           <div className="hidden md:flex items-center gap-4">
-            {NAV_LINKS.map((link) => (
+            {navLinks.map((link) => (
               <NavLink key={link.to} to={link.to} className={linkClass}>
                 {link.label}
               </NavLink>
@@ -191,7 +196,7 @@ export default function Navbar({ user, onLogout }) {
               </div>
 
               <div className="w-full md:hidden flex flex-col gap-1 mb-2">
-                {NAV_LINKS.map((link) => (
+                {navLinks.map((link) => (
                   <NavLink
                     key={link.to}
                     to={link.to}

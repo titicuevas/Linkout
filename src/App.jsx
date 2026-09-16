@@ -16,6 +16,7 @@ const Desahogate = lazy(() => import('./pages/desahogate/index'));
 const CrearDesahogo = lazy(() => import('./pages/desahogate/create'));
 const AnimoIAIndex = lazy(() => import('./pages/animoia/index'));
 const Fisico = lazy(() => import('./pages/retos/Fisico'));
+const Admin = lazy(() => import('./pages/Admin'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
           <Route path="/desahogate/create" element={<CrearDesahogo />} />
           <Route path="/animoia" element={<AnimoIAIndex />} />
           <Route path="/retos/fisico" element={<Fisico />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

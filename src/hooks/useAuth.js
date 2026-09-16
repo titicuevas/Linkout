@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase';
+import { touchLastSeen } from '../utils/touchLastSeen';
 
 /**
  * Verifica la sesión activa del usuario. Si no hay sesión redirige a /login.
@@ -20,6 +21,7 @@ export function useAuth() {
         navigate('/login');
       } else {
         setUser(data.user);
+        touchLastSeen(data.user.id);
       }
       setAuthLoading(false);
     });
@@ -34,6 +36,9 @@ export function useAuth() {
       if (session?.user) {
         setUser(session.user);
         setAuthLoading(false);
+        if (event === 'SIGNED_IN') {
+          touchLastSeen(session.user.id);
+        }
       }
     });
 

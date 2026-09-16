@@ -73,6 +73,7 @@ export default function Register() {
           id: user.id,
           email,
           nombre: nombreTrim,
+          last_seen_at: new Date().toISOString(),
         });
         if (profileError) {
           setError('Error al crear el perfil: ' + profileError.message);
